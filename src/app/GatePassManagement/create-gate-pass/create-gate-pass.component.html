@@ -1,0 +1,156 @@
+<div class="container">
+    <form>
+<div class="card border border-primary">
+  <div class="card-header text-white bg-primary font-weight-bold">
+       <i class="fa fa-database fa-fw"></i>&nbsp;Create Asset Gate Pass
+  </div>
+
+  <div class="card-body text-primary">
+
+      <div class="row">
+        <div class="col form-group">
+            <label for="gatepassdate" class="col-form-label font-weight-bold">Gate Pass Date :</label>
+           <input type="text" Id="gatepassdate" class="form-control" placeholder="Enter Gate Pass Date">
+        </div>
+        <div class="col form-group">
+            <label for="gatepassno" class="col-form-label font-weight-bold">Gate Pass No :</label>
+           <input type="text" Id="gatepassno" readonly class="form-control">
+        </div>
+        <div class="col form-group">
+            <label for="isreturnable" class="col-form-label font-weight-bold">Is Returnable :</label>
+            <select class="custom-select" id="isreturnable">
+                  <option>Returnable</option>
+                  <option>Non-Returnable</option>
+                </select>
+        </div>
+      <div class="col form-group">
+          <label for="preparedBy" class="col-form-label font-weight-bold">Prepared By :</label>
+          <input type="text" Id="preparedBy" class="form-control" readonly>
+      </div>
+      </div>
+      <div class="row">
+              <label for="sendtoname" class="col-form-label col font-weight-bold">Send Address Detail :</label>
+      </div>
+      <div class="row">
+         <div class="col form-group">
+            <input type="text" Id="sendtoname" class="form-control" placeholder="Enter Name">
+          </div>
+          <div class="col form-group">
+              <input type="text" Id="sendtocompany" class="form-control" placeholder="Enter Company Name">
+          </div>
+          <div class="col form-group">
+              <input type="text" Id="sendtoaddress" class="form-control" placeholder="Enter Address">
+          </div>
+          <div class="col form-group">
+              <input type="text" Id="sendtoPhone" class="form-control" placeholder="Enter Phone Number">
+          </div>
+      </div>
+
+      <div class="row">
+          
+        <div class="col form-group">
+            <label for="remarks" class="col-form-label font-weight-bold">Remarks</label>
+            <textarea class="form-control" rows="2" id="remarks"></textarea>
+        </div>
+      </div>
+
+      <div class="row">
+              <label for="sendtoname" class="col-form-label col form-group font-weight-bold">Asset Detail :</label>
+      </div>
+      <div class="card border border-primary">
+          <div class="card-body text-primary">
+      <div class="row">
+          <div class="col form-group">
+              <input type="text" Id="assetTagId" class="form-control" placeholder="Enter Asset Tag Id">
+          </div>
+          <div class="col form-group">
+              <input type="text" Id="assetname" class="form-control" readonly placeholder="Asset Name">
+          </div>
+          <div class="col form-group">
+              <input type="text" Id="modelnumber" class="form-control" readonly placeholder="Model Number">
+          </div>
+          <div class="col form-group">
+              <input type="text" Id="serialnumber" class="form-control" readonly placeholder="Serail Number">
+          </div>
+      </div>
+      <div class="row">
+          <div class="col form-group">
+              <label for="sendqty" class="col-form-label font-weight-bold">Send Quantity :</label>
+              <input type="text" Id="sendqty" class="form-control" placeholder="Enter Send Quantity">
+          </div>
+          <div class="col form-group">
+              <label for="sendqtyunits" class="col-form-label font-weight-bold">Units :</label>
+              <select class="custom-select" id="sendqtyunits">
+                    <option>No.</option>
+                    <option>KG</option>
+                  </select>
+          </div>
+          <div class="col form-group">
+              <label for="receivedqty" class="col-form-label font-weight-bold">Received Quantity :</label>
+              <input type="text" Id="receivedqty" class="form-control" placeholder="Enter Received Quantity">
+          </div>
+          <div class="col form-group">
+              <label for="receivedqtyunits" class="col-form-label font-weight-bold">Units :</label>
+              <select class="custom-select" id="receivedqtyunits">
+                  <option>No.</option>
+                  <option>KG</option>
+                </select>
+          </div>
+      </div>
+      <div class="row">
+          <label for="isreturnable" class="col-form-label col form-group font-weight-bold">Is Returnable :</label>
+      </div>
+      <div class="row">
+          <div class="col form-group">
+              <select class="custom-select" id="isreturnable">
+                    <option>Returnable</option>
+                    <option>Non-Returnable</option>
+                  </select>
+          </div>
+          <div class="col form-group">
+              <button type="button" class="btn btn-primary mr-1  btn-sm font-weight-bold"><i class="fa fa-plus-circle fa-fw"></i>&nbsp;Add</button>
+              <button type="button" class="btn btn-primary btn-sm font-weight-bold"><i class="fa fa-refresh fa-fw"></i>&nbsp;Reset</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col form-group">
+              <table class="table table-bordered table-md text-primary mt-1">
+                  <thead>
+                    <th >Asset Tag Id</th>
+                    <th >Asset Name</th>
+                    <th >Brand Name</th>
+                    <th >Model Number</th>
+                    <th>Serail Number</th>
+                    <th>Send Qty</th>
+                    <th>Received Qty</th>
+                    <th>Type</th>
+                    <th></th>
+                  </thead>
+                <tbody>
+                  <tr>
+                    <td>TAG0001111</td>
+                    <td>Laptop</td>
+                    <td>Dell</td>
+                    <td>M1234554</td>
+                    <td>SR2334234</td>
+                    <td>10</td>
+                    <td></td>
+                    <td>Retrunable</td>
+                    <td class="text-center"> <a href="#"><i class="fa fa-pencil-square-o fa-fw"></i></a> |
+                      <a href="#"><i class="fa fa-trash-o fa-fw"></i></a></td>
+                  </tr>
+                </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
+      </div>
+  </div>
+  <div class="card-footer  text-right">
+    <button type="button" class="btn btn-primary mr-1 m-1 btn-sm font-weight-bold"><i class="fa fa-save fa-fw"></i>&nbsp;Create</button>
+    <button type="button" class="btn btn-primary m-1 btn-sm font-weight-bold"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+  </div>
+
+</div>
+</form>
+</div>

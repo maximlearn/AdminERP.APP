@@ -1,0 +1,102 @@
+<div>
+  <div class="row">
+    <div class="col-md-5">
+    <form>
+        <div class="card border border-primary">
+            <div class="card-header font-weight-bold  text-white bg-primary">
+          <i class="fa fa-user fa-fw"></i>&nbsp;Add Compay
+      </div>
+      <div class="card-body text-primary mt-0">
+          <div class="row">
+              <div class="col form-group">
+              <label for="companyName" class="font-weight-bold col-form-label">Company Name :</label>
+              <input type="text" Id="companyName" class="form-control" placeholder="Enter Company Name">
+              </div>
+            </div>
+          <div class="row">
+              <div class="col form-group">
+              <label for="address" class="font-weight-bold col-form-label">Address :</label>
+             <input type="text" Id="address" class="form-control" placeholder="Enter Company Address">
+            </div>
+          </div>
+          <div class="row">
+              <div class="col form-group">
+              <label for="phoneno" class="font-weight-bold  col-form-label">Phone No. :</label>
+               <input type="text" Id="phoneno" class="form-control" placeholder="Enter Phone Number">
+            </div>
+          </div>
+          <div class="row">
+              <div class="col form-group">
+              <label for="email" class="font-weight-bold  col-form-label">Email :</label>
+                <input type="text" Id="email" class="form-control" placeholder="Enter Email Address">
+            </div>
+          </div>
+          <div class="row">
+              <div class="col form-group">
+              <label for="url" class="font-weight-bold  col-form-label">Website URL :</label>
+              <input type="text" Id="url" class="form-control" placeholder="Enter Company Website URL">
+            </div>
+          </div>
+          <div class="row">
+              <div class="col form-group">
+              <label for="country" class="font-weight-bold  col-form-label">Country :</label>
+               <select class="custom-select" id="country">
+                    <option selected>Select Country.</option>
+                    <option value="1">India</option>
+                  </select>
+            </div>
+          </div>
+          <div class="row">
+              <div class="col form-group">
+              <label for="role" class="font-weight-bold  col-form-label">Company Logo :</label>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="companyLogo">
+                    <label class="custom-file-label" for="companyLogo">Browse Company Logo</label>
+                  </div>
+            </div>
+          </div>
+      </div>
+      <div class="card-footer text-right">
+        <button type="button" class="btn btn-primary mr-1 m-1 btn-sm font-weight-bold"><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
+        <button type="button" class="btn btn-primary m-1 btn-sm font-weight-bold"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+      </div>
+
+    </div>
+    </form>
+  </div>
+
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header font-weight-bold text-white bg-primary">
+                <i class="fa fa-user fa-fw"></i>&nbsp;List Company
+            </div>
+
+      <div class="card-body border border-primary">
+          <table class="table table-bordered table-md text-primary">
+              <thead>
+                <th >Company Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Country</th>
+                <th>Website URL</th>
+                <th></th>
+              </thead>
+            <tbody>
+              <tr>
+                <td>ABC</td>
+                <td>98998100</td>
+                <td>abc@abc.com</td>
+                <td>India</td>
+                <td>www.abc.com</td>
+                <td class="text-center"> <a href="#"><i class="fa fa-pencil-square-o fa-fw"></i></a> |
+                  <a href="#"><i class="fa fa-trash-o fa-fw"></i></a></td>
+
+
+              </tr>
+            </tbody>
+          </table>
+  </div>
+   </div>
+  </div>
+</div>
+
