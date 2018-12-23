@@ -65,11 +65,9 @@ export class AssetListComponent implements OnInit {
   ];
 
 
-  constructor(private modalService: BsModalService) {
-
-  }
+  constructor(private modalService: BsModalService) {}
   ngOnInit() {
-    this.paginationPageSize = 5;
+    this.paginationPageSize = 10;
     this.paginationNumberFormatter = function(params) {
       return '[' + params.value.toLocaleString() + ']';
     };
