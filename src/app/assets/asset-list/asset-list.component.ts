@@ -42,7 +42,7 @@ export class AssetListComponent implements OnInit {
     {headerName: 'Asset Name', field: 'AssetName',width:150},
     {headerName: 'Cost', field: 'Cost',width:130},
     {headerName:'Purchase Date', field: 'PurchaseDate',width:160},
-    {headerName: 'Warranty Expire Date', field: 'WarrantyExpireDate',width:200}];
+    {headerName: 'Warranty Expire Date', field: 'WarrantyExpireDate',width:228}];
 
     rowData = [
       { AssetTagId: 'Tag123', AssetCategory: 'Celica', AssetName: 'Chair' , 
