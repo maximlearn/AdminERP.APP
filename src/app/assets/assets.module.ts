@@ -5,12 +5,15 @@ import { AddAssetComponent } from './add-asset/add-asset.component';
 import { AssetListComponent } from './asset-list/asset-list.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap';
+import { AgGridModule} from  'ag-grid-angular';
+
 
 @NgModule({
   declarations: [AddAssetComponent, AssetListComponent],
   imports: [
     CommonModule,
-    AssetsRoutingModule,
+    AssetsRoutingModule,    
+    AgGridModule.withComponents(AssetListComponent),
     BsDatepickerModule.forRoot(),
     ModalModule.forRoot()
   ]
