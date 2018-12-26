@@ -2,6 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild  } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { template } from '@angular/core/src/render3';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-asset-list',
@@ -13,65 +14,29 @@ export class AssetListComponent implements OnInit {
   @ViewChild('template') inner;
   private paginationPageSize;
   private paginationNumberFormatter;
+  SERVER_URL = 'https://localhost:44361/api/';
 
   private gridApi;
   columnDefs = [
     // tslint:disable-next-line:max-line-length
     {headerName: 'Action', template: '<a title=\'View\' ><i data-action-type=\'view\' class=\'fa fa-building fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'Edit\' (click)=\'openModal(template)\'><i class=\'fa fa-pencil-square-o fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'delete\' (click)=\'openModal(template)\'><i class=\'fa fa-trash-o fa-fw\'></i></a>', width: 100 },
-    {headerName: 'Asset Tag ID', field: 'AssetTagId', width: 150 },
-    {headerName: 'Asset Category', field: 'AssetCategory', width: 150 },
-    {headerName: 'Asset Name', field: 'AssetName', width: 150},
-    {headerName: 'Cost', field: 'Cost', width: 130},
-    {headerName: 'Purchase Date', field: 'PurchaseDate', width: 160},
-    {headerName: 'Warranty Expire Date', field: 'WarrantyExpireDate', width: 200}];
+    {headerName: 'Asset Tag ID', field: 'assetTagId', width: 150 },
+    {headerName: 'Asset Category Name', field: 'assetCategory.categoryName', width: 150 },
+    {headerName: 'Asset Name', field: 'assetName', width: 150},
+    {headerName: 'Cost', field: 'cost', width: 130},
+    {headerName: 'Purchase Date', field: 'assetDetail.purchaseDate?assestDetail.assetId==id:""', width: 160},
+    {headerName: 'Warranty Expire Date', field: 'assetDetail.warrantyExpireDate', width: 200}];
 
-    rowData = [
-      { AssetTagId: 'Tag123', AssetCategory: 'Celica', AssetName: 'Chair' ,
-      Cost: '45000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/01/2025' },
-      { AssetTagId: 'Tag124', AssetCategory: 'Computer', AssetName: 'Table' ,
-      Cost: '2000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/11/2022'},
-      { AssetTagId: 'Tag125', AssetCategory: 'Laptop', AssetName: 'Bed' ,
-      Cost: '1000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/12/2020' },
-      { AssetTagId: 'Tag123', AssetCategory: 'Celica', AssetName: 'Chair' ,
-      Cost: '45000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/01/2025' },
-      { AssetTagId: 'Tag124', AssetCategory: 'Computer', AssetName: 'Table' ,
-      Cost: '2000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/11/2022'},
-      { AssetTagId: 'Tag125', AssetCategory: 'Laptop', AssetName: 'Bed' ,
-      Cost: '1000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/12/2020' },
-      { AssetTagId: 'Tag123', AssetCategory: 'Celica', AssetName: 'Chair' ,
-      Cost: '45000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/01/2025' },
-      { AssetTagId: 'Tag124', AssetCategory: 'Computer', AssetName: 'Table' ,
-      Cost: '2000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/11/2022'},
-      { AssetTagId: 'Tag125', AssetCategory: 'Laptop', AssetName: 'Bed' ,
-      Cost: '1000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/12/2020' },
-      { AssetTagId: 'Tag123', AssetCategory: 'Celica', AssetName: 'Chair' ,
-      Cost: '45000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/01/2025' },
-      { AssetTagId: 'Tag124', AssetCategory: 'Computer', AssetName: 'Table' ,
-      Cost: '2000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/11/2022'},
-      { AssetTagId: 'Tag125', AssetCategory: 'Laptop', AssetName: 'Bed' ,
-      Cost: '1000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/12/2020' },
-      { AssetTagId: 'Tag123', AssetCategory: 'Celica', AssetName: 'Chair' ,
-      Cost: '45000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/01/2025' },
-      { AssetTagId: 'Tag124', AssetCategory: 'Computer', AssetName: 'Table' ,
-      Cost: '2000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/11/2022'},
-      { AssetTagId: 'Tag125', AssetCategory: 'Laptop', AssetName: 'Bed' ,
-      Cost: '1000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/12/2020' },
-      { AssetTagId: 'Tag123', AssetCategory: 'Celica', AssetName: 'Chair' ,
-      Cost: '45000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/01/2025' },
-      { AssetTagId: 'Tag124', AssetCategory: 'Computer', AssetName: 'Table' ,
-      Cost: '2000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/11/2022'},
-      { AssetTagId: 'Tag125', AssetCategory: 'Laptop', AssetName: 'Bed' ,
-      Cost: '1000', PurchaseDate: 'Celica', WarrantyExpireDate: '03/12/2020' },
-  ];
-
-
-  constructor(private modalService: BsModalService) {}
+    rowData: any;
+  constructor(private modalService: BsModalService, private http: HttpClient) {}
   ngOnInit() {
+    this.rowData = this.http.get(this.SERVER_URL + '/asset');
     this.paginationPageSize = 10;
     this.paginationNumberFormatter = function(params) {
       return '[' + params.value.toLocaleString() + ']';
     };
   }
+
 
   public onRowClicked(e) {
     if (e.event.target !== undefined) {

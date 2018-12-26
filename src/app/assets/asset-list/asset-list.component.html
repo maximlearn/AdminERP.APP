@@ -75,10 +75,10 @@
 
   <div class="row mt-3">
       <div class="col" style=" overflow: hidden;">
-          
+
            <ag-grid-angular  style='width: 100%; height: 370px;'
             class="ag-theme-balham" [enableSorting]="true" [enableFilter]="true"
-            [rowData]="rowData" [pagination]="true" [paginationPageSize]= 'paginationPageSize'
+            [rowData]="rowData | async" [pagination]="true" [paginationPageSize]= 'paginationPageSize'
             [paginationNumberFormatter]= 'paginationNumberFormatter'
             [columnDefs]="columnDefs" (rowClicked)="onRowClicked($event)" id="gridApi"
             (gridReady)="onGridReady($event)">

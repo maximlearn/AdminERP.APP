@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { AuthGuardService } from './guards/auth-guard.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { AuthGuardService } from './guards/auth-guard.service';
     BrowserModule,
     AppRoutingModule,
     CommonModule,
+    HttpClientModule,
     NgbModule.forRoot(),
   ],
   providers: [AuthGuardService],
