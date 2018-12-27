@@ -3,6 +3,9 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { template } from '@angular/core/src/render3';
 import { HttpClient } from '@angular/common/http';
+import { AssetsService } from '../assets.service';
+import { Asset } from '../models/asset.model';
+import { getViewData } from '@angular/core/src/render3/state';
 
 @Component({
   selector: 'app-asset-list',
@@ -11,6 +14,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AssetListComponent implements OnInit {
   modalRef: BsModalRef;
+  
   @ViewChild('template') inner;
   private paginationPageSize;
   private paginationNumberFormatter;
@@ -23,19 +27,25 @@ export class AssetListComponent implements OnInit {
     {headerName: 'Asset Tag ID', field: 'assetTagId', width: 150 },
     {headerName: 'Asset Category Name', field: 'assetCategory.categoryName', width: 150 },
     {headerName: 'Asset Name', field: 'assetName', width: 150},
-    {headerName: 'Cost', field: 'cost', width: 130},
-    {headerName: 'Purchase Date', field: 'assetDetail.purchaseDate?assestDetail.assetId==id:""', width: 160},
-    {headerName: 'Warranty Expire Date', field: 'assetDetail.warrantyExpireDate', width: 200}];
+    {headerName: 'Cost', cellRenderer: function(params) {
+      return params.data.assetDetail[0].cost;}, width: 130},
+    {headerName: 'Purchase Date',cellRenderer: function(params) {
+      return params.data.assetDetail[0].purchaseDate;} , width: 160},
+    {headerName: 'Warranty Expire Date',cellRenderer: function(params) {
+      return params.data.assetDetail[0].warrantyExpireDate;} , width: 200}];
 
     rowData: any;
-  constructor(private modalService: BsModalService, private http: HttpClient) {}
+  constructor(private modalService: BsModalService,private http: HttpClient, private assetService : AssetsService) {}
   ngOnInit() {
-    this.rowData = this.http.get(this.SERVER_URL + '/asset');
-    this.paginationPageSize = 10;
+   
+     this.paginationPageSize = 10;
     this.paginationNumberFormatter = function(params) {
       return '[' + params.value.toLocaleString() + ']';
     };
   }
+
+  
+
 
 
   public onRowClicked(e) {
@@ -58,7 +68,9 @@ onPageSizeChanged(newPageSize) {
 onGridReady(params) {
   this.gridApi = params.api;
   // this.gridColumnApi = params.columnApi;
-
+  this.rowData=this.assetService.getAssetList();
+  this.assetService.getAssetList().subscribe((data) =>{ console.log(data) } , (err) => { console.log(err)});
+   
   // this.http
   //   .get("https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json")
   //   .subscribe(data => {
