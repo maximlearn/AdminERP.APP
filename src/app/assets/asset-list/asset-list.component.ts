@@ -46,8 +46,6 @@ export class AssetListComponent implements OnInit {
 
   
 
-
-
   public onRowClicked(e) {
     if (e.event.target !== undefined) {
         // let data = e.data;

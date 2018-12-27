@@ -8,11 +8,11 @@ import { Asset } from './models/asset.model';
   providedIn: 'root'
 })
 export class AssetsService {
-API_URL = 'https://localhost:44361/api/';
+API_URL = 'https://localhost:44361/api/asset/';
   constructor(private httpClient: HttpClient) { }
 
 public getAssetList() {
-  return this.httpClient.get(this.API_URL + 'asset').pipe(catchError(this.errorHandler));
+  return this.httpClient.get(this.API_URL + 'GetAllAsset').pipe(catchError(this.errorHandler));
 }
 
 private errorHandler(errorResponse: HttpErrorResponse)

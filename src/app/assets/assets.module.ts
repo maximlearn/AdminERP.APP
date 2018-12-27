@@ -6,12 +6,14 @@ import { AssetListComponent } from './asset-list/asset-list.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap';
 import { AgGridModule} from 'ag-grid-angular/main';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [AddAssetComponent, AssetListComponent],
   imports: [
     CommonModule,
+    FormsModule,
     AssetsRoutingModule,
     AgGridModule.withComponents([AssetListComponent]),
     BsDatepickerModule.forRoot(),

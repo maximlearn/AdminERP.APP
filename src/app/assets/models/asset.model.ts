@@ -17,11 +17,7 @@ export class Asset {
 export class AssetCategory {
      Id : number
      CategoryName : string
-    IsActive : boolean
-    CreatedBy : number
-    CreatedDate : Date
-    ModifiedBy : number 
-    ModifiedDate : Date
+  
 }
 
 export class AssetDetail {
