@@ -41,39 +41,77 @@
       </div>
     </div>
     <div class="row mb-0">
-      <div class="col form-group">
+      <div class="col form-group" [class.was-validated]="assetName.errors?.required  && assetName.touched">
           <label for="assetDesc" class="col-form-label font-weight-bold">Asset Description :</label>
-          <textarea Id="assetDesc" class="form-control" placeholder="Asset Description" rows=2></textarea>
+          <textarea Id="assetDesc" name="assetDesc" [(ngModel)]="assetData.AssetDescription" #assetDesc="ngModel"
+           class="form-control" placeholder="Asset Description" rows=2 maxlength="300"></textarea>
+          <span class="invalid-feedback"  *ngIf="assetDesc.errors?.maxlength && assetDesc.touched" >
+                Asset Description should not be more than 300 characters.
+              </span>
         </div>
     </div>
     <div class="row">
-        <div class="col form-group">
+            <div class="col form-group" [class.was-validated]="assetBrand.errors?.maxlength  && assetBrand.touched">
             <label for="assetBrand" class="col-form-label font-weight-bold">Brand Name :</label>
-            <input type="text" Id="assetBrand" class="form-control" placeholder="Asset Brand Name">
-        </div>
-      <div class="col form-group">
+            <input type="text" Id="assetBrand" name="assetBrand" 
+            [(ngModel)]="assetData.AssetDetailModel.BrandName" #assetBrand="ngModel"
+            class="form-control" placeholder="Asset Brand Name" maxlength=100>
+            <span class="invalid-feedback"  *ngIf="assetBrand.errors?.maxlength && assetBrand.touched" >
+                    Brand Name should not be more than 100 characters.
+                  </span>
+            </div>
+           
+      <div class="col form-group" [class.was-validated]="assetModel.errors?.maxlength  && assetModel.touched">
           <label for="assetModel" class="col-form-label font-weight-bold">Model No :</label>
-          <input type="text" Id="assetModel" class="form-control" placeholder="Asset Model Number">
-      </div>
-      <div class="col form-group">
-          <label for="assetSerail" class="col-form-label font-weight-bold">Serail No :</label>
-          <input type="text" Id="assetSerail" class="form-control" placeholder="Asset Serial Number">
+          <input type="text" Id="assetModel" name="assetModel" 
+          [(ngModel)]="assetData.AssetDetailModel.ModelNumber" #assetModel="ngModel"
+          class="form-control" placeholder="Asset Model Number" maxlength="100">
+          <span class="invalid-feedback"  *ngIf="assetModel.errors?.maxlength && assetModel.touched" >
+                Model No. should not be more than 100 characters.
+              </span>
+        </div>
+     
+      <div class="col form-group" [class.was-validated]="assetSerial.errors?.maxlength  && assetSerial.touched">
+          <label for="assetSerial" class="col-form-label font-weight-bold">Serail No :</label>
+          <input type="text" Id="assetSerial" name="assetSerial" 
+          [(ngModel)]="assetData.AssetDetailModel.SerialNumber" #assetSerial="ngModel"
+          class="form-control" placeholder="Asset Serial Number" maxlength="100">
+          <span class="invalid-feedback"  *ngIf="assetSerial.errors?.maxlength && assetSerial.touched" >
+                Serail No. should not be more than 100 characters.
+          </span>
       </div>
     </div>
     <div class="row">
-
       <div class="col form-group">
-          <label for="purchaseFrom" class="col-form-label font-weight-bold">Purchase From :</label>
-          <input type="text" Id="purchaseFrom" class="form-control" placeholder="Purchase From">
+            <label for="assetVendor" class="col-form-label font-weight-bold">Purchase From / Vendor Name :</label>
+            <select class="custom-select" id="assetVendor" name="assetVendor" #assetVendor="ngModel"
+            [(ngModel)]="assetData.AssetDetailModel.VendorId" >
+               <option value="0" selected>Select Vendor.</option>
+               <!-- <option *ngFor="let assetCat of assetCategory" [value]="assetCat.Id">{{assetCat.CategoryName}}</option> -->
+               <option *ngFor="let assetVend of asset_Vendor" [value]="assetVend.Id" >
+                     {{assetVend.VendorName}}
+                   </option>
+             </select>
+          <!-- <input type="text" Id="purchaseFrom" class="form-control" placeholder="Purchase From"> -->
       </div>
       <div class="col form-group">
           <label for="purchaseDate" class="col-form-label font-weight-bold">Purchase Date :</label>
           <input id="purchaseDate" type="text"  bsDatepicker [bsConfig]="datePickerConfig" class="form-control"
           placeholder="Purchase Date" />
       </div>
-      <div class="col form-group">
+      <div class="col form-group" [class.was-validated]="(assetCost.errors?.required || assetCost.errors?.pattern)  && assetCost.touched">
           <label for="assetCost" class="col-form-label font-weight-bold">Asset Cost :</label>
-          <input type="text" Id="assetCost" class="form-control" placeholder="Asset Cost">
+          <input type="text" Id="assetCost" name="assetCost"
+          [(ngModel)]="assetData.AssetDetailModel.Cost" #assetCost="ngModel"
+           class="form-control" placeholder="Asset Cost" 
+            required pattern="^(?:[0-9]+(?:\.[0-9]{0,2})?)?$">
+            <span class="invalid-feedback"  *ngIf="assetCost.errors?.required && assetCost.touched" >
+                    Asset Cost is Required.
+            </span>
+            <span class="invalid-feedback"  *ngIf="assetCost.errors?.pattern && assetCost.touched" >
+                    Please enter  valid Asset Cost.
+            </span>
+          
       </div>
     </div>
     <div class="row">

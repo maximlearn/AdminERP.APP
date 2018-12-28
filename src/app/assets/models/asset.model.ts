@@ -3,7 +3,7 @@ export class Asset {
    AssetTagId : string ;
     AssetName : string ;
      AssetCategoryId : number;
-      AssetDescription : number;
+      AssetDescription : string;
       IsActive : boolean;
       CreatedBy : number;
       CreatedDate : Date;
