@@ -4,7 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { template } from '@angular/core/src/render3';
 import { HttpClient } from '@angular/common/http';
 import { AssetsService } from '../assets.service';
-import { Asset } from '../models/asset.model';
+import { IAssetModel } from '../models/asset.model';
 import { getViewData } from '@angular/core/src/render3/state';
 
 @Component({
@@ -67,7 +67,7 @@ onGridReady(params) {
   this.gridApi = params.api;
   // this.gridColumnApi = params.columnApi;
   this.rowData=this.assetService.getAssetList();
-  this.assetService.getAssetList().subscribe((data) =>{ console.log(data) } , (err) => { console.log(err)});
+ // this.assetService.getAssetList().subscribe((data) =>{ console.log(data) } , (err) => { console.log(err)});
 
   // this.http
   //   .get("https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json")

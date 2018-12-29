@@ -9,8 +9,8 @@ export class IAssetModel {
   CreatedDate : Date;
   ModifiedBy : number ;
   ModifiedDate : Date;
-  AssetCategoryModel : IAssetCategoryModel ;
-  AssetDetailModel : IAssetDetailModel;
+  AssetCategory : IAssetCategoryModel ;
+  AssetDetail : IAssetDetailModel[];
   VendorModel  : IVendorModel;
 }
 
@@ -36,4 +36,10 @@ export class IVendorModel {
   Id : number;
   VendorName  : string;
   IsActive? : boolean;
+}
+
+export class IMessage {
+    Message : string;
+    IsActive : boolean;
+    IsSuccess : boolean;
 }

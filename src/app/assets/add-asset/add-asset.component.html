@@ -22,8 +22,8 @@
            [(ngModel)]="assetData.AssetCategoryId" required>
               <option value="0" selected>Select Asset Category.</option>
               <!-- <option *ngFor="let assetCat of assetCategory" [value]="assetCat.Id">{{assetCat.CategoryName}}</option> -->
-              <option *ngFor="let assetCat of asset_category" [value]="assetCat.Id" >
-                    {{assetCat.CategoryName}}
+              <option *ngFor="let assetCat of asset_Category" [value]="assetCat.id" >
+                    {{assetCat.categoryName}}
                   </option>
             </select>
             <span class="invalid-feedback"  *ngIf="assetCategory.errors?.required && assetCategory.touched" >
@@ -88,8 +88,8 @@
             [(ngModel)]="assetData.AssetDetail[0].VendorId" >
                <option value="0" selected>Select Vendor.</option>
                <!-- <option *ngFor="let assetCat of assetCategory" [value]="assetCat.Id">{{assetCat.CategoryName}}</option> -->
-               <option *ngFor="let assetVend of asset_Vendor" [value]="assetVend.Id" >
-                     {{assetVend.VendorName}}
+               <option *ngFor="let assetVend of asset_Vendor" [value]="assetVend.id" >
+                     {{assetVend.vendorName}}
                    </option>
              </select>
           <!-- <input type="text" Id="purchaseFrom" class="form-control" placeholder="Purchase From"> -->
@@ -125,7 +125,7 @@
       <div class="col form-group">
           <label for="warrantyDocument" class="col-form-label font-weight-bold">Warranty Document :</label>
           <div class="custom-file">
-              <input type="file" #fileUpload  (change)="fileChangeEvent($event)" class="custom-file-input" id="warrentyDocument">
+              <input type="file" #fileUpload placeholder="Browse Warranty Document"  (change)="fileChangeEvent($event)" class="custom-file-input" id="warrentyDocument">
               <label class="custom-file-label" for="warrantyDocument">Browse Warranty Document</label>
             </div>
       </div>
@@ -133,7 +133,7 @@
           <label for="assetImage" class="col-form-label font-weight-bold">Asset Image :</label>
           <div class="custom-file">
               <input type="file" #fileUpload  (change)="fileChangeEvent($event)" class="custom-file-input" id="assetImage">
-              <label class="custom-file-label text-primary" for="assetImage">Browse Asset Image</label>
+              <label class="custom-file-label" for="assetImage">Browse Asset Image</label>
             </div>
       </div>
       <!-- <div class="col form-group">
@@ -142,8 +142,10 @@
     </div>
 </div>
 <div class="card-footer text-right">
-{{assetForm.form.valid}}
-       <button type="submit" [disabled]="!assetForm.form.valid" [ngClass]="!assetForm.form.valid ? 'btn-disabled' : 'btn-primary'"  class="btn  mr-1 m-1  btn-sm"><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
+  <span class="font-weight-bold" [class.text-success]= "IsSuccess"  [class.text-danger] ="!IsSuccess" *ngIf="IsVisible ">
+                {{errorMessage}}
+  </span>
+  <button type="submit" [disabled]="!assetForm.form.valid" [ngClass]="!assetForm.form.valid ? 'btn-disabled' : 'btn-primary'"  class="btn  mr-1 m-1  btn-sm"><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
   <button type="button" class="btn btn-primary mr-2 m-1 btn-sm "><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
 </div>
 

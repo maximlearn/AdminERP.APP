@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { Asset, AssetCategory, AssetDetail, Vendor } from '../models/asset.model';
-
+import { IAssetModel, IAssetCategoryModel, IAssetDetailModel, IVendorModel, IMessage } from '../models/asset.model';
+import { map, catchError } from 'rxjs/operators';
 import { AssetsService } from '../assets.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 @Component({
@@ -16,29 +16,33 @@ export class AddAssetComponent implements OnInit {
   @ViewChild('fileUpload') fileUploadVar: any;
   uploadResult: any;
   API_URL = 'https://localhost:44361/api/asset/';
- assetData = new Asset();
-  assetDetail:AssetDetail[]= [{
+  IsVisible : boolean = false;
+  errorMessage : string;
+  IsSuccess : boolean =false;
+ assetData = new IAssetModel();
+  assetDetail:IAssetDetailModel[]= [{
     Id : 0,
-          AssetId : 0,
-          PurchaseDate :null,
-          VendorId : null,
-          Cost :null,
-          WarrantyExpireDate : null,
-          WarrantyDocumentId : null,
-          BrandName: null,
-          ModelNumber : null,
-          SerialNumber  : null,
+    AssetId : 0,
+    PurchaseDate :null,
+    VendorId : null,
+    Cost :null,
+    WarrantyExpireDate : null,
+    WarrantyDocumentId : null,
+    BrandName: null,
+    ModelNumber : null,
+    SerialNumber  : null,
   }];
+  asset_Category : IAssetCategoryModel[] =[];
+  asset_Vendor : IVendorModel[] = [];
+  //  private asset_category : IAssetCategoryModel[] =[
+  //   { Id:4,CategoryName:'Hardware' },
+  //   {  Id:7,CategoryName:'Software' },
+  //   { Id:4,CategoryName:'Furniture' }];
 
-   private asset_category : AssetCategory[] =[
-    { Id:4,CategoryName:'Hardware' },
-    {  Id:7,CategoryName:'Software' },
-    { Id:4,CategoryName:'Furniture' }];
-
-    private asset_Vendor : Vendor[] =[
-      { Id:1,VendorName:'Dell' },
-      {  Id:1,VendorName:'Apple' },
-      { Id:1,VendorName:'Microsoft' }];
+  //   private asset_Vendor : IVendorModel[] =[
+  //     { Id:1,VendorName:'Dell' },
+  //     {  Id:1,VendorName:'Apple' },
+  //     { Id:1,VendorName:'Microsoft' }];
 
    
   constructor(private assetService : AssetsService,private httpClient: HttpClient) {
@@ -48,14 +52,15 @@ export class AddAssetComponent implements OnInit {
       }
 
   ngOnInit() {
-
+  this.assetService.getAssetCategoryList().subscribe((data) =>{ console.log(data); this.asset_Category=data } , (err) => { console.log(err)});
+  this.assetService.getVendorList().subscribe((data) =>{ console.log(data); this.asset_Vendor=data } , (err) => { console.log(err)});
   }
 
   fileChangeEvent(fileInput: any)
   {
       this.uploadResult = "";
       this.filesToUpload = <Array<File>>fileInput.target.files;
-
+      fileInput.target.nextSibling.innerHTML= this.filesToUpload[0].name;
       for (let file of  this.filesToUpload)     
       {
           this.selectedFileNames.push(file);
@@ -77,10 +82,28 @@ export class AddAssetComponent implements OnInit {
 
       }
   }
-
- SaveAsset(assetData : Asset) : void {
+ 
+ SaveAsset(assetData : IAssetModel)    {
   let formData = this.uploadFiles();
-   this.assetService.addAsset(assetData,formData);
+ 
+   this.assetService.addAsset(assetData,formData).subscribe(
+    data => {
+        this.errorMessage="Asset saved successfully.";
+        this.IsVisible=true;
+        this.IsSuccess = true;
+    },
+    error => {
+      this.errorMessage="There is problem with the service.We are notified. Please try again later...";
+      this.IsVisible=true; 
+      this.IsSuccess = false; 
+     // this.errorHandler;
+        //console.log("Error", error);
+    }
+  );
+  // this.IsVisible = message.IsActive;
+  // this.errorMessage= message.Message;
+ 
  }
+ 
 
 }
