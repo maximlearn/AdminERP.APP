@@ -14,7 +14,7 @@ import { getViewData } from '@angular/core/src/render3/state';
 })
 export class AssetListComponent implements OnInit {
   modalRef: BsModalRef;
-  
+
   @ViewChild('template') inner;
   private paginationPageSize;
   private paginationNumberFormatter;
@@ -37,14 +37,14 @@ export class AssetListComponent implements OnInit {
     rowData: any;
   constructor(private modalService: BsModalService,private http: HttpClient, private assetService : AssetsService) {}
   ngOnInit() {
-   
-     this.paginationPageSize = 10;
-    this.paginationNumberFormatter = function(params) {
+
+      this.paginationPageSize = 10;
+      this.paginationNumberFormatter = function(params) {
       return '[' + params.value.toLocaleString() + ']';
     };
   }
 
-  
+
 
   public onRowClicked(e) {
     if (e.event.target !== undefined) {
@@ -68,7 +68,7 @@ onGridReady(params) {
   // this.gridColumnApi = params.columnApi;
   this.rowData=this.assetService.getAssetList();
   this.assetService.getAssetList().subscribe((data) =>{ console.log(data) } , (err) => { console.log(err)});
-   
+
   // this.http
   //   .get("https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json")
   //   .subscribe(data => {

@@ -14,7 +14,7 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAssetClient {
-    getAllAsset(): Observable<FileResponse | null>;
+    getAllAsset(): Observable<AssetModel | null>;
 }
 
 @Injectable()
@@ -28,7 +28,7 @@ export class AssetClient implements IAssetClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    getAllAsset(): Observable<FileResponse | null> {
+    getAllAsset(): Observable<AssetModel | null> {
         let url_ = this.baseUrl + "/api/Asset";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -47,40 +47,306 @@ export class AssetClient implements IAssetClient {
                 try {
                     return this.processGetAllAsset(<any>response_);
                 } catch (e) {
-                    return <Observable<FileResponse | null>><any>_observableThrow(e);
+                    return <Observable<AssetModel | null>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<FileResponse | null>><any>_observableThrow(response_);
+                return <Observable<AssetModel | null>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetAllAsset(response: HttpResponseBase): Observable<FileResponse | null> {
+    protected processGetAllAsset(response: HttpResponseBase): Observable<AssetModel | null> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? AssetModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<FileResponse | null>(<any>null);
+        return _observableOf<AssetModel | null>(<any>null);
     }
 }
 
+export class AssetModel implements IAssetModel {
+    id!: number;
+    assetTagId?: string | undefined;
+    assetName?: string | undefined;
+    assetCategoryId!: number;
+    assetDescription?: string | undefined;
+    isActive!: boolean;
+    createdBy!: number;
+    createdDate!: Date;
+    modifiedBy!: number;
+    modifiedDate!: Date;
+    assetCategory?: AssetCategoryModel | undefined;
+    assetDetail?: AssetDetailModel[] | undefined;
 
-export interface FileResponse {
-    data: Blob;
-    status: number;
-    fileName?: string;
-    headers?: { [name: string]: any };
+    constructor(data?: IAssetModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.assetTagId = data["assetTagId"];
+            this.assetName = data["assetName"];
+            this.assetCategoryId = data["assetCategoryId"];
+            this.assetDescription = data["assetDescription"];
+            this.isActive = data["isActive"];
+            this.createdBy = data["createdBy"];
+            this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
+            this.modifiedBy = data["modifiedBy"];
+            this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
+            this.assetCategory = data["assetCategory"] ? AssetCategoryModel.fromJS(data["assetCategory"]) : <any>undefined;
+            if (data["assetDetail"] && data["assetDetail"].constructor === Array) {
+                this.assetDetail = [];
+                for (let item of data["assetDetail"])
+                    this.assetDetail.push(AssetDetailModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AssetModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new AssetModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["assetTagId"] = this.assetTagId;
+        data["assetName"] = this.assetName;
+        data["assetCategoryId"] = this.assetCategoryId;
+        data["assetDescription"] = this.assetDescription;
+        data["isActive"] = this.isActive;
+        data["createdBy"] = this.createdBy;
+        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
+        data["modifiedBy"] = this.modifiedBy;
+        data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
+        data["assetCategory"] = this.assetCategory ? this.assetCategory.toJSON() : <any>undefined;
+        if (this.assetDetail && this.assetDetail.constructor === Array) {
+            data["assetDetail"] = [];
+            for (let item of this.assetDetail)
+                data["assetDetail"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IAssetModel {
+    id: number;
+    assetTagId?: string | undefined;
+    assetName?: string | undefined;
+    assetCategoryId: number;
+    assetDescription?: string | undefined;
+    isActive: boolean;
+    createdBy: number;
+    createdDate: Date;
+    modifiedBy: number;
+    modifiedDate: Date;
+    assetCategory?: AssetCategoryModel | undefined;
+    assetDetail?: AssetDetailModel[] | undefined;
+}
+
+export class AssetCategoryModel implements IAssetCategoryModel {
+    id!: number;
+    categoryName?: string | undefined;
+    isActive?: boolean | undefined;
+    createdBy!: number;
+    createdDate!: Date;
+    modifiedBy!: number;
+    modifiedDate!: Date;
+
+    constructor(data?: IAssetCategoryModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.categoryName = data["categoryName"];
+            this.isActive = data["isActive"];
+            this.createdBy = data["createdBy"];
+            this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
+            this.modifiedBy = data["modifiedBy"];
+            this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): AssetCategoryModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new AssetCategoryModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["categoryName"] = this.categoryName;
+        data["isActive"] = this.isActive;
+        data["createdBy"] = this.createdBy;
+        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
+        data["modifiedBy"] = this.modifiedBy;
+        data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IAssetCategoryModel {
+    id: number;
+    categoryName?: string | undefined;
+    isActive?: boolean | undefined;
+    createdBy: number;
+    createdDate: Date;
+    modifiedBy: number;
+    modifiedDate: Date;
+}
+
+export class AssetDetailModel implements IAssetDetailModel {
+    id!: number;
+    assetId!: number;
+    purchaseDate?: Date | undefined;
+    vendorId?: number | undefined;
+    cost?: number | undefined;
+    warrantyExpireDate?: Date | undefined;
+    warrantyDocumentId?: number | undefined;
+    brandName?: string | undefined;
+    modelNumber?: string | undefined;
+    serialNumber?: string | undefined;
+    asset?: AssetModel | undefined;
+    vendor?: VendorModel | undefined;
+
+    constructor(data?: IAssetDetailModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.assetId = data["assetId"];
+            this.purchaseDate = data["purchaseDate"] ? new Date(data["purchaseDate"].toString()) : <any>undefined;
+            this.vendorId = data["vendorId"];
+            this.cost = data["cost"];
+            this.warrantyExpireDate = data["warrantyExpireDate"] ? new Date(data["warrantyExpireDate"].toString()) : <any>undefined;
+            this.warrantyDocumentId = data["warrantyDocumentId"];
+            this.brandName = data["brandName"];
+            this.modelNumber = data["modelNumber"];
+            this.serialNumber = data["serialNumber"];
+            this.asset = data["asset"] ? AssetModel.fromJS(data["asset"]) : <any>undefined;
+            this.vendor = data["vendor"] ? VendorModel.fromJS(data["vendor"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): AssetDetailModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new AssetDetailModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["assetId"] = this.assetId;
+        data["purchaseDate"] = this.purchaseDate ? this.purchaseDate.toISOString() : <any>undefined;
+        data["vendorId"] = this.vendorId;
+        data["cost"] = this.cost;
+        data["warrantyExpireDate"] = this.warrantyExpireDate ? this.warrantyExpireDate.toISOString() : <any>undefined;
+        data["warrantyDocumentId"] = this.warrantyDocumentId;
+        data["brandName"] = this.brandName;
+        data["modelNumber"] = this.modelNumber;
+        data["serialNumber"] = this.serialNumber;
+        data["asset"] = this.asset ? this.asset.toJSON() : <any>undefined;
+        data["vendor"] = this.vendor ? this.vendor.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IAssetDetailModel {
+    id: number;
+    assetId: number;
+    purchaseDate?: Date | undefined;
+    vendorId?: number | undefined;
+    cost?: number | undefined;
+    warrantyExpireDate?: Date | undefined;
+    warrantyDocumentId?: number | undefined;
+    brandName?: string | undefined;
+    modelNumber?: string | undefined;
+    serialNumber?: string | undefined;
+    asset?: AssetModel | undefined;
+    vendor?: VendorModel | undefined;
+}
+
+export class VendorModel implements IVendorModel {
+    id!: number;
+    vendorName?: string | undefined;
+    isActive?: boolean | undefined;
+
+    constructor(data?: IVendorModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.vendorName = data["vendorName"];
+            this.isActive = data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): VendorModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new VendorModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["vendorName"] = this.vendorName;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface IVendorModel {
+    id: number;
+    vendorName?: string | undefined;
+    isActive?: boolean | undefined;
 }
 
 export class SwaggerException extends Error {

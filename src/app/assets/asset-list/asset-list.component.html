@@ -91,70 +91,64 @@
       <div class="modal-dialog modal-lg">
       <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title pull-left">Modal</h4>
+        <h4 class="modal-title pull-left">View / Add Asset</h4>
         <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+      AssetTagId : string ;
+  AssetName : string ;
+  AssetCategoryId : number;
+  AssetDescription : string;
+  IsActive : boolean;
       <div class="modal-body modal-lg">
-          <div class="row">
-              <div class="col-3 form-group">
-                 <input type="text" Id="gptodate" class="form-control" placeholder="Enter Purchase To Date">
-               </div>
-               <div class="col-3 form-group">
-                   <input type="text" Id="gpfromdate" class="form-control" placeholder="Enter Purchase From Date">
-               </div>
-               <div class="col-3 form-group">
-                   <input type="text" Id="gptodate" class="form-control" placeholder="To Date">
-                 </div>
+          <div class="card-body text-primary">
+              <div class="row">
+                <div class="col form-group">
+                  <label for="assetTagId" class="col-form-label font-weight-bold">Tag ID :</label>
+                  <input type="text" Id="assetTagId" class="form-control" ([ngModel])="AssetTagId">
+                </div>
+                <div class="col form-group">
+                  <label for="assetName" class="col-form-label font-weight-bold">Asset Category :</label>
+                  <input type="text" Id="assetName" class="form-control" ([ngModel])="AssetName">
+              </div>
+              <div class="col form-group">
+                  <label for="assetName" class="col-form-label font-weight-bold">Asset Name :</label>
+                <input type="text" Id="assetName" class="form-control" placeholder="Asset Name">
+              </div>
+                </div>
+                <div class="row">
+                  <div class="col-6 form-group">
+                      <label for="purchasetodate" class="col-form-label font-weight-bold">Purchase Date :</label>
+                  </div>
+                  <div class="col-6 form-group">
+                      <label for="warrantyexpiretodate" class="col-form-label font-weight-bold">Warranty Expire Date :</label>
+                  </div>
+                </div>
+              <div class="row">
                  <div class="col-3 form-group">
-                     <input type="text" Id="gpfromdate" class="form-control" placeholder="From Date">
-                 </div>
+                    <input type="text" Id="gptodate" class="form-control" placeholder="Enter Purchase To Date">
+                  </div>
+                  <div class="col-3 form-group">
+                      <input type="text" Id="gpfromdate" class="form-control" placeholder="Enter Purchase From Date">
+                  </div>
+                  <div class="col-3 form-group">
+                      <input type="text" Id="gptodate" class="form-control" placeholder="To Date">
+                    </div>
+                    <div class="col-3 form-group">
+                        <input type="text" Id="gpfromdate" class="form-control" placeholder="From Date">
+                    </div>
+              </div>
            </div>
-           <div class="row">
-              <div class="col-3 form-group">
-                 <input type="text" Id="gptodate" class="form-control" placeholder="Enter Purchase To Date">
-               </div>
-               <div class="col-3 form-group">
-                   <input type="text" Id="gpfromdate" class="form-control" placeholder="Enter Purchase From Date">
-               </div>
-               <div class="col-3 form-group">
-                   <input type="text" Id="gptodate" class="form-control" placeholder="To Date">
+           <div class="card-footer">
+                  <div class="row">
+                 <div class="col text-right">
+                     <button type="button" class="btn btn-primary mr-1 m-1  btn-sm font-weight-bold"><i class="fa fa-save fa-fw"></i>&nbsp;Search</button>
+                     <button type="button" class="btn btn-primary  btn-sm m-1 font-weight-bold" (click)="modalRef.hide()"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
                  </div>
-                 <div class="col-3 form-group">
-                     <input type="text" Id="gpfromdate" class="form-control" placeholder="From Date">
-                 </div>
-           </div>
-           <div class="row">
-              <div class="col-3 form-group">
-                 <input type="text" Id="gptodate" class="form-control" placeholder="Enter Purchase To Date">
-               </div>
-               <div class="col-3 form-group">
-                   <input type="text" Id="gpfromdate" class="form-control" placeholder="Enter Purchase From Date">
-               </div>
-               <div class="col-3 form-group">
-                   <input type="text" Id="gptodate" class="form-control" placeholder="To Date">
-                 </div>
-                 <div class="col-3 form-group">
-                     <input type="text" Id="gpfromdate" class="form-control" placeholder="From Date">
-                 </div>
-           </div>
-           <div class="row">
-              <div class="col-3 form-group">
-                 <input type="text" Id="gptodate" class="form-control" placeholder="Enter Purchase To Date">
-               </div>
-               <div class="col-3 form-group">
-                   <input type="text" Id="gpfromdate" class="form-control" placeholder="Enter Purchase From Date">
-               </div>
-               <div class="col-3 form-group">
-                   <input type="text" Id="gptodate" class="form-control" placeholder="To Date">
-                 </div>
-                 <div class="col-3 form-group">
-                     <input type="text" Id="gpfromdate" class="form-control" placeholder="From Date">
-                 </div>
-           </div>
-
-      </div>
-      </div>
-      </div>
+             </div>
+              </div>
+        </div>
+        </div>
+        </div>
     </ng-template>

@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { Observable, throwError, observable } from 'rxjs';
 import { Asset } from './models/asset.model';
+import { IAssetModel } from '../auto.generated';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ API_URL = 'https://localhost:44361/api/asset/';
   constructor(private httpClient: HttpClient) { }
 
 public getAssetList() {
-  return this.httpClient.get(this.API_URL + 'GetAllAsset').pipe(catchError(this.errorHandler));
+  return this.httpClient.get<IAssetModel[]>(this.API_URL + 'GetAll').pipe(catchError(this.errorHandler));
 }
 
 private errorHandler(errorResponse: HttpErrorResponse)
@@ -27,7 +28,7 @@ private errorHandler(errorResponse: HttpErrorResponse)
 
 }
 
-public getAsset(assetId) {
+public getAssetById(assetId: number) {
   return this.httpClient.get(`${this.API_URL + 'assetslist'}/${assetId}`);
 }
 

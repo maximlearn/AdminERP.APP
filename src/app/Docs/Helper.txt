@@ -1,0 +1,6 @@
+to implement nswag, follow the below link:
+https://www.codingflow.net/building-single-page-applications-on-asp-net-core-2-1-with-angular-6-part-3-implementing-open-api/
+
+to download the nswagstudio:
+https://github.com/RSuter/NSwag/wiki/NSwagStudio
+
