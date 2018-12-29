@@ -42,19 +42,17 @@ export class AddAssetComponent implements OnInit {
 
    
   constructor(private assetService : AssetsService,private httpClient: HttpClient) {
-    this.datePickerConfig = Object.assign({}, { containerClass: 'theme-dark-blue', showWeekNumbers: false,
-    dateInputFormat: 'DD/MM/YYYY'
-});
-this.assetData.AssetDetail = this.assetDetail;
-  
-   }
+    this.datePickerConfig = Object.assign({}, 
+      { containerClass: 'theme-dark-blue', showWeekNumbers: false,dateInputFormat: 'DD/MM/YYYY'});
+        this.assetData.AssetDetail = this.assetDetail;
+      }
 
   ngOnInit() {
+
   }
 
   fileChangeEvent(fileInput: any)
   {
-      //Clear Uploaded Files result message
       this.uploadResult = "";
       this.filesToUpload = <Array<File>>fileInput.target.files;
 
@@ -75,45 +73,8 @@ this.assetData.AssetDetail = this.assetDetail;
           const formData = new FormData();
           for (let file of this.selectedFileNames)
             formData.append(file.name, file);
-
-          // for (var i = 0; i < this.filesToUpload.length; i++)
-          // {
-          //     formData.append('uploadedFiles', this.filesToUpload[i], this.filesToUpload[i].name);
-          // }
-
-          // this.httpClient.post(this.API_URL+'AddAsset',formData ).subscribe(
-          //   data => {
-          //       console.log("POST Request is successful ", data);
-          //   },
-          //   error => {
-          //       console.log("Error", error);
-          //   }
-          // ); 
-
           return formData;
 
-         // let apiUrl = "/api/Upload/UploadFiles";
-
-          // this.http.post(apiUrl, formData)
-          //     .map((res: Response) => res.json())
-          //     .subscribe
-          //     (
-          //         data => {
-          //             this.uploadResult = data;
-          //             this.errorMessage = "";
-          //         },
-          //         err => {
-          //             console.error(err);
-          //             this.errorMessage = err;
-          //             this.isLoadingData = false;
-          //         },
-          //         () => {
-          //             this.isLoadingData = false,
-          //                 this.fileUploadVar.nativeElement.value = "";
-          //             this.selectedFileNames = [];
-          //             this.filesToUpload = [];
-          //         }
-          //     );
       }
   }
 
