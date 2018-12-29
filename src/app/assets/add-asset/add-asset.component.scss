@@ -59,8 +59,15 @@ textarea.form-control{
 
 .btn-primary:hover {
   color: #fff;
-  background-color: rgba(46, 156, 52, 0.966);
+  background-color: rgba(46, 156, 52, 0.733);
   border-color: rgba(3, 156, 67, 0.959);
+}
+
+.btn-disabled {
+  color: #fff;
+  background-color: rgba(107, 105, 105, 0.705);
+  border-color: rgba(73, 68, 68, 0.705);
+  font-size: 1rem
 }
 
 .btn-sm{

@@ -10,7 +10,7 @@ export class Asset {
       ModifiedBy : number ;
       ModifiedDate : Date;
       AssetCategoryModel : AssetCategory ;
-      AssetDetailModel : AssetDetail;
+      AssetDetail : AssetDetail[];
       VendorModel  : Vendor;
 }
 
