@@ -30,12 +30,12 @@ export class AssetListComponent implements OnInit {
     {headerName: 'Cost', cellRenderer: function(params) {
       return params.data.assetDetail[0].cost;}, width: 130},
     {headerName: 'Purchase Date',cellRenderer: function(params) {
-      return params.data.assetDetail[0].purchaseDate;} , width: 160},
+      return (params.data.assetDetail[0].purchaseDate === null) ? '' : params.data.assetDetail[0].purchaseDate} , width: 160},
     {headerName: 'Warranty Expire Date',cellRenderer: function(params) {
-      return params.data.assetDetail[0].warrantyExpireDate;} , width: 200}];
+      return params.data.assetDetail[0].warrantyExpireDate === null ? '' : params.data.assetDetail[0].warrantyExpireDate ;} , width: 200}];
 
     rowData: any;
-  constructor(private modalService: BsModalService,private http: HttpClient, private assetService : AssetsService) {}
+  constructor(private modalService: BsModalService, private assetService : AssetsService) {}
   ngOnInit() {
 
       this.paginationPageSize = 10;

@@ -1,4 +1,4 @@
-export class Asset {
+export class IAssetModel {
   Id  : number;
   AssetTagId : string ;
   AssetName : string ;
@@ -9,17 +9,17 @@ export class Asset {
   CreatedDate : Date;
   ModifiedBy : number ;
   ModifiedDate : Date;
-  AssetCategoryModel : AssetCategory ;
-  AssetDetailModel : AssetDetail;
-  VendorModel  : Vendor;
+  AssetCategoryModel : IAssetCategoryModel ;
+  AssetDetailModel : IAssetDetailModel;
+  VendorModel  : IVendorModel;
 }
 
-export class AssetCategory {
+export class IAssetCategoryModel {
   Id : number
   CategoryName : string
 }
 
-export class AssetDetail {
+export class IAssetDetailModel {
   Id : number;
   AssetId : number;
   PurchaseDate? : Date;
@@ -32,7 +32,7 @@ export class AssetDetail {
   SerialNumber ? : string
 }
 
-export class Vendor {
+export class IVendorModel {
   Id : number;
   VendorName  : string;
   IsActive? : boolean;

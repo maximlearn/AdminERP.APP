@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { Observable, throwError, observable } from 'rxjs';
-import { Asset } from './models/asset.model';
-import { IAssetModel } from '../auto.generated';
+import { IAssetModel } from './models/asset.model';
+//import { IAssetModel } from '../auto.generated';
 
 @Injectable({
   providedIn: 'root'
@@ -32,8 +32,26 @@ public getAssetById(assetId: number) {
   return this.httpClient.get(`${this.API_URL + 'assetslist'}/${assetId}`);
 }
 
-public addAsset(asset: {assetTagId: string, assetName: string, assetCategory: string}) {
-return this.httpClient.post (this.API_URL , 'asset');
+public addAsset(assetData : Asset, formData : FormData) {
+
+ this.httpClient.post(this.API_URL+'AddAsset',assetData ).subscribe(
+  data => {
+      console.log("POST Request is successful ", data);
+  },
+  error => {
+      console.log("Error", error);
+  }
+);
+
+
+this.httpClient.post(this.API_URL+'UploadAssetDocument',formData ).subscribe(
+  data => {
+      console.log("POST Request is successful ", data);
+  },
+  error => {
+      console.log("Error", error);
+  }
+);
 }
 
 }
