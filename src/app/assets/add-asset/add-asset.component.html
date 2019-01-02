@@ -16,19 +16,21 @@
                 Asset Tag Id is required.
               </span>
     </div>
-      <div class="col form-group" [class.was-validated]="assetCategory.errors?.required  && assetCategory.touched">
-          <label for="assetCategory" class="col-form-label font-weight-bold">Asset Category :</label>
-          <select class="custom-select" id="assetCategory" name="assetCategory" #assetCategory="ngModel"
-           [(ngModel)]="assetData.AssetCategoryId" required>
-              <option value="0" selected>Select Asset Category.</option>
+      <div class="col form-group" >
+          <label for="assetCategory" class="control-label col-form-label font-weight-bold">Asset Category :</label>
+          <select class="form-control" appSelectRequiredValidator appSelectValidator=-101
+          id="assetCategory" name="assetCategory" #assetCategory="ngModel"
+          [ngClass]="assetCategory.errors?.defaultSelected  && assetCategory.touched ? 'select-validated' : ''"
+           [(ngModel)]="assetData.AssetCategoryId" >
+              <option value="-101" selected>Select Asset Category.</option>
               <!-- <option *ngFor="let assetCat of assetCategory" [value]="assetCat.Id">{{assetCat.CategoryName}}</option> -->
               <option *ngFor="let assetCat of asset_Category" [value]="assetCat.id" >
                     {{assetCat.categoryName}}
                   </option>
             </select>
-            <span class="invalid-feedback"  *ngIf="assetCategory.errors?.required && assetCategory.touched" >
+            <span [ngClass]="(assetCategory.errors?.defaultSelected  && assetCategory.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'" *ngIf="assetCategory.errors?.defaultSelected  && assetCategory.touched" >
                     Asset Category is required.
-                  </span>
+            </span>
        
       </div>
       <div class="col form-group" [class.was-validated]="assetName.errors?.required  && assetName.touched">
@@ -41,7 +43,7 @@
       </div>
     </div>
     <div class="row mb-0">
-      <div class="col form-group" [class.was-validated]="assetName.errors?.required  && assetName.touched">
+      <div class="col form-group" [class.was-validated]="assetName.errors?.maxlength  && assetName.touched">
           <label for="assetDesc" class="col-form-label font-weight-bold">Asset Description :</label>
           <textarea Id="assetDesc" name="assetDesc" [(ngModel)]="assetData.AssetDescription" #assetDesc="ngModel"
            class="form-control" placeholder="Asset Description" rows=2 maxlength="300"></textarea>
@@ -85,7 +87,7 @@
       <div class="col form-group">
             <label for="assetVendor" class="col-form-label font-weight-bold">Purchase From / Vendor Name :</label>
             <select class="custom-select" id="assetVendor" name="assetVendor" #assetVendor="ngModel"
-            [(ngModel)]="assetData.AssetDetail[0].VendorId" >
+            [(ngModel)]="assetData.AssetDetail[0].VendorId"  >
                <option value="0" selected>Select Vendor.</option>
                <!-- <option *ngFor="let assetCat of assetCategory" [value]="assetCat.Id">{{assetCat.CategoryName}}</option> -->
                <option *ngFor="let assetVend of asset_Vendor" [value]="assetVend.id" >
@@ -94,46 +96,55 @@
              </select>
           <!-- <input type="text" Id="purchaseFrom" class="form-control" placeholder="Purchase From"> -->
       </div>
+     
       <div class="col form-group">
           <label for="purchaseDate" class="col-form-label font-weight-bold">Purchase Date :</label>
-          <input id="purchaseDate" name="purchaseDate" type="text" [(ngModel)]="assetData.AssetDetail[0].PurchaseDate" 
+          <input id="purchaseDate" name="purchaseDate" (ngModelChange)="executeValidator('warrantyExpiryDate')" type="text" [(ngModel)]="assetData.AssetDetail[0].PurchaseDate" 
           #purchaseDate="ngModel" bsDatepicker [bsConfig]="datePickerConfig" class="form-control"
           placeholder="Purchase Date" />
       </div>
-      <div class="col form-group" [class.was-validated]="(assetCost.errors?.required || assetCost.errors?.pattern)  && assetCost.touched">
-          <label for="assetCost" class="col-form-label font-weight-bold">Asset Cost :</label>
-          <input type="text" Id="assetCost" name="assetCost"
-          [(ngModel)]="assetData.AssetDetail[0].Cost" #assetCost="ngModel"
-           class="form-control" placeholder="Asset Cost" 
-            required pattern="^(?:[0-9]+(?:\.[0-9]{0,2})?)?$">
-            <span class="invalid-feedback"  *ngIf="assetCost.errors?.required && assetCost.touched" >
-                    Asset Cost is Required.
+      <div class="col form-group">
+            <label for="warrantyExpiryDate" class="col-form-label font-weight-bold">Warranty Expiry Date :
+                {{warrantyExpiryDate.errors?.notValidated && warrantyExpiryDate.touched}}
+            </label>
+            <input id="warrantyExpiryDate" appCompareDateValidator="purchaseDate" name="warrantyExpiryDate" type="text" [(ngModel)]="assetData.AssetDetail[0].WarrantyExpireDate"
+            #warrantyExpiryDate="ngModel"
+            [ngClass]="warrantyExpiryDate.errors?.notValidated  && warrantyExpiryDate.touched ? 'select-validated' : ''"
+            bsDatepicker [bsConfig]="datePickerConfig" placeholder="Warrenty Expiry Date" class="form-control" />
+            <span  [ngClass]="(warrantyExpiryDate.errors?.notValidated  && warrantyExpiryDate.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"   *ngIf="warrantyExpiryDate.errors?.notValidated && warrantyExpiryDate.touched" >
+                    Warranty Expire date should be greater from PurchaseDate.
             </span>
-            <span class="invalid-feedback"  *ngIf="assetCost.errors?.pattern && assetCost.touched" >
-                    Please enter  valid Asset Cost.
-            </span>
-          
-      </div>
+    </div>
+
+      
     </div>
     <div class="row">
-            <div class="col form-group">
-                    <label for="warrantyExpiryDate" class="col-form-label font-weight-bold">Warranty Expiry Date :</label>
-                    <input id="warrantyExpiryDate" name="warrantyExpiryDate" type="text" [(ngModel)]="assetData.AssetDetail[0].WarrantyExpireDate"
-                    #warrantyExpiryDate="ngModel"
-                    bsDatepicker [bsConfig]="datePickerConfig" placeholder="Warrenty Expiry Date" class="form-control" />
+            <div class="col form-group" [class.was-validated]="(assetCost.errors?.required || assetCost.errors?.pattern)  && assetCost.touched">
+                    <label for="assetCost" class="col-form-label font-weight-bold">Asset Cost :</label>
+                    <input type="text" Id="assetCost" name="assetCost"
+                    [(ngModel)]="assetData.AssetDetail[0].Cost" #assetCost="ngModel"
+                     class="form-control" placeholder="Asset Cost" 
+                      required pattern="^(?:[0-9]+(?:\.[0-9]{0,2})?)?$">
+                      <span class="invalid-feedback"  *ngIf="assetCost.errors?.required && assetCost.touched" >
+                              Asset Cost is Required.
+                      </span>
+                      <span class="invalid-feedback"  *ngIf="assetCost.errors?.pattern && assetCost.touched" >
+                              Please enter  valid Asset Cost.
+                      </span>
+                    
                 </div>
       <div class="col form-group">
           <label for="warrantyDocument" class="col-form-label font-weight-bold">Warranty Document :</label>
           <div class="custom-file">
-              <input type="file" #fileUpload placeholder="Browse Warranty Document"  (change)="fileChangeEvent($event)" class="custom-file-input" id="warrentyDocument">
-              <label class="custom-file-label" for="warrantyDocument">Browse Warranty Document</label>
+              <input type="file" #fileUpload placeholder="Browse Warranty Document"  (change)="fileChangeEvent($event,'WarrantyDocument')" class="custom-file-input" id="warrentyDocument">
+              <label class="custom-file-label warrantyDocument"  for="warrantyDocument">Browse Warranty Document</label>
             </div>
       </div>
       <div class="col form-group">
           <label for="assetImage" class="col-form-label font-weight-bold">Asset Image :</label>
           <div class="custom-file">
-              <input type="file" #fileUpload  (change)="fileChangeEvent($event)" class="custom-file-input" id="assetImage">
-              <label class="custom-file-label" for="assetImage">Browse Asset Image</label>
+              <input type="file" #fileUpload  (change)="fileChangeEvent($event,'AssetImage')" class="custom-file-input" id="assetImage">
+              <label class="custom-file-label assetImage" for="assetImage">Browse Asset Image</label>
             </div>
       </div>
       <!-- <div class="col form-group">
@@ -142,11 +153,12 @@
     </div>
 </div>
 <div class="card-footer text-right">
-  <span class="font-weight-bold" [class.text-success]= "IsSuccess"  [class.text-danger] ="!IsSuccess" *ngIf="IsVisible ">
-                {{errorMessage}}
+  <span class="font-weight-bold" [class.text-success]= "this.responseMessage.isSuccess" 
+   [class.text-danger] ="!this.responseMessage.isSuccess" *ngIf="IsVisible ">
+                {{responseMessage.message}}
   </span>
   <button type="submit" [disabled]="!assetForm.form.valid" [ngClass]="!assetForm.form.valid ? 'btn-disabled' : 'btn-primary'"  class="btn  mr-1 m-1  btn-sm"><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
-  <button type="button" class="btn btn-primary mr-2 m-1 btn-sm "><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+  <button type="button" class="btn btn-primary mr-2 m-1 btn-sm" (click)="resetForm()"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
 </div>
 
 </div>

@@ -1,9 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { IAssetModel, IAssetCategoryModel, IAssetDetailModel, IVendorModel, IMessage } from '../models/asset.model';
+import { IAssetModel, IAssetCategoryModel, IAssetDetailModel, IVendorModel, IMessage, IResponseMessage, IFile } from '../models/asset.model';
 import { map, catchError } from 'rxjs/operators';
 import { AssetsService } from '../assets.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { NgForm } from '@angular/forms';
+import * as $ from 'jquery';
+
 @Component({
   selector: 'app-add-asset',
   templateUrl: './add-asset.component.html',
@@ -11,14 +14,13 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 })
 export class AddAssetComponent implements OnInit {
   datePickerConfig: Partial<BsDatepickerConfig>;
-  filesToUpload: Array<File>;
-  selectedFileNames:Array<File>= [];
-  @ViewChild('fileUpload') fileUploadVar: any;
+  filesToUpload: Array<IFile>;
+  selectedFileNames:Array<IFile>= [];  
+  @ViewChild('assetForm') assetForm : NgForm;
   uploadResult: any;
   API_URL = 'https://localhost:44361/api/asset/';
   IsVisible : boolean = false;
-  errorMessage : string;
-  IsSuccess : boolean =false;
+  responseMessage : IResponseMessage ;
  assetData = new IAssetModel();
   assetDetail:IAssetDetailModel[]= [{
     Id : 0,
@@ -34,21 +36,14 @@ export class AddAssetComponent implements OnInit {
   }];
   asset_Category : IAssetCategoryModel[] =[];
   asset_Vendor : IVendorModel[] = [];
-  //  private asset_category : IAssetCategoryModel[] =[
-  //   { Id:4,CategoryName:'Hardware' },
-  //   {  Id:7,CategoryName:'Software' },
-  //   { Id:4,CategoryName:'Furniture' }];
-
-  //   private asset_Vendor : IVendorModel[] =[
-  //     { Id:1,VendorName:'Dell' },
-  //     {  Id:1,VendorName:'Apple' },
-  //     { Id:1,VendorName:'Microsoft' }];
-
+  
    
   constructor(private assetService : AssetsService,private httpClient: HttpClient) {
     this.datePickerConfig = Object.assign({}, 
       { containerClass: 'theme-dark-blue', showWeekNumbers: false,dateInputFormat: 'DD/MM/YYYY'});
+      this.assetData.AssetCategoryId=-101;      
         this.assetData.AssetDetail = this.assetDetail;
+        this.assetData.AssetDetail[0].VendorId=0;
       }
 
   ngOnInit() {
@@ -56,15 +51,25 @@ export class AddAssetComponent implements OnInit {
   this.assetService.getVendorList().subscribe((data) =>{ console.log(data); this.asset_Vendor=data } , (err) => { console.log(err)});
   }
 
-  fileChangeEvent(fileInput: any)
+  fileChangeEvent(fileInput: any,fileInputLabel : string)
   {
       this.uploadResult = "";
-      this.filesToUpload = <Array<File>>fileInput.target.files;
+      this.filesToUpload = <Array<IFile>>fileInput.target.files;
       fileInput.target.nextSibling.innerHTML= this.filesToUpload[0].name;
+    //  fileInput.target.
       for (let file of  this.filesToUpload)     
       {
+         file.filelabel = fileInputLabel;
           this.selectedFileNames.push(file);
       }
+  }
+
+  resetForm()
+  {
+    this.assetForm.reset();   
+    $(".warrantyDocument").html('Browse Warranty Document');
+    $(".assetImage").html('Browse Asset Image');
+
   }
 
   uploadFiles() : FormData
@@ -77,32 +82,31 @@ export class AddAssetComponent implements OnInit {
 
           const formData = new FormData();
           for (let file of this.selectedFileNames)
-            formData.append(file.name, file);
+            formData.append(file.filelabel, file);
+           // formData.append(file.name, file);
           return formData;
 
       }
   }
  
  SaveAsset(assetData : IAssetModel)    {
-  let formData = this.uploadFiles();
- 
+  let formData = this.uploadFiles(); 
+
+  this.IsVisible = true;
    this.assetService.addAsset(assetData,formData).subscribe(
     data => {
-        this.errorMessage="Asset saved successfully.";
-        this.IsVisible=true;
-        this.IsSuccess = true;
+       this.responseMessage=data;
     },
     error => {
-      this.errorMessage="There is problem with the service.We are notified. Please try again later...";
-      this.IsVisible=true; 
-      this.IsSuccess = false; 
-     // this.errorHandler;
-        //console.log("Error", error);
+      this.responseMessage = error.error;
     }
-  );
-  // this.IsVisible = message.IsActive;
-  // this.errorMessage= message.Message;
- 
+  ); 
+ }
+
+ executeValidator(controlName : string)
+ {
+  this.assetForm.controls[controlName].updateValueAndValidity();
+  
  }
  
 

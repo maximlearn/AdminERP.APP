@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { Observable, throwError, observable } from 'rxjs';
-import { IAssetModel, IAssetCategoryModel, IVendorModel, IMessage } from './models/asset.model';
+import { IAssetModel, IAssetCategoryModel, IVendorModel, IMessage, IResponseMessage } from './models/asset.model';
 //import { IAssetModel } from '../auto.generated';
 
 @Injectable({
@@ -40,17 +40,14 @@ public getAssetById(assetId: number) {
 }
 
 public addAsset(assetData : IAssetModel, formData : FormData)   { 
-  if  ((formData !=null) && (formData !=undefined))
-  {
-    this.httpClient.post(this.API_URL+'UploadAssetDocument',formData ).subscribe(
-        data => {
-            console.log("POST Request is successful ", data);
-    },
-        error => {
-            this.errorHandler;
-        }
-    );
-  }
-  return this.httpClient.post<IAssetModel>(this.API_URL+'AddAsset',assetData);
+  let params = new HttpParams();
+  params = params.set('assetData', JSON.stringify(assetData));
+  const HttpHeaderOptions = {
+    headers: { 'Accept': 'application/json' },
+    //headers: { 'Content-type': 'application/json', 'dataType': 'json' },
+    params : params
+    }
+    return this.httpClient.post<IResponseMessage>(this.API_URL+'AddAsset',formData,HttpHeaderOptions)  
+  
   }
 }

@@ -8,9 +8,13 @@ import { CommonModule } from '@angular/common';
 import { AuthGuardService } from './guards/auth-guard.service';
 import { HttpClientModule } from '@angular/common/http';
 
+
+
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
+    
+  
   ],
   imports: [
     BrowserModule,

@@ -12,6 +12,20 @@ export class IAssetModel {
   AssetCategory : IAssetCategoryModel ;
   AssetDetail : IAssetDetailModel[];
   VendorModel  : IVendorModel;
+  Message :  string;
+}
+
+export class IFile implements File{
+    lastModified: number;    
+    name: string;
+    size: number;
+    type: string;
+    slice(start?: number, end?: number, contentType?: string): Blob {
+        throw new Error("Method not implemented.");
+    }
+    filelabel : string;
+
+
 }
 
 export class IAssetCategoryModel {
@@ -26,7 +40,8 @@ export class IAssetDetailModel {
   VendorId? : number ;
   Cost? : number;
   WarrantyExpireDate? : Date;
-  WarrantyDocumentId? : number;
+  WarrantyDocumentId? : string;
+  AssetImageId? : string;
   BrandName?: string;
   ModelNumber? : string;
   SerialNumber ? : string
@@ -43,3 +58,11 @@ export class IMessage {
     IsActive : boolean;
     IsSuccess : boolean;
 }
+
+export class IResponseMessage
+    {
+        StatusCode : number;
+        StatusText : string; 
+        Message : string; 
+        IsSuccess : boolean;        
+    }

@@ -7,10 +7,13 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap';
 import { AgGridModule} from 'ag-grid-angular/main';
 import { FormsModule } from '@angular/forms';
+import { SelectRequiredValidatorDirective } from '../shared/select-required-validator.directive';
+import { CompareDateValidatorDirective } from '../shared/compare-date-validator.directive';
 
 
 @NgModule({
-  declarations: [AddAssetComponent, AssetListComponent],
+  declarations: [AddAssetComponent, AssetListComponent,
+     SelectRequiredValidatorDirective,CompareDateValidatorDirective],
   imports: [
     CommonModule,
     FormsModule,

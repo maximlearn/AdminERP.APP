@@ -80,5 +80,6 @@ onGridReady(params) {
 
   openModal(template : TemplateRef <any>) {
     this.modalRef = this.modalService.show(template, {class: 'modal-lg'});
+   
   }
 }
