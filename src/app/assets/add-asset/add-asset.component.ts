@@ -15,13 +15,13 @@ import * as $ from 'jquery';
 export class AddAssetComponent implements OnInit {
   datePickerConfig: Partial<BsDatepickerConfig>;
   filesToUpload: Array<IFile>;
-  selectedFileNames:Array<IFile>= [];  
+  selectedFileNames:Array<IFile>= [];
   @ViewChild('assetForm') assetForm : NgForm;
   uploadResult: any;
   API_URL = 'https://localhost:44361/api/asset/';
   IsVisible : boolean = false;
   responseMessage : IResponseMessage ;
- assetData = new IAssetModel();
+  assetData = new IAssetModel();
   assetDetail:IAssetDetailModel[]= [{
     Id : 0,
     AssetId : 0,
@@ -36,12 +36,12 @@ export class AddAssetComponent implements OnInit {
   }];
   asset_Category : IAssetCategoryModel[] =[];
   asset_Vendor : IVendorModel[] = [];
-  
-   
+
+
   constructor(private assetService : AssetsService,private httpClient: HttpClient) {
-    this.datePickerConfig = Object.assign({}, 
+    this.datePickerConfig = Object.assign({},
       { containerClass: 'theme-dark-blue', showWeekNumbers: false,dateInputFormat: 'DD/MM/YYYY'});
-      this.assetData.AssetCategoryId=-101;      
+        this.assetData.AssetCategoryId=-101;
         this.assetData.AssetDetail = this.assetDetail;
         this.assetData.AssetDetail[0].VendorId=0;
       }
@@ -57,16 +57,16 @@ export class AddAssetComponent implements OnInit {
       this.filesToUpload = <Array<IFile>>fileInput.target.files;
       fileInput.target.nextSibling.innerHTML= this.filesToUpload[0].name;
     //  fileInput.target.
-      for (let file of  this.filesToUpload)     
+      for (let file of  this.filesToUpload)
       {
          file.filelabel = fileInputLabel;
-          this.selectedFileNames.push(file);
+         this.selectedFileNames.push(file);
       }
   }
 
   resetForm()
   {
-    this.assetForm.reset();   
+    this.assetForm.reset();
     $(".warrantyDocument").html('Browse Warranty Document');
     $(".assetImage").html('Browse Asset Image');
 
@@ -88,9 +88,9 @@ export class AddAssetComponent implements OnInit {
 
       }
   }
- 
+
  SaveAsset(assetData : IAssetModel)    {
-  let formData = this.uploadFiles(); 
+  let formData = this.uploadFiles();
 
   this.IsVisible = true;
    this.assetService.addAsset(assetData,formData).subscribe(
@@ -100,14 +100,14 @@ export class AddAssetComponent implements OnInit {
     error => {
       this.responseMessage = error.error;
     }
-  ); 
+  );
  }
 
  executeValidator(controlName : string)
  {
   this.assetForm.controls[controlName].updateValueAndValidity();
-  
+
  }
- 
+
 
 }

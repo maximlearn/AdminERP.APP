@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild  } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild , Input } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { template } from '@angular/core/src/render3';
@@ -6,6 +6,9 @@ import { HttpClient } from '@angular/common/http';
 import { AssetsService } from '../assets.service';
 import { IAssetModel } from '../models/asset.model';
 import { getViewData } from '@angular/core/src/render3/state';
+import { Observable } from 'rxjs';
+import { Template } from '@angular/compiler/src/render3/r3_ast';
+//import { AssetClient,AssetModel } from 'src/app/auto.generated';
 
 @Component({
   selector: 'app-asset-list',
@@ -14,11 +17,12 @@ import { getViewData } from '@angular/core/src/render3/state';
 })
 export class AssetListComponent implements OnInit {
   modalRef: BsModalRef;
-
+  @Input() assessData;
   @ViewChild('template') inner;
   private paginationPageSize;
   private paginationNumberFormatter;
   SERVER_URL = 'https://localhost:44361/api/';
+  assetData: any;
 
   private gridApi;
   columnDefs = [
@@ -35,24 +39,28 @@ export class AssetListComponent implements OnInit {
       return params.data.assetDetail[0].warrantyExpireDate === null ? '' : params.data.assetDetail[0].warrantyExpireDate ;} , width: 200}];
 
     rowData: any;
-  constructor(private modalService: BsModalService, private assetService : AssetsService) {}
-  ngOnInit() {
+  //constructor(private modalService: BsModalService, private assetService : AssetsService, private swagassesstservice : AssetClient) {}
 
-      this.paginationPageSize = 10;
-      this.paginationNumberFormatter = function(params) {
-      return '[' + params.value.toLocaleString() + ']';
+  constructor(private modalService: BsModalService, private assetService : AssetsService)  {}
+  ngOnInit() {
+    this.paginationPageSize = 10;
+    this.paginationNumberFormatter = function(params) {
+    return '[' + params.value.toLocaleString() + ']';
     };
+
+    //this.assetData=new IAssetModel();
   }
 
-
-
+  private assetId: number;
   public onRowClicked(e) {
     if (e.event.target !== undefined) {
-        // let data = e.data;
+        let data = e.data;
         const actionType = e.event.target.getAttribute('data-action-type');
 
         switch (actionType) {
             case 'view':
+                this.assetId=e.data.id;
+                console.log(this.assetId);
                 return this.openModal(this.inner);
 
         }
@@ -65,21 +73,31 @@ onPageSizeChanged(newPageSize) {
 }
 onGridReady(params) {
   this.gridApi = params.api;
-  // this.gridColumnApi = params.columnApi;
   this.rowData=this.assetService.getAssetList();
- // this.assetService.getAssetList().subscribe((data) =>{ console.log(data) } , (err) => { console.log(err)});
-
-  // this.http
-  //   .get("https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json")
-  //   .subscribe(data => {
-  //     this.rowData = data;
-  //     params.api.paginationGoToPage(4);
-  //   });
 }
 
-
+  //swagassetData: Observable<AssetModel>;
+  public myContent;
   openModal(template : TemplateRef <any>) {
-    this.modalRef = this.modalService.show(template, {class: 'modal-lg'});
-   
-  }
+   //this.swagassetData = this.swagassesstservice.getAssetById(this.assetId);
+   this.assetService.getAssetById(this.assetId).subscribe(
+    data => {
+       this.assetData=data;
+       this.modalRef = this.modalService.show(template, {initialState: this.assetData});
+    },
+    error => {
+      this.assetData = error.error;
+    }
+  );
+
+  //   this.assetService.(this.assetId)
+  //   .subscribe(x => {
+  //       this.assetData = x;
+  //       console.log(x + ", : "+ this.assetData);
+  //       //this.modalRef = this.modalService.show(template);
+  // })
+
+  // this.modalRef.  as TemplateRef
+ // this.modalRef.content.myContent =this.swagassetData;
+}
 }

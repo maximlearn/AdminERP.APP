@@ -9,6 +9,7 @@ import { AgGridModule} from 'ag-grid-angular/main';
 import { FormsModule } from '@angular/forms';
 import { SelectRequiredValidatorDirective } from '../shared/select-required-validator.directive';
 import { CompareDateValidatorDirective } from '../shared/compare-date-validator.directive';
+import { AssetClient } from '../auto.generated';
 
 
 @NgModule({
@@ -21,6 +22,8 @@ import { CompareDateValidatorDirective } from '../shared/compare-date-validator.
     AgGridModule.withComponents([AssetListComponent]),
     BsDatepickerModule.forRoot(),
     ModalModule.forRoot()
-  ]
+  ],
+  providers: [AssetClient]
+
 })
 export class AssetsModule { }

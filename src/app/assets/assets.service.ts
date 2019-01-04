@@ -31,15 +31,15 @@ private errorHandler(errorResponse: HttpErrorResponse)
   }
   else {
     console.error('Server Side Error : - ' + errorResponse)
-  } 
+  }
   return throwError("There is problem with the service.We are notified. Please try again later...");
 }
 
-public getAssetById(assetId: number) {
-  return this.httpClient.get(`${this.API_URL + 'assetslist'}/${assetId}`);
+public getAssetById(assetId: number)  {
+  return this.httpClient.get(`${this.API_URL + 'getasset?assetId='}${assetId}`);
 }
 
-public addAsset(assetData : IAssetModel, formData : FormData)   { 
+public addAsset(assetData : IAssetModel, formData : FormData)   {
   let params = new HttpParams();
   params = params.set('assetData', JSON.stringify(assetData));
   const HttpHeaderOptions = {
@@ -47,7 +47,7 @@ public addAsset(assetData : IAssetModel, formData : FormData)   {
     //headers: { 'Content-type': 'application/json', 'dataType': 'json' },
     params : params
     }
-    return this.httpClient.post<IResponseMessage>(this.API_URL+'AddAsset',formData,HttpHeaderOptions)  
-  
+    return this.httpClient.post<IResponseMessage>(this.API_URL+'AddAsset',formData,HttpHeaderOptions)
+
   }
 }
