@@ -14,7 +14,11 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAssetClient {
-    getAllAsset(): Observable<AssetModel | null>;
+    getAllAsset(): Observable<AssetModel[] | null>;
+    getAllAssetCategory(): Observable<AssetModel | null>;
+    getAllVendor(): Observable<FileResponse | null>;
+    saveAsset(assetData: string | null | undefined): Observable<FileResponse | null>;
+    getAssetById(assetId: number | undefined): Observable<AssetModel | null>;
 }
 
 @Injectable()
@@ -28,8 +32,8 @@ export class AssetClient implements IAssetClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    getAllAsset(): Observable<AssetModel | null> {
-        let url_ = this.baseUrl + "/api/Asset";
+    getAllAsset(): Observable<AssetModel[] | null> {
+        let url_ = this.baseUrl + "/api/Asset/GetAll";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -47,6 +51,58 @@ export class AssetClient implements IAssetClient {
                 try {
                     return this.processGetAllAsset(<any>response_);
                 } catch (e) {
+                    return <Observable<AssetModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AssetModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllAsset(response: HttpResponseBase): Observable<AssetModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(AssetModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AssetModel[] | null>(<any>null);
+    }
+
+    getAllAssetCategory(): Observable<AssetModel | null> {
+        let url_ = this.baseUrl + "/api/Asset/GetAllAssetCategory";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllAssetCategory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllAssetCategory(<any>response_);
+                } catch (e) {
                     return <Observable<AssetModel | null>><any>_observableThrow(e);
                 }
             } else
@@ -54,7 +110,153 @@ export class AssetClient implements IAssetClient {
         }));
     }
 
-    protected processGetAllAsset(response: HttpResponseBase): Observable<AssetModel | null> {
+    protected processGetAllAssetCategory(response: HttpResponseBase): Observable<AssetModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? AssetModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AssetModel | null>(<any>null);
+    }
+
+    getAllVendor(): Observable<FileResponse | null> {
+        let url_ = this.baseUrl + "/api/Asset/GetAllVendor";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllVendor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllVendor(<any>response_);
+                } catch (e) {
+                    return <Observable<FileResponse | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileResponse | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllVendor(response: HttpResponseBase): Observable<FileResponse | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileResponse | null>(<any>null);
+    }
+
+    saveAsset(assetData: string | null | undefined): Observable<FileResponse | null> {
+        let url_ = this.baseUrl + "/api/Asset/AddAsset?";
+        if (assetData !== undefined)
+            url_ += "assetData=" + encodeURIComponent("" + assetData) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSaveAsset(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSaveAsset(<any>response_);
+                } catch (e) {
+                    return <Observable<FileResponse | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileResponse | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSaveAsset(response: HttpResponseBase): Observable<FileResponse | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileResponse | null>(<any>null);
+    }
+
+    getAssetById(assetId: number | undefined): Observable<AssetModel | null> {
+        let url_ = this.baseUrl + "/api/Asset/GetAsset?";
+        if (assetId === null)
+            throw new Error("The parameter 'assetId' cannot be null.");
+        else if (assetId !== undefined)
+            url_ += "assetId=" + encodeURIComponent("" + assetId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAssetById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAssetById(<any>response_);
+                } catch (e) {
+                    return <Observable<AssetModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AssetModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAssetById(response: HttpResponseBase): Observable<AssetModel | null> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -232,7 +434,8 @@ export class AssetDetailModel implements IAssetDetailModel {
     vendorId?: number | undefined;
     cost?: number | undefined;
     warrantyExpireDate?: Date | undefined;
-    warrantyDocumentId?: number | undefined;
+    warrantyDocumentId?: string | undefined;
+    assetImageId?: string | undefined;
     brandName?: string | undefined;
     modelNumber?: string | undefined;
     serialNumber?: string | undefined;
@@ -257,6 +460,7 @@ export class AssetDetailModel implements IAssetDetailModel {
             this.cost = data["cost"];
             this.warrantyExpireDate = data["warrantyExpireDate"] ? new Date(data["warrantyExpireDate"].toString()) : <any>undefined;
             this.warrantyDocumentId = data["warrantyDocumentId"];
+            this.assetImageId = data["assetImageId"];
             this.brandName = data["brandName"];
             this.modelNumber = data["modelNumber"];
             this.serialNumber = data["serialNumber"];
@@ -281,6 +485,7 @@ export class AssetDetailModel implements IAssetDetailModel {
         data["cost"] = this.cost;
         data["warrantyExpireDate"] = this.warrantyExpireDate ? this.warrantyExpireDate.toISOString() : <any>undefined;
         data["warrantyDocumentId"] = this.warrantyDocumentId;
+        data["assetImageId"] = this.assetImageId;
         data["brandName"] = this.brandName;
         data["modelNumber"] = this.modelNumber;
         data["serialNumber"] = this.serialNumber;
@@ -297,7 +502,8 @@ export interface IAssetDetailModel {
     vendorId?: number | undefined;
     cost?: number | undefined;
     warrantyExpireDate?: Date | undefined;
-    warrantyDocumentId?: number | undefined;
+    warrantyDocumentId?: string | undefined;
+    assetImageId?: string | undefined;
     brandName?: string | undefined;
     modelNumber?: string | undefined;
     serialNumber?: string | undefined;
@@ -347,6 +553,13 @@ export interface IVendorModel {
     id: number;
     vendorName?: string | undefined;
     isActive?: boolean | undefined;
+}
+
+export interface FileResponse {
+    data: Blob;
+    status: number;
+    fileName?: string;
+    headers?: { [name: string]: any };
 }
 
 export class SwaggerException extends Error {

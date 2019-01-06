@@ -16,7 +16,7 @@ export class IAssetModel {
 }
 
 export class IFile implements File{
-    lastModified: number;    
+    lastModified: number;
     name: string;
     size: number;
     type: string;
@@ -62,7 +62,7 @@ export class IMessage {
 export class IResponseMessage
     {
         StatusCode : number;
-        StatusText : string; 
-        Message : string; 
-        IsSuccess : boolean;        
+        StatusText : string;
+        Message : string;
+        IsSuccess : boolean;
     }

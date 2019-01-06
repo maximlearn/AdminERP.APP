@@ -19,4 +19,10 @@ export class HeaderComponent implements OnInit {
     const dom: any = document.querySelector('body');
     dom.classList.toggle(this.pushRightClass);
 }
+
+LogOut()
+{
+  localStorage.removeItem('isLoggedin');
+  this.router.navigate(['/login']);
+}
 }
