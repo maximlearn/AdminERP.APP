@@ -8,7 +8,6 @@ import { IAssetModel } from '../models/asset.model';
   styleUrls: ['./asset.component.scss']
 })
 export class AssetComponent implements OnInit {
-
   title: string;
   closeBtnName: string;
   list: any[] = [];

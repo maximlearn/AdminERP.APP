@@ -67,6 +67,5 @@ public addAsset(assetData : IAssetModel, formData : FormData)   {
     params : params
     }
     return this.httpClient.post<IResponseMessage>(this.API_URL+'AddAsset',formData,HttpHeaderOptions)
-
   }
 }

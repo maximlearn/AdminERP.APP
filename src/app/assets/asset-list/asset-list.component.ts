@@ -91,7 +91,7 @@ openModalWithComponent()
   // };
 
   const initialState ={
-assetData:IAssetModel
+          assetData:IAssetModel
   };
 
     this.assetService.getAssetById(this.assetId).subscribe(
