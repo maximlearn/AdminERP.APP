@@ -54,8 +54,8 @@ private errorHandler(errorResponse: HttpErrorResponse)
   return throwError("There is problem with the service.We are notified. Please try again later...");
 }
 
-public getAssetById(assetId: number)  {
-  return this.httpClient.get(`${this.API_URL + 'getasset?assetId='}${assetId}`);
+public getAssetById(assetId: number)   {
+  return this.httpClient.get<IAssetModel>(`${this.API_URL + 'getasset?assetId='}${assetId}`);
 }
 
 public addAsset(assetData : IAssetModel, formData : FormData)   {

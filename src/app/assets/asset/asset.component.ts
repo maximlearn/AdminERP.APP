@@ -9,12 +9,11 @@ import { IAssetModel } from '../models/asset.model';
 })
 export class AssetComponent implements OnInit {
   title: string;
-  closeBtnName: string;
-  list: any[] = [];
+  closeBtnName: string; 
   assetData: IAssetModel;
 
   constructor(public bsModalRef: BsModalRef) {
-    this.assetData=new IAssetModel();
+   // this.assetData=new IAssetModel();
    }
 
   ngOnInit() {

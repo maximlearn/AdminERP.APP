@@ -17,7 +17,7 @@ export class AssetListComponent implements OnInit {
   private paginationPageSize;
   private paginationNumberFormatter;
   SERVER_URL = 'https://localhost:44361/api/';
-  assetData: any;
+ // assetData: any;
 
   private gridApi;
   columnDefs = [
@@ -64,20 +64,22 @@ onGridReady(params) {
   this.rowData=this.assetService.getAssetList();
 }
 
+//assetData : IAssetModel;
 openModalWithComponent()
-{
-  const initialState ={
-          assetData:IAssetModel
-  };
+ {
+   const initialState ={
+     assetData : {}   
+    };
 
     this.assetService.getAssetById(this.assetId).subscribe(
-    data => {
-       this.assetData=data;
-       this.modalRef = this.modalService.show(AssetComponent, { initialState : this.assetData});
+    data => {  
+       
+      initialState.assetData =  data;
+       this.modalRef = this.modalService.show(AssetComponent, {class: 'modal-lg', initialState });
        this.modalRef.content.closeBtnName = 'Close';
     },
     error => {
-      this.assetData = error.error;
+      initialState.assetData = error.error;
     }
   );
 }

@@ -1,53 +1,90 @@
-<div class="modal-header">
-  <h4 class="modal-title pull-left">{{title}}</h4>
-  <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-<div class="modal-body" *ngIf="assetData">
-  <!-- <ul *ngIf="list.length">
-    <li *ngFor="let item of list">{{item}}</li>
-  </ul> -->
-
-  <div class="card-body text-primary">
-    <div class="row">
-      <div class="col form-group">
-        <label for="assetTagId" class="col-form-label font-weight-bold">Tag ID :</label>
-        <input type="text" Id="assetTagId" class="form-control"  [ngModel]="assetData.assetTagId">
+<div class="container">    
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">View Asset Data</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+  
+  <div class="modal-body text-primary mb-3">
+  
+      <div class="row">
+        <div class="col form-group">
+            <label for="assetTagId" class="control-label col-form-label font-weight-bold">Asset Tag Id :</label>
+            <label for="assetTagId" class="control-label col-form-label form-control">{{assetData.assetTagId}}</label>
+              
       </div>
-      <div class="col form-group">
-        <label for="assetName" class="col-form-label font-weight-bold">Asset Category :</label>
-        <input type="text" Id="assetName" class="form-control" [ngModel]="assetData.assetName">
-    </div>
-    <div class="col form-group">
-        <label for="assetName" class="col-form-label font-weight-bold">Asset Name :</label>
-      <input type="text" Id="assetame" class="form-control" placeholder="Asset Name">
-    </div>
+        <div class="col form-group" >
+            <label for="assetCategory" class="control-label col-form-label font-weight-bold">Asset Category :</label>
+            <label for="assetCategory" class="control-label col-form-label form-control">{{assetData.assetCategory.categoryName}}</label>
+
+        </div>
+        <div class="col form-group" >
+            <label for="assetName" class="col-form-label font-weight-bold">Asset Name :</label>
+            <label for="assetName" class="col-form-label form-control">{{assetData.assetName}}</label>
+        </div>
       </div>
       <div class="row">
-        <div class="col-6 form-group">
-            <label for="purchasetodate" class="col-form-label font-weight-bold">Purchase Date :</label>
-        </div>
-        <div class="col-6 form-group">
-            <label for="warrantyexpiretodate" class="col-form-label font-weight-bold">Warranty Expire Date :</label>
+        <div class="col form-group" >
+            <label for="assetDesc" class="col-form-label font-weight-bold">Asset Description :</label>
+            <label for="assetDesc" class="col-form-label form-control">{{assetData.assetDesc}}</label>
+           
+          </div>
+      </div>
+      <div class="row">
+              <div class="col form-group">
+              <label for="assetBrand" class="col-form-label font-weight-bold">Brand Name :</label>
+              <label for="assetBrand" class="col-form-label form-control">{{assetData.assetDetail[0].brandName}}</label>
+              </div>
+             
+        <div class="col form-group">
+            <label for="assetModel" class="col-form-label font-weight-bold">Model No :</label>
+            <label for="assetModel" class="col-form-label form-control">{{assetData.assetDetail[0].modalNumber}}</label>
+          </div>
+       
+        <div class="col form-group" >
+            <label for="assetSerial" class="col-form-label font-weight-bold">Serail No :</label>
+            <label for="assetSerial" class="col-form-label form-control">{{assetData.assetDetail[0].serialNumber}}</label>
         </div>
       </div>
-    <div class="row">
-       <div class="col-3 form-group">
-          <input type="text" Id="gptodate" class="form-control" placeholder="Enter Purchase To Date">
+      <div class="row">
+        <div class="col form-group">
+              <label for="assetVendor" class="col-form-label font-weight-bold">Purchase From / Vendor Name :</label>
+              <label for="assetVendor" class="col-form-label form-control">{{(assetData.assetDetail[0].vendor !=null) ? assetData.assetDetail[0].vendor.vendorName : ''}}</label>
         </div>
-        <div class="col-3 form-group">
-            <input type="text" Id="gpfromdate" class="form-control" placeholder="Enter Purchase From Date">
+       
+        <div class="col form-group">
+            <label for="purchaseDate" class="col-form-label font-weight-bold">Purchase Date :</label>
+            <label for="purchaseDate" class="col-form-label form-control">{{assetData.assetDetail[0].purchaseDate}}</label>
         </div>
-        <div class="col-3 form-group">
-            <input type="text" Id="gptodate" class="form-control" placeholder="To Date">
-          </div>
-          <div class="col-3 form-group">
-              <input type="text" Id="gpfromdate" class="form-control" placeholder="From Date">
-          </div>
-    </div>
- </div>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">{{closeBtnName}}</button>
-</div>
+        <div class="col form-group">
+              <label for="warrantyExpiryDate" class="col-form-label font-weight-bold">Warranty Expiry Date : </label>
+              <label for="warrantyExpiryDate" class="col-form-label form-control">{{assetData.assetDetail[0].warrantyExpireDate}} </label>
+      </div>  
+        
+      </div>
+      <div class="row">
+              <div class="col form-group" >
+                      <label for="assetCost" class="col-form-label font-weight-bold">Asset Cost :</label>
+                      <label for="assetCost" class="col-form-label form-control">{{assetData.assetDetail[0].cost}}</label>
+                      
+                  </div>
+        <div class="col form-group">
+            <label for="warrantyDocument" class="col-form-label font-weight-bold">Warranty Document :</label>
+            <label for="warrantyDocument" class="col-form-label form-control">{{assetData.assetDetail[0].warrantyDocumentId}}</label>
+        </div>
+        <div class="col form-group">
+            <label for="assetImage" class="col-form-label font-weight-bold">Asset Image :</label>
+            <label for="assetImage" class="col-form-label form-control">{{assetData.assetDetail[0].assetImageId}}</label>
+        </div>
+        <!-- <div class="col form-group">
+            <img>
+        </div> -->
+      </div>
+  </div>
+  
+  
+  </div>
+
+
+  
