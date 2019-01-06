@@ -96,21 +96,26 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+      AssetTagId : string ;
+  AssetName : string ;
+  AssetCategoryId : number;
+  AssetDescription : string;
+  IsActive : boolean;
       <div class="modal-body modal-lg">
 
           <div class="card-body text-primary">
               <div class="row">
                 <div class="col form-group">
                   <label for="assetTagId" class="col-form-label font-weight-bold">Tag ID :</label>
-                  <input type="text" Id="assetTagId" class="form-control"  [ngModel]="assetData.assetTagId">
+                  <input type="text" Id="assetTagId" class="form-control" ([ngModel])="AssetTagId">
                 </div>
                 <div class="col form-group">
                   <label for="assetName" class="col-form-label font-weight-bold">Asset Category :</label>
-                  <input type="text" Id="assetName" class="form-control" [ngModel]="assetData.assetName">
+                  <input type="text" Id="assetName" class="form-control" ([ngModel])="AssetName">
               </div>
               <div class="col form-group">
                   <label for="assetName" class="col-form-label font-weight-bold">Asset Name :</label>
-                <input type="text" Id="assetame" class="form-control" placeholder="Asset Name">
+                <input type="text" Id="assetName" class="form-control" placeholder="Asset Name">
               </div>
                 </div>
                 <div class="row">

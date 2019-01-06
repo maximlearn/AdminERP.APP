@@ -49,8 +49,8 @@ private errorHandler(errorResponse: HttpErrorResponse)
     console.error('Client Side Error : - ' + errorResponse.error.message)
   }
   else {
-    console.error('Server Side Error : - ' + errorResponse)
-  }
+    console.error('Server Side Error : - ' + errorResponse);
+  } 
   return throwError("There is problem with the service.We are notified. Please try again later...");
 }
 
