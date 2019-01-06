@@ -22,7 +22,6 @@ export class AssetListComponent implements OnInit {
   private gridApi;
   columnDefs = [
     // tslint:disable-next-line:max-line-length
-    //{headerName: 'Action', template: '<a title=\'View\' ><i data-action-type=\'view\' class=\'fa fa-building fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'Edit\' (click)=\'openModal(template)\'><i class=\'fa fa-pencil-square-o fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'delete\' (click)=\'openModal(template)\'><i class=\'fa fa-trash-o fa-fw\'></i></a>', width: 100 },
     {headerName: 'Action', template: '<a title=\'View\' ><i data-action-type=\'view\' class=\'fa fa-building fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'Edit\' (click)=\'openModalWithComponent()\'><i class=\'fa fa-pencil-square-o fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'delete\' (click)=\'openModal(template)\'><i class=\'fa fa-trash-o fa-fw\'></i></a>', width: 100 },
     {headerName: 'Asset Tag ID', field: 'assetTagId', width: 150 },
     {headerName: 'Asset Category Name', field: 'assetCategory.categoryName', width: 150 },
@@ -51,7 +50,6 @@ export class AssetListComponent implements OnInit {
         switch (actionType) {
             case 'view':
                 this.assetId=e.data.id;
-                //return this.openModal(this.inner);
                 return this.openModalWithComponent();
         }
     }
@@ -66,30 +64,8 @@ onGridReady(params) {
   this.rowData=this.assetService.getAssetList();
 }
 
-// openModal(template : TemplateRef <any>) {
-//    this.assetService.getAssetById(this.assetId).subscribe(
-//     data => {
-//        this.assetData=data;
-//        this.modalRef = this.modalService.show(template, {initialState: this.assetData});
-//     },
-//     error => {
-//       this.assetData = error.error;
-//     }
-//   );
-// }
-
 openModalWithComponent()
 {
-  // const initialState = {
-  //   list: [
-  //     'Open a modal with component',
-  //     'Pass your data',
-  //     'Do something else',
-  //     '...'
-  //   ],
-  //   title: 'Modal with component'
-  // };
-
   const initialState ={
           assetData:IAssetModel
   };
@@ -104,8 +80,5 @@ openModalWithComponent()
       this.assetData = error.error;
     }
   );
-
-  // this.modalRef = this.modalService.show(AssetComponent, {initialState});
-  // this.modalRef.content.closeBtnName = 'Close';
 }
 }
