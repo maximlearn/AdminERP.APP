@@ -1,0 +1,52 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{title}}</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body" *ngIf="assetData">
+  <!-- <ul *ngIf="list.length">
+    <li *ngFor="let item of list">{{item}}</li>
+  </ul> -->
+  <div class="card-body text-primary">
+    <div class="row">
+      <div class="col form-group">
+        <label for="assetTagId" class="col-form-label font-weight-bold">Tag ID :</label>
+        <input type="text" Id="assetTagId" class="form-control"  [ngModel]="assetData.assetTagId">
+      </div>
+      <div class="col form-group">
+        <label for="assetName" class="col-form-label font-weight-bold">Asset Category :</label>
+        <input type="text" Id="assetName" class="form-control" [ngModel]="assetData.assetName">
+    </div>
+    <div class="col form-group">
+        <label for="assetName" class="col-form-label font-weight-bold">Asset Name :</label>
+      <input type="text" Id="assetame" class="form-control" placeholder="Asset Name">
+    </div>
+      </div>
+      <div class="row">
+        <div class="col-6 form-group">
+            <label for="purchasetodate" class="col-form-label font-weight-bold">Purchase Date :</label>
+        </div>
+        <div class="col-6 form-group">
+            <label for="warrantyexpiretodate" class="col-form-label font-weight-bold">Warranty Expire Date :</label>
+        </div>
+      </div>
+    <div class="row">
+       <div class="col-3 form-group">
+          <input type="text" Id="gptodate" class="form-control" placeholder="Enter Purchase To Date">
+        </div>
+        <div class="col-3 form-group">
+            <input type="text" Id="gpfromdate" class="form-control" placeholder="Enter Purchase From Date">
+        </div>
+        <div class="col-3 form-group">
+            <input type="text" Id="gptodate" class="form-control" placeholder="To Date">
+          </div>
+          <div class="col-3 form-group">
+              <input type="text" Id="gpfromdate" class="form-control" placeholder="From Date">
+          </div>
+    </div>
+ </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">{{closeBtnName}}</button>
+</div>

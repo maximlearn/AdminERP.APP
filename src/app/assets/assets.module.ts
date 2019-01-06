@@ -10,11 +10,12 @@ import { FormsModule } from '@angular/forms';
 import { SelectRequiredValidatorDirective } from '../shared/select-required-validator.directive';
 import { CompareDateValidatorDirective } from '../shared/compare-date-validator.directive';
 import { AssetClient } from '../auto.generated';
+import { AssetComponent } from './asset/asset.component';
 
 
 @NgModule({
   declarations: [AddAssetComponent, AssetListComponent,
-     SelectRequiredValidatorDirective,CompareDateValidatorDirective],
+     SelectRequiredValidatorDirective,CompareDateValidatorDirective, AssetComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -23,7 +24,8 @@ import { AssetClient } from '../auto.generated';
     BsDatepickerModule.forRoot(),
     ModalModule.forRoot()
   ],
-  providers: [AssetClient]
+  providers: [AssetClient],
+  entryComponents: [AssetComponent]
 
 })
 export class AssetsModule { }
