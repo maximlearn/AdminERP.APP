@@ -1,20 +1,19 @@
 export class IAssetModel {
-  Id  : number;
-  AssetTagId : string ;
-  AssetName : string ;
-  AssetCategoryId : number;
-  AssetDescription : string;
-  IsActive : boolean;
-  CreatedBy : number;
-  CreatedDate : Date;
-  ModifiedBy : number ;
-  ModifiedDate : Date;
-  AssetCategory : IAssetCategoryModel ;
-  AssetDetail : IAssetDetailModel[];
-  VendorModel  : IVendorModel;
-  Message :  string;
+  id!: number;
+  assetTagId?: string | undefined;
+  assetName?: string | undefined;
+  assetCategoryId!: number;
+  assetDescription?: string | undefined;
+  isActive!: boolean;
+  createdBy!: number;
+  createdDate!: Date;
+  modifiedBy!: number;
+  modifiedDate!: Date;
+  assetCategory?: IAssetCategoryModel | undefined;
+  assetDetail?: IAssetDetailModel[] | undefined;
+  vendorModel  : IVendorModel;
+  message :  string;
 }
-
 export class IFile implements File{
     lastModified: number;
     name: string;
@@ -24,45 +23,49 @@ export class IFile implements File{
         throw new Error("Method not implemented.");
     }
     filelabel : string;
-
-
 }
 
 export class IAssetCategoryModel {
-  Id : number
-  CategoryName : string
+  id!: number;
+  categoryName?: string | undefined;
+  isActive?: boolean | undefined;
+  createdBy!: number;
+  createdDate!: Date;
+  modifiedBy!: number;
+  modifiedDate!: Date;
 }
 
 export class IAssetDetailModel {
-  Id : number;
-  AssetId : number;
-  PurchaseDate? : Date;
-  VendorId? : number ;
-  Cost? : number;
-  WarrantyExpireDate? : Date;
-  WarrantyDocumentId? : string;
-  AssetImageId? : string;
-  BrandName?: string;
-  ModelNumber? : string;
-  SerialNumber ? : string
+  id!: number;
+  assetId!: number;
+  purchaseDate?: Date | undefined;
+  vendorId?: number | undefined;
+  cost?: number | undefined;
+  warrantyExpireDate?: Date | undefined;
+  warrantyDocumentId?: string | undefined;
+  assetImageId?: string | undefined;
+  brandName?: string | undefined;
+  modelNumber?: string | undefined;
+  serialNumber?: string | undefined;
+  asset?: IAssetModel | undefined;
+  vendor?: IVendorModel | undefined;
 }
 
 export class IVendorModel {
-  Id : number;
-  VendorName  : string;
-  IsActive? : boolean;
+  id!: number;
+  vendorName?: string | undefined;
+  isActive?: boolean | undefined;
 }
 
 export class IMessage {
-    Message : string;
-    IsActive : boolean;
-    IsSuccess : boolean;
+  message : string;
+  isActive : boolean;
+  isSuccess : boolean;
 }
 
-export class IResponseMessage
-    {
-        StatusCode : number;
-        StatusText : string;
-        Message : string;
-        IsSuccess : boolean;
-    }
+export class IResponseMessage {
+  statusCode : number;
+  statusText : string;
+  message : string;
+  isSuccess : boolean;
+}

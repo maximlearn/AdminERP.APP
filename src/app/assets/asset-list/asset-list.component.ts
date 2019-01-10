@@ -4,6 +4,7 @@ import { AssetsService } from '../assets.service';
 import { IAssetModel } from '../models/asset.model';
 import { Observable } from 'rxjs';
 import { AssetComponent } from '../asset/asset.component';
+import { AddAssetComponent } from '../add-asset/add-asset.component';
 
 @Component({
   selector: 'app-asset-list',
@@ -22,7 +23,7 @@ export class AssetListComponent implements OnInit {
   private gridApi;
   columnDefs = [
     // tslint:disable-next-line:max-line-length
-    {headerName: 'Action', template: '<a title=\'View\' ><i data-action-type=\'view\' class=\'fa fa-building fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'Edit\' (click)=\'openModalWithComponent()\'><i class=\'fa fa-pencil-square-o fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'delete\' (click)=\'openModal(template)\'><i class=\'fa fa-trash-o fa-fw\'></i></a>', width: 100 },
+    {headerName: 'Action', template: '<a title=\'View\' ><i data-action-type=\'view\' class=\'fa fa-building fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'Edit\'><i data-action-type=\'edit\' class=\'fa fa-pencil-square-o fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'delete\' data-action-type=\'delete\'><i class=\'fa fa-trash-o fa-fw\'></i></a>', width: 100 },
     {headerName: 'Asset Tag ID', field: 'assetTagId', width: 150 },
     {headerName: 'Asset Category Name', field: 'assetCategory.categoryName', width: 150 },
     {headerName: 'Asset Name', field: 'assetName', width: 150},
@@ -51,9 +52,15 @@ export class AssetListComponent implements OnInit {
             case 'view':
                 this.assetId=e.data.id;
                 return this.openModalWithComponent();
+            case 'edit':
+                this.assetId=e.data.id;
+                return this.openModalForEdit();
+            // case 'delete':
+            //     this.assetId=e.data.id;
+            //     return this.openModalWithComponent();
+        }
         }
     }
-}
 
 onPageSizeChanged(newPageSize) {
   const value = (<HTMLInputElement>document.getElementById('page-size')).value;
@@ -68,14 +75,33 @@ onGridReady(params) {
 openModalWithComponent()
  {
    const initialState ={
-     assetData : {}   
+     assetData : {}
     };
 
     this.assetService.getAssetById(this.assetId).subscribe(
-    data => {  
-       
+    data => {
+
       initialState.assetData =  data;
        this.modalRef = this.modalService.show(AssetComponent, {class: 'modal-lg', initialState });
+       this.modalRef.content.closeBtnName = 'Close';
+    },
+    error => {
+      initialState.assetData = error.error;
+    }
+  );
+}
+
+openModalForEdit()
+ {
+   const initialState ={
+     assetData : {}
+    };
+
+    this.assetService.getAssetById(this.assetId).subscribe(
+    data => {
+
+      initialState.assetData =  data;
+       this.modalRef = this.modalService.show(AddAssetComponent, {class: 'modal-lg', initialState });
        this.modalRef.content.closeBtnName = 'Close';
     },
     error => {

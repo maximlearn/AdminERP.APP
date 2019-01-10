@@ -6,6 +6,7 @@ import { AssetsService } from '../assets.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { NgForm } from '@angular/forms';
 import * as $ from 'jquery';
+import { AssetModel, AssetDetailModel, AssetCategoryModel, VendorModel, AssetClient, SaveAssetRequestModel, ResponseModel } from 'src/app/auto.generated';
 
 @Component({
   selector: 'app-add-asset',
@@ -18,37 +19,28 @@ export class AddAssetComponent implements OnInit {
   selectedFileNames:Array<IFile>= [];
   @ViewChild('assetForm') assetForm : NgForm;
   uploadResult: any;
-  API_URL = 'https://localhost:44361/api/asset/';
-  IsVisible : boolean = false;
-  responseMessage : IResponseMessage ;
-  assetData = new IAssetModel();
-  assetDetail:IAssetDetailModel[]= [{
-    Id : 0,
-    AssetId : 0,
-    PurchaseDate :null,
-    VendorId : null,
-    Cost :null,
-    WarrantyExpireDate : null,
-    WarrantyDocumentId : null,
-    BrandName: null,
-    ModelNumber : null,
-    SerialNumber  : null,
-  }];
-  asset_Category : IAssetCategoryModel[] =[];
-  asset_Vendor : IVendorModel[] = [];
+  //API_URL = 'https://localhost:44361/api/asset/';
+  isVisible : boolean = false;
+
+  assetData: AssetModel;
+  assetDetail: AssetDetailModel[];
+  assetCategory : AssetCategoryModel[];
+  assetVendor : any;
+  saveAssetRequestModel: SaveAssetRequestModel;
+  responseMessage: ResponseModel;
 
 
-  constructor(private assetService : AssetsService,private httpClient: HttpClient) {
+  constructor(private assetService : AssetClient, private httpClient: HttpClient) {
     this.datePickerConfig = Object.assign({},
       { containerClass: 'theme-dark-blue', showWeekNumbers: false,dateInputFormat: 'DD/MM/YYYY'});
-        this.assetData.AssetCategoryId=-101;
-        this.assetData.AssetDetail = this.assetDetail;
-        this.assetData.AssetDetail[0].VendorId=0;
+        // this.assetData.assetCategoryId=-101;
+        // this.assetData.assetDetail = this.assetDetail;
+        // this.assetData.assetDetail[0].vendorId=0;
       }
 
   ngOnInit() {
-  this.assetService.getAssetCategoryList().subscribe((data) =>{ console.log(data); this.asset_Category=data } , (err) => { console.log(err)});
-  this.assetService.getVendorList().subscribe((data) =>{ console.log(data); this.asset_Vendor=data } , (err) => { console.log(err)});
+    this.assetService.getAllAssetCategory().subscribe((data) =>{ this.assetData=data } , (err) => { console.log(err)});
+    this.assetService.getAllVendor().subscribe((data) =>{ this.assetVendor=data } , (err) => { console.log(err)});
   }
 
   fileChangeEvent(fileInput: any,fileInputLabel : string)
@@ -56,11 +48,11 @@ export class AddAssetComponent implements OnInit {
       this.uploadResult = "";
       this.filesToUpload = <Array<IFile>>fileInput.target.files;
       fileInput.target.nextSibling.innerHTML= this.filesToUpload[0].name;
-    //  fileInput.target.
+
       for (let file of  this.filesToUpload)
       {
-         file.filelabel = fileInputLabel;
-         this.selectedFileNames.push(file);
+        file.filelabel = fileInputLabel;
+        this.selectedFileNames.push(file);
       }
   }
 
@@ -83,31 +75,31 @@ export class AddAssetComponent implements OnInit {
           const formData = new FormData();
           for (let file of this.selectedFileNames)
             formData.append(file.filelabel, file);
-           // formData.append(file.name, file);
+          // formData.append(file.name, file);
           return formData;
 
       }
   }
 
- SaveAsset(assetData : IAssetModel)    {
+SaveAsset(assetData : AssetModel) {
   let formData = this.uploadFiles();
 
-  this.IsVisible = true;
-   this.assetService.addAsset(assetData,formData).subscribe(
+  this.isVisible = true;
+  this.saveAssetRequestModel.formData=formData;
+  this.saveAssetRequestModel.assetData=assetData;
+
+  this.assetService.saveAsset(this.saveAssetRequestModel).subscribe(
     data => {
-       this.responseMessage=data;
+    this.responseMessage=data;
     },
     error => {
       this.responseMessage = error.error;
     }
   );
- }
+}
 
- executeValidator(controlName : string)
- {
+executeValidator(controlName : string) {
   this.assetForm.controls[controlName].updateValueAndValidity();
 
- }
-
-
+}
 }
