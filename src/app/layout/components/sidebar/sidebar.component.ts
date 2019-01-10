@@ -1,5 +1,7 @@
-import { Component, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, Input } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { LayoutService } from '../../layout.service';
+import { IUserRoleModel } from 'src/app/login/models/user.model';
 
 @Component({
     selector: 'app-sidebar',
@@ -11,9 +13,9 @@ export class SidebarComponent implements OnInit {
     collapsed: boolean;
     showMenu: string;
     pushRightClass: string;
-
+    @Input('appUserRoleData') appUserRoleData;
     @Output() collapsedEvent = new EventEmitter<boolean>();
-
+     userRoleData : IUserRoleModel;
     constructor(public router: Router) {
          this.router.events.subscribe(val => {
             if (
@@ -31,6 +33,8 @@ export class SidebarComponent implements OnInit {
         this.collapsed = false;
         this.showMenu = '';
         this.pushRightClass = 'push-right';
+        this.userRoleData = this.appUserRoleData;
+       
     }
 
 
@@ -62,6 +66,7 @@ export class SidebarComponent implements OnInit {
     }
 
     onLoggedout() {
-        localStorage.removeItem('isLoggedin');
+        localStorage.removeItem('currentUser');
+        this.router.navigate(['/login']);
     }
 }

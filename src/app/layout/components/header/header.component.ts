@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { IUserModel, IUserRoleModel } from 'src/app/login/models/user.model';
 
 @Component({
   selector: 'app-header',
@@ -10,9 +11,11 @@ export class HeaderComponent implements OnInit {
   public pushRightClass: string;
 
   constructor(public router: Router) { }
-
+  @Input('appUserData') appUserData;
+  userData : IUserModel;
   ngOnInit() {
     this.pushRightClass = 'push-right';
+    this.userData = this.appUserData;
   }
 
   toggleSidebar() {
@@ -22,7 +25,7 @@ export class HeaderComponent implements OnInit {
 
 LogOut()
 {
-  localStorage.removeItem('isLoggedin');
+  localStorage.removeItem('currentUser');
   this.router.navigate(['/login']);
 }
 }

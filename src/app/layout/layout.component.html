@@ -1,5 +1,5 @@
-<app-header></app-header>
-<app-sidebar (collapsedEvent)="receiveCollapsed($event)"></app-sidebar>
+<app-header *ngIf="userRoleData" [appUserData]="userData"></app-header>
+<app-sidebar *ngIf="userRoleData" [appUserRoleData]="userRoleData" (collapsedEvent)="receiveCollapsed($event)"></app-sidebar>
 
 <section class="main-container" [ngClass]="{collapsed: collapsedSideBar}">
   <router-outlet></router-outlet>

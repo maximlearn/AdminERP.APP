@@ -7,6 +7,7 @@ import { LayoutComponent } from './layout.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 import { DashboardModule } from '../dashboard/dashboard.module';
+import { menuFilterPipe } from '../shared/menu-filter.pipe';
 // import { RoleManagementModule } from '../role-management/role-management.module';
 
 @NgModule({
@@ -16,6 +17,6 @@ import { DashboardModule } from '../dashboard/dashboard.module';
         NgbDropdownModule,
         DashboardModule,
     ],
-    declarations: [LayoutComponent, SidebarComponent, HeaderComponent]
+    declarations: [LayoutComponent, SidebarComponent, HeaderComponent,menuFilterPipe]
 })
 export class LayoutModule {}

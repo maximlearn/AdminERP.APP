@@ -113,12 +113,15 @@ $topnav-background-color: hsl(194, 79%, 28%);
     ul.submenu {
         display: none;
         height: 0;
+        margin-bottom: 0.01rem;
+
     }
     & .expand {
         ul.submenu {
             display: block;
             list-style-type: none;
             height: auto;
+            margin-bottom: 0.01rem;
             li {
                 a {
                     color: #fff;
@@ -188,4 +191,6 @@ $topnav-background-color: hsl(194, 79%, 28%);
     span {
         display: none;
     }
+
+
 }

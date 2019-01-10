@@ -9,175 +9,25 @@
           <i class="fa fa-fw fa-dashboard"></i>&nbsp;
           <span>{{ 'Dashboard'  }}</span>
       </a>
-      <div class="nested-menu">
-          <a class="list-group-item" (click)="addExpandClass('page1')">
+      <div *ngIf="appUserRoleData">
+      <div class="nested-menu" *ngFor="let parentMenu of appUserRoleData.menuList | menuFilter : 0">
+          <a class="list-group-item" *ngIf="parentMenu.parentMenuId==0" (click)="addExpandClass(parentMenu.tag)">
               <i class="fa fa-cog fa-spin fa-fw"></i>&nbsp;
-              <span>{{ 'Asset Management'  }}</span>&nbsp;
-
+              <span>{{ parentMenu.menuTitle  }} </span>&nbsp;
           </a>
-          <li class="nested" [class.expand]="showMenu === 'page1'">
-              <ul class="submenu">
-                  <li>
-                    <a routerLink="/assets/addasset" [routerLinkActive]="['router-link-active']" class="list-group-item">
+         
+          <li class="nested" *ngIf="parentMenu.parentMenuId==0" [class.expand]="showMenu === parentMenu.tag">
+              <ul class="submenu ">
+                  <li *ngFor="let childMenu of appUserRoleData.menuList | menuFilter : parentMenu.id "  >
+                    <a *ngIf="parentMenu.id==childMenu.parentMenuId" [routerLink]="childMenu.menuLink" [routerLinkActive]="['router-link-active']" class="list-group-item">
                       <i class="fa fa-cube"></i>&nbsp;
-                          <span>{{ 'Add Asset'  }}</span>
+                          <span>{{ childMenu.menuTitle  }} </span>
                       </a>
-                  </li>
-                  <li>
-                      <a routerLink="/assets/listasset" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                        <i class="fa fa-cube"></i>&nbsp;
-                          <span>{{ 'List Asset'  }}</span>
-                      </a>
-                  </li>
+                  </li>                 
               </ul>
           </li>
       </div>
-      <div class="nested-menu">
-        <a class="list-group-item" (click)="addExpandClass('page2')">
-            <i class="fa fa-desktop"></i>&nbsp;
-            <span>{{ 'Gate Pass Management'  }}</span>
-        </a>
-        <li class="nested" [class.expand]="showMenu === 'page2'">
-            <ul class="submenu">
-                    <li>
-                            <a routerLink="/gatepass/creategatepass" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                              <i class="fa fa-cube"></i>&nbsp;
-                                <span>{{ 'Create Gate Pass'  }}</span>
-                            </a>
-                        </li>
-                <li>
-                    <a routerLink="/gatepass/listgatepass" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                      <i class="fa fa-cube"></i>&nbsp;
-                        <span>{{ 'List Gate Pass'  }}</span>
-                    </a>
-                </li>
-                <!-- <li>
-                    <a routerLink="/pendinggatepass" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                        <i class="fa fa-cube"></i>&nbsp;
-                        <span>{{ 'Pending'  }}</span>
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/approvedgatepass" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                        <i class="fa fa-cube"></i>&nbsp;
-                        <span>{{ 'Approved'  }}</span>
-                    </a>
-                </li>
-                <li>
-                    <a routerLink="/rejectedgatepass" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                      <i class="fa fa-cube"></i>&nbsp;
-                      <span>{{ 'Rejected'  }}</span>
-                  </a>
-              </li> -->
-            </ul>
-        </li>
     </div>
-    <div class="nested-menu">
-      <a class="list-group-item" (click)="addExpandClass('page3')">
-          <i class="fa fa-desktop"></i>&nbsp;
-          <span>{{ 'User Management'  }}</span>
-      </a>
-      <li class="nested" [class.expand]="showMenu === 'page3'">
-          <ul class="submenu">
-              <li>
-                  <a routerLink="/user/adduser" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                    <i class="fa fa-cube"></i>&nbsp;
-                      <span>{{ 'Manage User'  }}</span>
-                  </a>
-              </li>
-              <!-- <li>
-                  <a routerLink="/user/searchuser" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                      <i class="fa fa-cube"></i>&nbsp;
-                      <span>{{ 'Search User'  }}</span>
-                  </a>
-              </li> -->
-              <!-- <li>
-                <a routerLink="/user/edituser" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                    <i class="fa fa-cube"></i>&nbsp;
-                    <span>{{ 'Edit User'  }}</span>
-                </a>
-            </li> -->
-          </ul>
-      </li>
-  </div>
-  <div class="nested-menu">
-    <a class="list-group-item" (click)="addExpandClass('page4')">
-        <i class="fa fa-desktop"></i>&nbsp;
-        <span>{{ 'Role Management'  }}</span>
-    </a>
-    <li class="nested" [class.expand]="showMenu === 'page4'">
-        <ul class="submenu">
-            <li>
-                <a routerLink="/role/addrole" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                  <i class="fa fa-cube"></i>&nbsp;
-                    <span>{{ 'Manage Role'  }}</span>
-                </a>
-            </li>
-            <!-- <li>
-                <a routerLink="/role/searchrole" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                    <i class="fa fa-cube"></i>&nbsp;
-                    <span>{{ 'Search Role'  }}</span>
-                </a>
-            </li> -->
-        </ul>
-    </li>
-</div>
-<div class="nested-menu">
-  <a class="list-group-item" (click)="addExpandClass('page5')">
-      <i class="fa fa-desktop"></i>&nbsp;
-      <span>{{ 'Basic Configuration'  }}</span>
-  </a>
-  <li class="nested" [class.expand]="showMenu === 'page5'">
-      <ul class="submenu">
-          <li>
-              <a routerLink="/basicconfig/configuration" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                  <i class="fa fa-cube"></i>&nbsp;
-                  <span>{{ 'Configuration'  }}</span>
-              </a>
-          </li>
-          <!-- <li>
-              <a routerLink="/basicconfig/adddepartment" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                  <i class="fa fa-cube"></i>&nbsp;
-                  <span>{{ 'Add Department'  }}</span>
-              </a>
-          </li>
-          <li>
-              <a routerLink="/basicconfig/addassetcategory" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                <i class="fa fa-cube"></i>&nbsp;
-                <span>{{ 'Add Asset Category'  }}</span>
-            </a>
-        </li> -->
-        <!-- <li>
-            <a routerLink="/generalsettings" [routerLinkActive]="['router-link-active']" class="list-group-item">
-              <i class="fa fa-cube"></i>&nbsp;
-              <span>{{ 'General Settings'  }}</span>
-          </a>
-      </li> -->
-      </ul>
-  </li>
-</div>
-<div class="nested-menu">
-  <a class="list-group-item" (click)="addExpandClass('page6')">
-      <i class="fa fa-desktop"></i>&nbsp;
-      <span>{{ 'Report Management'  }}</span>
-  </a>
-  <li class="nested" [class.expand]="showMenu === 'page6'">
-      <ul class="submenu">
-          <li>
-              <a routerLink="/report/gatepassreport" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                  <i class="fa fa-cube"></i>&nbsp;
-                  <span>{{ 'Gate Pass Report'  }}</span>
-              </a>
-          </li>
-          <li>
-              <a routerLink="/report/assetreport" [routerLinkActive]="['router-link-active']" class="list-group-item">
-                  <i class="fa fa-cube"></i>&nbsp;
-                  <span>{{ 'Asset Report'  }}</span>
-              </a>
-          </li>
-      </ul>
-  </li>
-</div>
       <a [routerLink]="['/blank']" [routerLinkActive]="['router-link-active']" class="list-group-item">
           <i class="fa fa-file-o"></i>&nbsp;
           <span>{{ 'Blank Page'  }}</span>

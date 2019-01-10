@@ -11,10 +11,11 @@ import { JwtInterceptor } from './shared/jwt.interceptor';
 
 
 
+
 @NgModule({
   declarations: [
-    AppComponent
-    
+    AppComponent,
+       
   
   ],
   imports: [
