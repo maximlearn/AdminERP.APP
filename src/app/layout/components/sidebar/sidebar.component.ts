@@ -1,7 +1,6 @@
 import { Component, Output, EventEmitter, OnInit, Input } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { LayoutService } from '../../layout.service';
-import { IUserRoleModel } from 'src/app/login/models/user.model';
+import { UserRoleModel } from 'src/app/sharedservice';
 
 @Component({
     selector: 'app-sidebar',
@@ -15,9 +14,9 @@ export class SidebarComponent implements OnInit {
     pushRightClass: string;
     @Input('appUserRoleData') appUserRoleData;
     @Output() collapsedEvent = new EventEmitter<boolean>();
-     userRoleData : IUserRoleModel;
+    userRoleData: UserRoleModel;
     constructor(public router: Router) {
-         this.router.events.subscribe(val => {
+        this.router.events.subscribe(val => {
             if (
                 val instanceof NavigationEnd &&
                 window.innerWidth <= 992 &&
@@ -34,10 +33,9 @@ export class SidebarComponent implements OnInit {
         this.showMenu = '';
         this.pushRightClass = 'push-right';
         this.userRoleData = this.appUserRoleData;
-       
+
     }
-
-
+    
     eventCalled() {
         this.isActive = !this.isActive;
     }

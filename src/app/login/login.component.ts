@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
-import { LoginService } from './login.service';
 import { first } from 'rxjs/operators';
-import { IUserModel, LoginDetails } from './models/user.model';
+import { LoginDetails, AuthClient } from 'src/app/sharedservice';
+import { NumberSequence } from 'ag-grid-community';
 
 @Component({
   selector: 'app-login',
@@ -11,30 +11,28 @@ import { IUserModel, LoginDetails } from './models/user.model';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-  @ViewChild('loginForm') loginForm : NgForm;
-  error : string ='';
-  
- userlogin : LoginDetails;
-  constructor(private router: Router, private loginService : LoginService) {
-    this.userlogin=new LoginDetails();
-   }
-  
-  ngOnInit() {
-   
+  @ViewChild('loginForm') loginForm: NgForm;
+  error: string = '';
+  userlogin = {}
+
+  constructor(private router: Router, private authClient: AuthClient) {
+    //this.userlogin = new LoginDetails();
   }
 
-  Authenticate(userLogin : LoginDetails) {
-   // let userName = userLogin.UserID;//this.loginForm.control["empId"].value;
-   // let password =userLogin.Password;//this.loginForm.controls["password"].value;
-    this.loginService.Authenticate(userLogin) .pipe(first())
-    .subscribe(
-        data => {
+  ngOnInit() { }
+
+  Authenticate(userLogin: LoginDetails) {
+    this.authClient.authenticate(userLogin).pipe(first())
+      .subscribe(
+        user => {
+          if (user && user.token) {
+            // store user details and jwt token in local storage to keep user logged in between page refreshes
+            localStorage.setItem('currentUser', JSON.stringify(user));
             this.router.navigate(['/dashboard']);
+          }         
         },
         error => {
-            this.error = error;           
+          this.error = error;
         });
-
-  //  localStorage.setItem('isLoggedin', 'true');
-}
+  }
 }

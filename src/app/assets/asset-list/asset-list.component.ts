@@ -1,10 +1,8 @@
 import { Component, OnInit, TemplateRef, ViewChild , Input } from '@angular/core';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
-import { AssetsService } from '../assets.service';
-import { IAssetModel } from '../models/asset.model';
-import { Observable } from 'rxjs';
 import { AssetComponent } from '../asset/asset.component';
 import { AddAssetComponent } from '../add-asset/add-asset.component';
+import { AssetClient } from 'src/app/sharedservice';
 
 @Component({
   selector: 'app-asset-list',
@@ -13,13 +11,9 @@ import { AddAssetComponent } from '../add-asset/add-asset.component';
 })
 export class AssetListComponent implements OnInit {
   modalRef: BsModalRef;
-
   @ViewChild('template') inner;
   private paginationPageSize;
-  private paginationNumberFormatter;
-  SERVER_URL = 'https://localhost:44361/api/';
- // assetData: any;
-
+  private paginationNumberFormatter;  
   private gridApi;
   columnDefs = [
     // tslint:disable-next-line:max-line-length
@@ -35,7 +29,7 @@ export class AssetListComponent implements OnInit {
       return params.data.assetDetail[0].warrantyExpireDate === null ? '' : params.data.assetDetail[0].warrantyExpireDate ;} , width: 200}];
 
     rowData: any;
-  constructor(private modalService: BsModalService, private assetService : AssetsService)  {}
+  constructor(private modalService: BsModalService, private assetClient : AssetClient)  {}
   ngOnInit() {
     this.paginationPageSize = 10;
     this.paginationNumberFormatter = function(params) {
@@ -68,19 +62,17 @@ onPageSizeChanged(newPageSize) {
 }
 onGridReady(params) {
   this.gridApi = params.api;
-  this.rowData=this.assetService.getAssetList();
+  this.rowData=this.assetClient.getAllAsset();
 }
 
-//assetData : IAssetModel;
 openModalWithComponent()
  {
    const initialState ={
      assetData : {}
     };
 
-    this.assetService.getAssetById(this.assetId).subscribe(
+    this.assetClient.getAssetById(this.assetId).subscribe(
     data => {
-
       initialState.assetData =  data;
        this.modalRef = this.modalService.show(AssetComponent, {class: 'modal-lg', initialState });
        this.modalRef.content.closeBtnName = 'Close';
@@ -97,9 +89,8 @@ openModalForEdit()
      assetData : {}
     };
 
-    this.assetService.getAssetById(this.assetId).subscribe(
+    this.assetClient.getAssetById(this.assetId).subscribe(
     data => {
-
       initialState.assetData =  data;
        this.modalRef = this.modalService.show(AddAssetComponent, {class: 'modal-lg', initialState });
        this.modalRef.content.closeBtnName = 'Close';

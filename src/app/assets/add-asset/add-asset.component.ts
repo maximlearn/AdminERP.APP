@@ -1,12 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { IAssetModel, IAssetCategoryModel, IAssetDetailModel, IVendorModel, IMessage, IResponseMessage, IFile } from '../models/asset.model';
+import { IFile } from '../models/asset.model';
 import { map, catchError } from 'rxjs/operators';
-import { AssetsService } from '../assets.service';
+
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { NgForm } from '@angular/forms';
 import * as $ from 'jquery';
-import { AssetModel, AssetDetailModel, AssetCategoryModel, VendorModel, AssetClient, SaveAssetRequestModel, ResponseModel } from 'src/app/auto.generated';
+import { AssetModel, AssetDetailModel, AssetCategoryModel, VendorModel, AssetClient, SaveAssetRequestModel, ResponseModel, 
+   } from 'src/app/sharedservice';
+import { AssetService } from '../assets.service';
 
 @Component({
   selector: 'app-add-asset',
@@ -19,36 +21,37 @@ export class AddAssetComponent implements OnInit {
   selectedFileNames:Array<IFile>= [];
   @ViewChild('assetForm') assetForm : NgForm;
   uploadResult: any;
-  //API_URL = 'https://localhost:44361/api/asset/';
+ 
   isVisible : boolean = false;
 
-  assetData: AssetModel;
-  assetDetail: AssetDetailModel[];
-  assetCategory : AssetCategoryModel[];
-  assetVendor : any;
+  assetData: AssetModel ;
+  assetDetail: AssetDetailModel;
+  asset_Category : AssetCategoryModel[];
+  asset_Vendor : VendorModel[];
   saveAssetRequestModel: SaveAssetRequestModel;
-  responseMessage: ResponseModel;
+  responseMessage: ResponseModel; 
 
-
-  constructor(private assetService : AssetClient, private httpClient: HttpClient) {
+  constructor(private assetClient : AssetClient,private assetService : AssetService ) {
     this.datePickerConfig = Object.assign({},
       { containerClass: 'theme-dark-blue', showWeekNumbers: false,dateInputFormat: 'DD/MM/YYYY'});
-        // this.assetData.assetCategoryId=-101;
-        // this.assetData.assetDetail = this.assetDetail;
-        // this.assetData.assetDetail[0].vendorId=0;
+       
+        this.assetData=new AssetModel(); 
+        this.assetData.assetDetail = [];
+        this.assetData.assetDetail.push(new AssetDetailModel());        
       }
 
   ngOnInit() {
-    this.assetService.getAllAssetCategory().subscribe((data) =>{ this.assetData=data } , (err) => { console.log(err)});
-    this.assetService.getAllVendor().subscribe((data) =>{ this.assetVendor=data } , (err) => { console.log(err)});
+    this.assetClient.getAllAssetCategory().subscribe((data) =>{ 
+      this.asset_Category = data 
+    } , (err) => { console.log(err)});
+    this.assetClient.getAllVendor().subscribe((data) =>{ this.asset_Vendor=data } , (err) => { console.log(err)});
   }
 
   fileChangeEvent(fileInput: any,fileInputLabel : string)
-  {
+  {    
       this.uploadResult = "";
       this.filesToUpload = <Array<IFile>>fileInput.target.files;
       fileInput.target.nextSibling.innerHTML= this.filesToUpload[0].name;
-
       for (let file of  this.filesToUpload)
       {
         file.filelabel = fileInputLabel;
@@ -63,32 +66,31 @@ export class AddAssetComponent implements OnInit {
     $(".assetImage").html('Browse Asset Image');
 
   }
-
   uploadFiles() : FormData
   {
       this.uploadResult = "";
 
       if (this.selectedFileNames.length > 0)
-      {
-          //this.isLoadingData = true;
-
+      { 
           const formData = new FormData();
           for (let file of this.selectedFileNames)
-            formData.append(file.filelabel, file);
-          // formData.append(file.name, file);
+            formData.append(file.filelabel, file);      
           return formData;
-
       }
   }
 
 SaveAsset(assetData : AssetModel) {
   let formData = this.uploadFiles();
-
   this.isVisible = true;
-  this.saveAssetRequestModel.formData=formData;
-  this.saveAssetRequestModel.assetData=assetData;
+ 
+  // this.saveAssetRequestModel =new SaveAssetRequestModel();
+  // this.saveAssetRequestModel.assetData=assetData;
+  // this.saveAssetRequestModel.formData=formData;
+ // this.saveAssetRequestModel.assetData.assetDetail.push(assetDetail);
 
-  this.assetService.saveAsset(this.saveAssetRequestModel).subscribe(
+  //this.saveAssetRequestModel.assetData.assetDetail.push(assetDetail);
+
+  this.assetService.SaveAsset(assetData,formData).subscribe(
     data => {
     this.responseMessage=data;
     },

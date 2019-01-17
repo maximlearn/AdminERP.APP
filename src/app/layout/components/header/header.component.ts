@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { IUserModel, IUserRoleModel } from 'src/app/login/models/user.model';
+import { UserModel } from 'src/app/sharedservice';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +12,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(public router: Router) { }
   @Input('appUserData') appUserData;
-  userData : IUserModel;
+  userData : UserModel;
   ngOnInit() {
     this.pushRightClass = 'push-right';
     this.userData = this.appUserData;

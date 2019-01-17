@@ -11,18 +11,19 @@ import { Observable, throwError as _observableThrow, of as _observableOf } from 
 import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
-export const API_BASE_URL =new InjectionToken<string>('https://localhost:44361/');
-// new InjectionToken<string>('API_BASE_URL');
+export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAssetClient {
     getAllAsset(): Observable<AssetModel[] | null>;
-    getAllAssetCategory(): Observable<AssetModel | null>;
-    getAllVendor(): Observable<FileResponse | null>;
+    getAllAssetCategory(): Observable<AssetCategoryModel[] | null>;
+    getAllVendor(): Observable<VendorModel[] | null>;
     saveAsset(objAssetData: SaveAssetRequestModel): Observable<ResponseModel | null>;
-    getAssetById(assetId: number | undefined): Observable<AssetModel | null>;
+    getAssetById(assetId?: number | undefined): Observable<AssetModel | null>;
 }
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class AssetClient implements IAssetClient {
     private http: HttpClient;
     private baseUrl: string;
@@ -61,8 +62,8 @@ export class AssetClient implements IAssetClient {
 
     protected processGetAllAsset(response: HttpResponseBase): Observable<AssetModel[] | null> {
         const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -85,7 +86,7 @@ export class AssetClient implements IAssetClient {
         return _observableOf<AssetModel[] | null>(<any>null);
     }
 
-    getAllAssetCategory(): Observable<AssetModel | null> {
+    getAllAssetCategory(): Observable<AssetCategoryModel[] | null> {
         let url_ = this.baseUrl + "/api/Asset/GetAllAssetCategory";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -104,17 +105,17 @@ export class AssetClient implements IAssetClient {
                 try {
                     return this.processGetAllAssetCategory(<any>response_);
                 } catch (e) {
-                    return <Observable<AssetModel | null>><any>_observableThrow(e);
+                    return <Observable<AssetCategoryModel[] | null>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<AssetModel | null>><any>_observableThrow(response_);
+                return <Observable<AssetCategoryModel[] | null>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetAllAssetCategory(response: HttpResponseBase): Observable<AssetModel | null> {
+    protected processGetAllAssetCategory(response: HttpResponseBase): Observable<AssetCategoryModel[] | null> {
         const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -122,7 +123,11 @@ export class AssetClient implements IAssetClient {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? AssetModel.fromJS(resultData200) : <any>null;
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(AssetCategoryModel.fromJS(item));
+            }
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -130,10 +135,10 @@ export class AssetClient implements IAssetClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<AssetModel | null>(<any>null);
+        return _observableOf<AssetCategoryModel[] | null>(<any>null);
     }
 
-    getAllVendor(): Observable<FileResponse | null> {
+    getAllVendor(): Observable<VendorModel[] | null> {
         let url_ = this.baseUrl + "/api/Asset/GetAllVendor";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -152,31 +157,37 @@ export class AssetClient implements IAssetClient {
                 try {
                     return this.processGetAllVendor(<any>response_);
                 } catch (e) {
-                    return <Observable<FileResponse | null>><any>_observableThrow(e);
+                    return <Observable<VendorModel[] | null>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<FileResponse | null>><any>_observableThrow(response_);
+                return <Observable<VendorModel[] | null>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetAllVendor(response: HttpResponseBase): Observable<FileResponse | null> {
+    protected processGetAllVendor(response: HttpResponseBase): Observable<VendorModel[] | null> {
         const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(VendorModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<FileResponse | null>(<any>null);
+        return _observableOf<VendorModel[] | null>(<any>null);
     }
 
     saveAsset(objAssetData: SaveAssetRequestModel): Observable<ResponseModel | null> {
@@ -190,7 +201,7 @@ export class AssetClient implements IAssetClient {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json",
+                "Content-Type": "application/json", 
                 "Accept": "application/json"
             })
         };
@@ -211,8 +222,8 @@ export class AssetClient implements IAssetClient {
 
     protected processSaveAsset(response: HttpResponseBase): Observable<ResponseModel | null> {
         const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -231,12 +242,12 @@ export class AssetClient implements IAssetClient {
         return _observableOf<ResponseModel | null>(<any>null);
     }
 
-    getAssetById(assetId: number | undefined): Observable<AssetModel | null> {
+    getAssetById(assetId?: number | undefined): Observable<AssetModel | null> {
         let url_ = this.baseUrl + "/api/Asset/GetAsset?";
         if (assetId === null)
             throw new Error("The parameter 'assetId' cannot be null.");
         else if (assetId !== undefined)
-            url_ += "assetId=" + encodeURIComponent("" + assetId) + "&";
+            url_ += "assetId=" + encodeURIComponent("" + assetId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -263,8 +274,8 @@ export class AssetClient implements IAssetClient {
 
     protected processGetAssetById(response: HttpResponseBase): Observable<AssetModel | null> {
         const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -285,10 +296,13 @@ export class AssetClient implements IAssetClient {
 }
 
 export interface IAuthClient {
-    authenticate(userLogin: LoginDetails): Observable<FileResponse | null>;
+    getUserRoleMenuFunctions(roleId?: number | undefined): Observable<UserRoleModel | null>;
+    authenticate(userLogin: LoginDetails): Observable<UserModel | null>;
 }
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class AuthClient implements IAuthClient {
     private http: HttpClient;
     private baseUrl: string;
@@ -299,7 +313,59 @@ export class AuthClient implements IAuthClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    authenticate(userLogin: LoginDetails): Observable<FileResponse | null> {
+    getUserRoleMenuFunctions(roleId?: number | undefined): Observable<UserRoleModel | null> {
+        let url_ = this.baseUrl + "/api/Auth/UserRoleMenuFunction?";
+        if (roleId === null)
+            throw new Error("The parameter 'roleId' cannot be null.");
+        else if (roleId !== undefined)
+            url_ += "roleId=" + encodeURIComponent("" + roleId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserRoleMenuFunctions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserRoleMenuFunctions(<any>response_);
+                } catch (e) {
+                    return <Observable<UserRoleModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UserRoleModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUserRoleMenuFunctions(response: HttpResponseBase): Observable<UserRoleModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? UserRoleModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserRoleModel | null>(<any>null);
+    }
+
+    authenticate(userLogin: LoginDetails): Observable<UserModel | null> {
         let url_ = this.baseUrl + "/api/Auth/Authenticate";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -310,7 +376,7 @@ export class AuthClient implements IAuthClient {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json",
+                "Content-Type": "application/json", 
                 "Accept": "application/json"
             })
         };
@@ -322,31 +388,33 @@ export class AuthClient implements IAuthClient {
                 try {
                     return this.processAuthenticate(<any>response_);
                 } catch (e) {
-                    return <Observable<FileResponse | null>><any>_observableThrow(e);
+                    return <Observable<UserModel | null>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<FileResponse | null>><any>_observableThrow(response_);
+                return <Observable<UserModel | null>><any>_observableThrow(response_);
         }));
     }
 
-    protected processAuthenticate(response: HttpResponseBase): Observable<FileResponse | null> {
+    protected processAuthenticate(response: HttpResponseBase): Observable<UserModel | null> {
         const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? UserModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<FileResponse | null>(<any>null);
+        return _observableOf<UserModel | null>(<any>null);
     }
 }
 
@@ -419,7 +487,7 @@ export class AssetModel implements IAssetModel {
             for (let item of this.assetDetail)
                 data["assetDetail"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -484,7 +552,7 @@ export class AssetCategoryModel implements IAssetCategoryModel {
         data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
         data["modifiedBy"] = this.modifiedBy;
         data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -562,7 +630,7 @@ export class AssetDetailModel implements IAssetDetailModel {
         data["serialNumber"] = this.serialNumber;
         data["asset"] = this.asset ? this.asset.toJSON() : <any>undefined;
         data["vendor"] = this.vendor ? this.vendor.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -616,7 +684,7 @@ export class VendorModel implements IVendorModel {
         data["id"] = this.id;
         data["vendorName"] = this.vendorName;
         data["isActive"] = this.isActive;
-        return data;
+        return data; 
     }
 }
 
@@ -666,7 +734,7 @@ export class ResponseModel implements IResponseModel {
         data["message"] = this.message;
         data["isSuccess"] = this.isSuccess;
         data["isExist"] = this.isExist;
-        return data;
+        return data; 
     }
 }
 
@@ -709,13 +777,417 @@ export class SaveAssetRequestModel implements ISaveAssetRequestModel {
         data = typeof data === 'object' ? data : {};
         data["assetData"] = this.assetData ? this.assetData.toJSON() : <any>undefined;
         data["formData"] = this.formData;
-        return data;
+        return data; 
     }
 }
 
 export interface ISaveAssetRequestModel {
     assetData?: AssetModel | undefined;
     formData?: any | undefined;
+}
+
+export class UserRoleModel implements IUserRoleModel {
+    userId!: number;
+    roleId!: number;
+    menuList?: MenuModel[] | undefined;
+    functionList?: FunctionModel[] | undefined;
+
+    constructor(data?: IUserRoleModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+            this.roleId = data["roleId"];
+            if (data["menuList"] && data["menuList"].constructor === Array) {
+                this.menuList = [];
+                for (let item of data["menuList"])
+                    this.menuList.push(MenuModel.fromJS(item));
+            }
+            if (data["functionList"] && data["functionList"].constructor === Array) {
+                this.functionList = [];
+                for (let item of data["functionList"])
+                    this.functionList.push(FunctionModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UserRoleModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserRoleModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["roleId"] = this.roleId;
+        if (this.menuList && this.menuList.constructor === Array) {
+            data["menuList"] = [];
+            for (let item of this.menuList)
+                data["menuList"].push(item.toJSON());
+        }
+        if (this.functionList && this.functionList.constructor === Array) {
+            data["functionList"] = [];
+            for (let item of this.functionList)
+                data["functionList"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IUserRoleModel {
+    userId: number;
+    roleId: number;
+    menuList?: MenuModel[] | undefined;
+    functionList?: FunctionModel[] | undefined;
+}
+
+export class MenuModel implements IMenuModel {
+    id!: number;
+    menuTitle?: string | undefined;
+    parentMenuId?: number | undefined;
+    menuLink?: string | undefined;
+    templateUrl?: string | undefined;
+    controller?: string | undefined;
+    controllerAs?: string | undefined;
+    isDisabled!: boolean;
+    isStateRequired!: boolean;
+    displayOrder!: number;
+    tag?: string | undefined;
+
+    constructor(data?: IMenuModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.menuTitle = data["menuTitle"];
+            this.parentMenuId = data["parentMenuId"];
+            this.menuLink = data["menuLink"];
+            this.templateUrl = data["templateUrl"];
+            this.controller = data["controller"];
+            this.controllerAs = data["controllerAs"];
+            this.isDisabled = data["isDisabled"];
+            this.isStateRequired = data["isStateRequired"];
+            this.displayOrder = data["displayOrder"];
+            this.tag = data["tag"];
+        }
+    }
+
+    static fromJS(data: any): MenuModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new MenuModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["menuTitle"] = this.menuTitle;
+        data["parentMenuId"] = this.parentMenuId;
+        data["menuLink"] = this.menuLink;
+        data["templateUrl"] = this.templateUrl;
+        data["controller"] = this.controller;
+        data["controllerAs"] = this.controllerAs;
+        data["isDisabled"] = this.isDisabled;
+        data["isStateRequired"] = this.isStateRequired;
+        data["displayOrder"] = this.displayOrder;
+        data["tag"] = this.tag;
+        return data; 
+    }
+}
+
+export interface IMenuModel {
+    id: number;
+    menuTitle?: string | undefined;
+    parentMenuId?: number | undefined;
+    menuLink?: string | undefined;
+    templateUrl?: string | undefined;
+    controller?: string | undefined;
+    controllerAs?: string | undefined;
+    isDisabled: boolean;
+    isStateRequired: boolean;
+    displayOrder: number;
+    tag?: string | undefined;
+}
+
+export class FunctionModel implements IFunctionModel {
+    id!: number;
+    functionCode?: string | undefined;
+    functionName?: string | undefined;
+    functionDescription?: string | undefined;
+
+    constructor(data?: IFunctionModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.functionCode = data["functionCode"];
+            this.functionName = data["functionName"];
+            this.functionDescription = data["functionDescription"];
+        }
+    }
+
+    static fromJS(data: any): FunctionModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new FunctionModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["functionCode"] = this.functionCode;
+        data["functionName"] = this.functionName;
+        data["functionDescription"] = this.functionDescription;
+        return data; 
+    }
+}
+
+export interface IFunctionModel {
+    id: number;
+    functionCode?: string | undefined;
+    functionName?: string | undefined;
+    functionDescription?: string | undefined;
+}
+
+export class UserModel implements IUserModel {
+    id!: number;
+    title?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    empId?: string | undefined;
+    phone?: string | undefined;
+    email?: string | undefined;
+    deptId?: number | undefined;
+    roleId!: number;
+    isActive?: boolean | undefined;
+    createdBy!: number;
+    createdDate!: Date;
+    modifiedBy!: number;
+    modifiedDate!: Date;
+    token?: string | undefined;
+    userCredential?: UserCredentialModel[] | undefined;
+    userSecurityAnswer?: UserSecurityAnswerModel[] | undefined;
+
+    constructor(data?: IUserModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.title = data["title"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.empId = data["empId"];
+            this.phone = data["phone"];
+            this.email = data["email"];
+            this.deptId = data["deptId"];
+            this.roleId = data["roleId"];
+            this.isActive = data["isActive"];
+            this.createdBy = data["createdBy"];
+            this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
+            this.modifiedBy = data["modifiedBy"];
+            this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
+            this.token = data["token"];
+            if (data["userCredential"] && data["userCredential"].constructor === Array) {
+                this.userCredential = [];
+                for (let item of data["userCredential"])
+                    this.userCredential.push(UserCredentialModel.fromJS(item));
+            }
+            if (data["userSecurityAnswer"] && data["userSecurityAnswer"].constructor === Array) {
+                this.userSecurityAnswer = [];
+                for (let item of data["userSecurityAnswer"])
+                    this.userSecurityAnswer.push(UserSecurityAnswerModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UserModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["empId"] = this.empId;
+        data["phone"] = this.phone;
+        data["email"] = this.email;
+        data["deptId"] = this.deptId;
+        data["roleId"] = this.roleId;
+        data["isActive"] = this.isActive;
+        data["createdBy"] = this.createdBy;
+        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
+        data["modifiedBy"] = this.modifiedBy;
+        data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
+        data["token"] = this.token;
+        if (this.userCredential && this.userCredential.constructor === Array) {
+            data["userCredential"] = [];
+            for (let item of this.userCredential)
+                data["userCredential"].push(item.toJSON());
+        }
+        if (this.userSecurityAnswer && this.userSecurityAnswer.constructor === Array) {
+            data["userSecurityAnswer"] = [];
+            for (let item of this.userSecurityAnswer)
+                data["userSecurityAnswer"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IUserModel {
+    id: number;
+    title?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    empId?: string | undefined;
+    phone?: string | undefined;
+    email?: string | undefined;
+    deptId?: number | undefined;
+    roleId: number;
+    isActive?: boolean | undefined;
+    createdBy: number;
+    createdDate: Date;
+    modifiedBy: number;
+    modifiedDate: Date;
+    token?: string | undefined;
+    userCredential?: UserCredentialModel[] | undefined;
+    userSecurityAnswer?: UserSecurityAnswerModel[] | undefined;
+}
+
+export class UserCredentialModel implements IUserCredentialModel {
+    id!: number;
+    userId!: number;
+    password?: string | undefined;
+    passwordKey?: string | undefined;
+    attempted?: number | undefined;
+
+    constructor(data?: IUserCredentialModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.userId = data["userId"];
+            this.password = data["password"];
+            this.passwordKey = data["passwordKey"];
+            this.attempted = data["attempted"];
+        }
+    }
+
+    static fromJS(data: any): UserCredentialModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserCredentialModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userId"] = this.userId;
+        data["password"] = this.password;
+        data["passwordKey"] = this.passwordKey;
+        data["attempted"] = this.attempted;
+        return data; 
+    }
+}
+
+export interface IUserCredentialModel {
+    id: number;
+    userId: number;
+    password?: string | undefined;
+    passwordKey?: string | undefined;
+    attempted?: number | undefined;
+}
+
+export class UserSecurityAnswerModel implements IUserSecurityAnswerModel {
+    id!: number;
+    userId!: number;
+    securityQuestionId!: number;
+    answer?: string | undefined;
+
+    constructor(data?: IUserSecurityAnswerModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.userId = data["userId"];
+            this.securityQuestionId = data["securityQuestionId"];
+            this.answer = data["answer"];
+        }
+    }
+
+    static fromJS(data: any): UserSecurityAnswerModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserSecurityAnswerModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userId"] = this.userId;
+        data["securityQuestionId"] = this.securityQuestionId;
+        data["answer"] = this.answer;
+        return data; 
+    }
+}
+
+export interface IUserSecurityAnswerModel {
+    id: number;
+    userId: number;
+    securityQuestionId: number;
+    answer?: string | undefined;
 }
 
 export class LoginDetails implements ILoginDetails {
@@ -749,7 +1221,7 @@ export class LoginDetails implements ILoginDetails {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
         data["password"] = this.password;
-        return data;
+        return data; 
     }
 }
 
@@ -758,19 +1230,12 @@ export interface ILoginDetails {
     password?: string | undefined;
 }
 
-export interface FileResponse {
-    data: Blob;
-    status: number;
-    fileName?: string;
-    headers?: { [name: string]: any };
-}
-
 export class SwaggerException extends Error {
     message: string;
-    status: number;
-    response: string;
+    status: number; 
+    response: string; 
     headers: { [key: string]: any; };
-    result: any;
+    result: any; 
 
     constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
         super();
@@ -802,12 +1267,12 @@ function blobToText(blob: any): Observable<string> {
             observer.next("");
             observer.complete();
         } else {
-            let reader = new FileReader();
-            reader.onload = event => {
+            let reader = new FileReader(); 
+            reader.onload = event => { 
                 observer.next((<any>event.target).result);
                 observer.complete();
             };
-            reader.readAsText(blob);
+            reader.readAsText(blob); 
         }
     });
 }

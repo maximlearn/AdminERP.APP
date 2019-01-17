@@ -9,24 +9,18 @@ import { AuthGuardService } from './guards/auth-guard.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './shared/jwt.interceptor';
 
-
-
-
 @NgModule({
-  declarations: [
-    AppComponent,
-       
-  
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    CommonModule,
-    HttpClientModule,
+    CommonModule,  
     NgbModule.forRoot(),
+    HttpClientModule
+   
   ],
-  providers: [AuthGuardService,
-  { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }],
+  providers: [AuthGuardService,{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }],
+ 
   bootstrap: [AppComponent]
 })
 export class AppModule { }

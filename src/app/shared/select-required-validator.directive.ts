@@ -13,11 +13,11 @@ import { NG_VALIDATORS, Validator, AbstractControl } from '@angular/forms';
 })
 export class SelectRequiredValidatorDirective implements Validator {
   @Input('appSelectValidator')
-  private defaultOption : number;
+  private defaultOption : string;
  
   validate(control: AbstractControl) : {[key:string] : any} | null {
   // alert(control.value == this.defaultOption);
-    return control.value == this.defaultOption ? {'defaultSelected':true} : null;
+    return control.value === this.defaultOption ? {'defaultSelected':true} : null;
     }
 
 }

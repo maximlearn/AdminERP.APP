@@ -59,14 +59,14 @@
       "template": "Angular",
       "promiseType": "Promise",
       "httpClass": "HttpClient",
-      "useSingletonProvider": false,
+      "useSingletonProvider": true,
       "injectionTokenType": "InjectionToken",
       "rxJsVersion": 6.0,
       "dateTimeType": "Date",
       "nullValue": "Undefined",
       "generateClientClasses": true,
       "generateClientInterfaces": true,
-      "generateOptionalParameters": false,
+      "generateOptionalParameters": true,
       "exportTypes": true,
       "wrapDtoExceptions": false,
       "clientBaseClass": null,
@@ -86,7 +86,7 @@
       "classTypes": [],
       "extendedClasses": [],
       "extensionCode": null,
-      "generateDefaultValues": true,
+      "generateDefaultValues": false,
       "excludedTypeNames": [],
       "handleReferences": false,
       "generateConstructorInterface": true,
@@ -100,9 +100,9 @@
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
-      "serviceHost": null,
+      "serviceHost": "",
       "serviceSchemes": null,
-      "output": "../src/app/auto.generated.ts"
+      "output": "../src/app/sharedservice.ts"
     }
   }
 }

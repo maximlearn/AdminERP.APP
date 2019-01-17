@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LayoutService } from './layout.service';
-import { IUserModel, IUserRoleModel } from '../login/models/user.model';
-
+import { UserRoleModel, AuthClient } from '../sharedservice';
 
 @Component({
   selector: 'app-layout',
@@ -9,25 +7,21 @@ import { IUserModel, IUserRoleModel } from '../login/models/user.model';
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent implements OnInit {
-
-  
-  constructor(private layoutService : LayoutService) { }
+  constructor(private authClient: AuthClient) { }
   collapsedSideBar: boolean;
-  userRoleData : IUserRoleModel
-  userData : any;
-  ngOnInit() {  
-   
-    if (localStorage.getItem('currentUser'))
-    {
-       this.userData =  JSON.parse(localStorage.getItem('currentUser'));      
-       this.layoutService.GetUserRoleMenuFunction(this.userData.roleId)
-                     .subscribe(data => 
-                            {     this.userRoleData= data,
-                                  console.log(this.userRoleData)
-                            });
+  userRoleData: UserRoleModel
+  userData: any;
+  ngOnInit() {
+
+    if (localStorage.getItem('currentUser')) {
+      this.userData = JSON.parse(localStorage.getItem('currentUser'));
+      this.authClient.getUserRoleMenuFunctions(this.userData.roleId)
+        .subscribe(data => {
+        this.userRoleData = data,
+          console.log(this.userRoleData)
+        });
+    }
   }
-}
- 
   receiveCollapsed($event) {
     this.collapsedSideBar = $event;
   }
