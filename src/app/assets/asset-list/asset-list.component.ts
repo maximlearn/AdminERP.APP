@@ -3,6 +3,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { AssetComponent } from '../asset/asset.component';
 import { AddAssetComponent } from '../add-asset/add-asset.component';
 import { AssetClient } from 'src/app/sharedservice';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-asset-list',
@@ -15,6 +16,7 @@ export class AssetListComponent implements OnInit {
   private paginationPageSize;
   private paginationNumberFormatter;  
   private gridApi;
+  
   columnDefs = [
     // tslint:disable-next-line:max-line-length
     {headerName: 'Action', template: '<a title=\'View\' ><i data-action-type=\'view\' class=\'fa fa-building fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'Edit\'><i data-action-type=\'edit\' class=\'fa fa-pencil-square-o fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'delete\' data-action-type=\'delete\'><i class=\'fa fa-trash-o fa-fw\'></i></a>', width: 100 },
@@ -24,9 +26,9 @@ export class AssetListComponent implements OnInit {
     {headerName: 'Cost', cellRenderer: function(params) {
       return params.data.assetDetail[0].cost;}, width: 130},
     {headerName: 'Purchase Date',cellRenderer: function(params) {
-      return (params.data.assetDetail[0].purchaseDate === null) ? '' : params.data.assetDetail[0].purchaseDate} , width: 160},
+      return (params.data.assetDetail[0].purchaseDate === undefined) ? '' : new DatePipe('en-US').transform(params.data.assetDetail[0].purchaseDate,'dd/MM/yyyy')} , width: 160},
     {headerName: 'Warranty Expire Date',cellRenderer: function(params) {
-      return params.data.assetDetail[0].warrantyExpireDate === null ? '' : params.data.assetDetail[0].warrantyExpireDate ;} , width: 200}];
+      return (params.data.assetDetail[0].warrantyExpireDate === undefined) ? '' : new DatePipe('en-US').transform(params.data.assetDetail[0].warrantyExpireDate,'dd/MM/yyyy') } , width: 200}];
 
     rowData: any;
   constructor(private modalService: BsModalService, private assetClient : AssetClient)  {}

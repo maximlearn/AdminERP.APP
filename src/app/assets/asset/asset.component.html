@@ -27,7 +27,7 @@
       <div class="row">
         <div class="col form-group" >
             <label for="assetDesc" class="col-form-label font-weight-bold">Asset Description :</label>
-            <label for="assetDesc" class="col-form-label form-control">{{assetData.assetDesc}}</label>
+            <label for="assetDesc" class="col-form-label form-control">{{assetData.assetDescription}}</label>
            
           </div>
       </div>
@@ -39,7 +39,7 @@
              
         <div class="col form-group">
             <label for="assetModel" class="col-form-label font-weight-bold">Model No :</label>
-            <label for="assetModel" class="col-form-label form-control">{{assetData.assetDetail[0].modalNumber}}</label>
+            <label for="assetModel" class="col-form-label form-control">{{assetData.assetDetail[0].modelNumber}}</label>
           </div>
        
         <div class="col form-group" >
@@ -55,11 +55,11 @@
        
         <div class="col form-group">
             <label for="purchaseDate" class="col-form-label font-weight-bold">Purchase Date :</label>
-            <label for="purchaseDate" class="col-form-label form-control">{{assetData.assetDetail[0].purchaseDate}}</label>
+            <label for="purchaseDate" class="col-form-label form-control">{{assetData.assetDetail[0].purchaseDate | date : "dd/MM/yyyy"}}</label>
         </div>
         <div class="col form-group">
               <label for="warrantyExpiryDate" class="col-form-label font-weight-bold">Warranty Expiry Date : </label>
-              <label for="warrantyExpiryDate" class="col-form-label form-control">{{assetData.assetDetail[0].warrantyExpireDate}} </label>
+              <label for="warrantyExpiryDate" class="col-form-label form-control">{{assetData.assetDetail[0].warrantyExpireDate | date : "dd/MM/yyyy"             }} </label>
       </div>  
         
       </div>

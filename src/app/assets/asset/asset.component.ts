@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { IAssetModel } from '../models/asset.model';
+import { AssetModel } from 'src/app/sharedservice';
+
 
 @Component({
   selector: 'app-asset',
@@ -9,12 +10,12 @@ import { IAssetModel } from '../models/asset.model';
 })
 export class AssetComponent implements OnInit {
   title: string;
-  closeBtnName: string; 
-  assetData: IAssetModel;
+  closeBtnName: string;
+  assetData: AssetModel;
 
   constructor(public bsModalRef: BsModalRef) {
-   // this.assetData=new IAssetModel();
-   }
+    // this.assetData=new IAssetModel();
+  }
 
   ngOnInit() {
 

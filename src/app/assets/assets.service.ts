@@ -10,7 +10,7 @@ import { AssetModel, ResponseModel } from '../sharedservice';
   providedIn: 'root'
 })
 export class AssetService {
-  API_URL = 'https://localhost:44361/api/Auth/';
+  API_URL = 'https://localhost:44361/api/Asset/';
   constructor(private httpClient: HttpClient) { }
 
 private errorHandler(errorResponse: HttpErrorResponse)
@@ -24,7 +24,7 @@ private errorHandler(errorResponse: HttpErrorResponse)
   return throwError("There is problem with the service.We are notified. Please try again later...");
 }
 
-public SaveAsset(assetData : AssetModel, formData : FormData)   {
+public SaveAsset(assetData : AssetModel, formData : FormData)  {
   let params = new HttpParams();
   params = params.set('assetData', JSON.stringify(assetData));
   const HttpHeaderOptions = {

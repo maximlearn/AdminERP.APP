@@ -96,7 +96,7 @@
           <div class="col form-group">
             <label for="purchaseDate" class="col-form-label font-weight-bold">Purchase Date :</label>
             <input id="purchaseDate" name="purchaseDate" (ngModelChange)="executeValidator('warrantyExpiryDate')" type="text"
-              [(ngModel)]="assetData.assetDetail[0].PurchaseDate" #purchaseDate="ngModel" bsDatepicker [bsConfig]="datePickerConfig"
+              [(ngModel)]="assetData.assetDetail[0].purchaseDate" #purchaseDate="ngModel" bsDatepicker [bsConfig]="datePickerConfig"
               class="form-control" placeholder="Purchase Date" />
           </div>
           <div class="col form-group">
@@ -104,7 +104,7 @@
               {{warrantyExpiryDate.errors?.notValidated && warrantyExpiryDate.touched}}
             </label>
             <input id="warrantyExpiryDate" appCompareDateValidator="purchaseDate" name="warrantyExpiryDate" type="text"
-              [(ngModel)]="assetData.assetDetail[0].WarrantyExpireDate" #warrantyExpiryDate="ngModel" [ngClass]="warrantyExpiryDate.errors?.notValidated  && warrantyExpiryDate.touched ? 'select-validated' : ''"
+              [(ngModel)]="assetData.assetDetail[0].warrantyExpireDate" #warrantyExpiryDate="ngModel" [ngClass]="warrantyExpiryDate.errors?.notValidated  && warrantyExpiryDate.touched ? 'select-validated' : ''"
               bsDatepicker [bsConfig]="datePickerConfig" placeholder="Warrenty Expiry Date" class="form-control" />
             <span [ngClass]="(warrantyExpiryDate.errors?.notValidated  && warrantyExpiryDate.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
               *ngIf="warrantyExpiryDate.errors?.notValidated && warrantyExpiryDate.touched">
@@ -117,7 +117,7 @@
         <div class="row">
           <div class="col form-group" [class.was-validated]="(assetCost.errors?.required || assetCost.errors?.pattern)  && assetCost.touched">
             <label for="assetCost" class="col-form-label font-weight-bold">Asset Cost :</label>
-            <input type="text" Id="assetCost" name="assetCost" [(ngModel)]="assetData.assetDetail[0].Cost" #assetCost="ngModel"
+            <input type="text" Id="assetCost" name="assetCost" [(ngModel)]="assetData.assetDetail[0].cost" #assetCost="ngModel"
               class="form-control" placeholder="Asset Cost" required pattern="^(?:[0-9]+(?:\.[0-9]{0,2})?)?$">
             <span class="invalid-feedback" *ngIf="assetCost.errors?.required && assetCost.touched">
               Asset Cost is Required.
@@ -133,7 +133,13 @@
               <input type="file" #fileUpload placeholder="Browse Warranty Document" (change)="fileChangeEvent($event,'WarrantyDocument')"
                 class="custom-file-input" id="warrentyDocument">
               <label class="custom-file-label warrantyDocument" for="warrantyDocument">Browse Warranty Document</label>
+              <span [ngClass]="!validDocument ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
+              *ngIf="!validDocument">
+                file type should be .pdf, .doc, .docx.
+               </span>
             </div>
+            
+            
           </div>
           <div class="col form-group">
             <label for="assetImage" class="col-form-label font-weight-bold">Asset Image :</label>
@@ -141,6 +147,10 @@
               <input type="file" #fileUpload (change)="fileChangeEvent($event,'AssetImage')" class="custom-file-input"
                 id="assetImage">
               <label class="custom-file-label assetImage" for="assetImage">Browse Asset Image</label>
+              <span [ngClass]="!validImage ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
+              *ngIf="!validImage">
+                file type should be .jpeg, .png, .jpg, .gif.
+               </span>
             </div>
           </div>
           <!-- <div class="col form-group">
@@ -150,7 +160,7 @@
       </div>
       <div class="card-footer text-right">
         <span class="font-weight-bold" [class.text-success]="this.responseMessage.isSuccess" [class.text-danger]="!this.responseMessage.isSuccess"
-          *ngIf="IsVisible ">
+          *ngIf="isVisible ">
           {{responseMessage.message}}
         </span>
         <button type="submit" [disabled]="!assetForm.form.valid" [ngClass]="!assetForm.form.valid ? 'btn-disabled' : 'btn-primary'"

@@ -17,7 +17,7 @@ export interface IAssetClient {
     getAllAsset(): Observable<AssetModel[] | null>;
     getAllAssetCategory(): Observable<AssetCategoryModel[] | null>;
     getAllVendor(): Observable<VendorModel[] | null>;
-    saveAsset(objAssetData: SaveAssetRequestModel): Observable<ResponseModel | null>;
+    saveAsset(assetData?: string | null | undefined): Observable<ResponseModel | null>;
     getAssetById(assetId?: number | undefined): Observable<AssetModel | null>;
 }
 
@@ -190,18 +190,16 @@ export class AssetClient implements IAssetClient {
         return _observableOf<VendorModel[] | null>(<any>null);
     }
 
-    saveAsset(objAssetData: SaveAssetRequestModel): Observable<ResponseModel | null> {
-        let url_ = this.baseUrl + "/api/Asset/AddAsset";
+    saveAsset(assetData?: string | null | undefined): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/Asset/AddAsset?";
+        if (assetData !== undefined)
+            url_ += "assetData=" + encodeURIComponent("" + assetData) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(objAssetData);
-
         let options_ : any = {
-            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json", 
                 "Accept": "application/json"
             })
         };
@@ -744,46 +742,6 @@ export interface IResponseModel {
     message?: string | undefined;
     isSuccess: boolean;
     isExist: boolean;
-}
-
-export class SaveAssetRequestModel implements ISaveAssetRequestModel {
-    assetData?: AssetModel | undefined;
-    formData?: any | undefined;
-
-    constructor(data?: ISaveAssetRequestModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.assetData = data["assetData"] ? AssetModel.fromJS(data["assetData"]) : <any>undefined;
-            this.formData = data["formData"];
-        }
-    }
-
-    static fromJS(data: any): SaveAssetRequestModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new SaveAssetRequestModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["assetData"] = this.assetData ? this.assetData.toJSON() : <any>undefined;
-        data["formData"] = this.formData;
-        return data; 
-    }
-}
-
-export interface ISaveAssetRequestModel {
-    assetData?: AssetModel | undefined;
-    formData?: any | undefined;
 }
 
 export class UserRoleModel implements IUserRoleModel {
