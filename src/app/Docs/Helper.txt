@@ -4,3 +4,9 @@ https://www.codingflow.net/building-single-page-applications-on-asp-net-core-2-1
 to download the nswagstudio:
 https://github.com/RSuter/NSwag/wiki/NSwagStudio
 
+To run the application from VS Code
+command: npm run serve
+
+To auto genrate the model and services using nswag
+command: npm run generate:erp
+
