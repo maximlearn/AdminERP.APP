@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
+import { BsDatepickerConfig,BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { IFile } from '../models/asset.model';
 import { map, catchError } from 'rxjs/operators';
 
@@ -33,8 +33,7 @@ export class AddAssetComponent implements OnInit {
   asset_Vendor: VendorModel[];
 
   responseMessage: ResponseModel;
-
-  constructor(private assetClient: AssetClient, private assetService: AssetService) {
+  constructor(private assetClient: AssetClient, private assetService: AssetService,public bsModalRef: BsModalRef) {
     this.datePickerConfig = Object.assign({},
       { containerClass: 'theme-dark-blue', showWeekNumbers: false, dateInputFormat: 'DD/MM/YYYY' });
 
@@ -49,6 +48,10 @@ export class AddAssetComponent implements OnInit {
     }, (err) => { console.log(err) });
     this.assetClient.getAllVendor().subscribe((data) => { this.asset_Vendor = data }, (err) => { console.log(err) });
   }
+  // ngOnDestroy(){
+  //   this.bsModalRef.hide();
+
+  // }
 
   fileChangeEvent(fileInput: any, fileInputLabel: string) {
     this.uploadResult = "";
@@ -113,16 +116,29 @@ export class AddAssetComponent implements OnInit {
   SaveAsset(assetData: AssetModel) {
     let formData = this.uploadFiles();
     this.isVisible = true;
-    this.assetService.SaveAsset(assetData, formData).subscribe(
-      data => {
-        this.responseMessage = data; console.log(this.responseMessage)
-      },
-      error => {
-        this.responseMessage = error;
-      }
-    );
-  }
+    if(assetData.id==0){
+      this.assetService.SaveAsset(assetData, formData).subscribe(
+        data => {
+          this.responseMessage = data; console.log(this.responseMessage)
+        },
+        error => {
+          this.responseMessage = error;
+        }
+      );
+    }
+    else
+    {
+      this.assetService.UpdateAsset(assetData, formData).subscribe(
+        data => {
+          this.responseMessage = data; console.log(this.responseMessage)
+        },
+        error => {
+          this.responseMessage = error;
+        }
+      );
+    }
 
+  }
 
   executeValidator(controlName: string) {
     this.assetForm.controls[controlName].updateValueAndValidity();

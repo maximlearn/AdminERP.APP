@@ -20,7 +20,7 @@ private errorHandler(errorResponse: HttpErrorResponse)
   }
   else {
     console.error('Server Side Error : - ' + errorResponse);
-  } 
+  }
   return throwError("There is problem with the service.We are notified. Please try again later...");
 }
 
@@ -33,5 +33,17 @@ public SaveAsset(assetData : AssetModel, formData : FormData)  {
     params : params
     }
     return this.httpClient.post<ResponseModel>(this.API_URL+'AddAsset',formData,HttpHeaderOptions)
+  }
+
+
+public UpdateAsset(assetData : AssetModel, formData : FormData)  {
+  let params = new HttpParams();
+  params = params.set('assetData', JSON.stringify(assetData));
+  const HttpHeaderOptions = {
+    headers: { 'Accept': 'application/json' },
+    //headers: { 'Content-type': 'application/json', 'dataType': 'json' },
+    params : params
+    }
+    return this.httpClient.post<ResponseModel>(this.API_URL+'UpdateAsset',formData,HttpHeaderOptions)
   }
 }
