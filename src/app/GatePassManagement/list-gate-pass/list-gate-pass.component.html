@@ -1,62 +1,80 @@
 <div class="container">
-    <div class="row">
-      <div class="col">
-  <form>
-        <div class="card border border-primary">
-                <div class="card-header text-white bg-secondary">
-        <i class="fa fa-database fa-fw"></i>&nbsp;Search Asset Gate Pass
+    <div style="display: none" class="row">
+        <div class="col">
+            <form>
+                <div class="card border border-primary">
+                    <div class="card-header text-white bg-secondary">
+                        <i class="fa fa-database fa-fw"></i>&nbsp;Search Asset Gate Pass
+                    </div>
+
+                    <div class="card-body text-primary">
+                        <div class="row">
+                            <div class="col form-group">
+                                <label for="gatepassdate" class="col-form-label font-weight-bold">Gate Pass No :</label>
+                                <input type="text" Id="gatepassdate" class="form-control" placeholder="Enter Gate Pass Date">
+                            </div>
+                            <div class="col form-group">
+                                <label for="type" class="col-form-label font-weight-bold">Type :</label>
+                                <select class="custom-select" id="type">
+                                    <option>Returnable</option>
+                                    <option>Non-Returnable</option>
+                                </select>
+                            </div>
+                            <div class="col form-group">
+                                <label for="status" class="col-form-label font-weight-bold">Status :</label>
+                                <select class="custom-select" id="isreturnable">
+                                    <option>Pending</option>
+                                    <option>Approved</option>
+                                    <option>Reject</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col form-group">
+                                <label for="gptodate" class="col-form-label font-weight-bold">Gate Pass To Date :</label>
+                                <input type="text" Id="gptodate" class="form-control" placeholder="Enter Gate Pass To Date">
+                            </div>
+                            <div class="col form-group">
+                                <label for="gpfromdate" class="col-form-label font-weight-bold">Gate Pass From Date :</label>
+                                <input type="text" Id="gpfromdate" class="form-control" placeholder="Enter Gate Pass To Date">
+                            </div>
+                            <div class="col form-group">
+                                <label for="assettagid" class="col-form-label font-weight-bold">Asset Tag ID :</label>
+                                <input type="text" Id="assettagid" class="form-control" placeholder="Enter Asset Tag ID">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="text-right">
+                            <button type="button" class="btn btn-primary mr-1 m-1  btn-sm font-weight-bold"><i class="fa fa-save fa-fw"></i>&nbsp;Search</button>
+                            <button type="button" class="btn btn-primary  btn-sm m-1 font-weight-bold"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
+    <div class="text-left">
+        <span class="font-weight-bold" [class.text-success]="this.responseMessage.isSuccess" [class.text-danger]="!this.responseMessage.isSuccess"
+          *ngIf="isMessageVisible ">
+          {{responseMessage.message}}
+        </span>
+        </div>
+    <div class="card border border-primary">
+        <div class="card-header text-white bg-secondary">
+            <i class="fa fa-database fa-fw"></i>&nbsp;Search Asset Gate Pass            
+        </div>
 
-    <div class="card-body text-primary">
-        <div class="row">
-          <div class="col form-group">
-              <label for="gatepassdate" class="col-form-label font-weight-bold">Gate Pass No :</label>
-            <input type="text" Id="gatepassdate" class="form-control" placeholder="Enter Gate Pass Date">
-          </div>
-          <div class="col form-group">
-              <label for="type" class="col-form-label font-weight-bold">Type :</label>
-              <select class="custom-select" id="type">
-                  <option>Returnable</option>
-                  <option>Non-Returnable</option>
-              </select>
-          </div>
-          <div class="col form-group">
-              <label for="status" class="col-form-label font-weight-bold">Status :</label>
-              <select class="custom-select" id="isreturnable">
-                  <option>Pending</option>
-                  <option>Approved</option>
-                  <option>Reject</option>
-              </select>
-          </div>
-        </div>
-        <div class="row">
-           <div class="col form-group">
-              <label for="gptodate" class="col-form-label font-weight-bold">Gate Pass To Date :</label>
-              <input type="text" Id="gptodate" class="form-control" placeholder="Enter Gate Pass To Date">
-            </div>
-            <div class="col form-group">
-                <label for="gpfromdate" class="col-form-label font-weight-bold">Gate Pass From Date :</label>
-                <input type="text" Id="gpfromdate" class="form-control" placeholder="Enter Gate Pass To Date">
-            </div>
-            <div class="col form-group">
-                <label for="assettagid" class="col-form-label font-weight-bold">Asset Tag ID :</label>
-                <input type="text" Id="assettagid" class="form-control" placeholder="Enter Asset Tag ID">
-            </div>
-        </div>
-     </div>
-     <div class="card-footer">
-        <div class="text-right">
-            <button type="button" class="btn btn-primary mr-1 m-1  btn-sm font-weight-bold"><i class="fa fa-save fa-fw"></i>&nbsp;Search</button>
-            <button type="button" class="btn btn-primary  btn-sm m-1 font-weight-bold"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
-        </div>
-     </div>
-  </div>
-  </form>
-  </div>
-  </div>
-
-  <div class="row mt-3">
-      <div class="col">
+        <div class="card-body text-primary">
+            <div class="row">
+                <div class="col" style=" overflow: hidden;">
+                    <ag-grid-angular style='width: 100%; height: 370px;' class="ag-theme-balham" [enableSorting]="true"
+                        [enableFilter]="true" [rowData]="rowData | async" [pagination]="true" [paginationPageSize]='paginationPageSize'
+                        [paginationNumberFormatter]='paginationNumberFormatter' [columnDefs]="columnDefs" (rowClicked)="onRowClicked($event)"
+                        id="gridApi" (gridReady)="onGridReady($event)">
+                    </ag-grid-angular>
+                </div>
+                <!-- <div class="col">
           <table class="table table-bordered table-md text-primary">
               <thead>
                 <th >Gate Pass No</th>
@@ -85,6 +103,8 @@
               </tr>
             </tbody>
           </table>
-      </div>
+      </div> -->
+            </div>
+        </div>
     </div>
-  </div>
+</div>

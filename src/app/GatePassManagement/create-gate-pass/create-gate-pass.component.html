@@ -1,6 +1,6 @@
 <div class="container">
-    <form>
-<div class="card border border-primary">
+    <form  name="gatePassForm" #gatePassForm="ngForm" (ngSubmit)="SaveAssetGatePass(assetGatePassModel)">
+<div class="card border border-primary" *ngIf="assetGatePassModel">
   <div class="card-header text-white bg-secondary">
        <i class="fa fa-database fa-fw"></i>&nbsp;Create Asset Gate Pass
   </div>
@@ -8,41 +8,79 @@
   <div class="card-body text-primary">
 
       <div class="row">
-        <div class="col form-group">
-            <label for="gatepassdate" class="col-form-label font-weight-bold">Gate Pass Date :</label>
-           <input type="text" Id="gatepassdate" class="form-control" placeholder="Enter Gate Pass Date">
-        </div>
+        <div class="col form-group" [class.was-validated]="gatepassdate.errors?.required  && gatepassdate.touched">
+            <label for="gatepassdate" class="col-form-label font-weight-bold">Gate Pass Date : </label>          
+            <input id="gatepassdate"  name="gatepassdate" type="text" required
+              [(ngModel)]="assetGatePassModel.gatePassDate" #gatepassdate="ngModel" 
+              bsDatepicker [bsConfig]="datePickerConfig" placeholder="Gate Pass Date" class="form-control" />
+              <span class="invalid-feedback" *ngIf="gatepassdate.errors?.required && gatepassdate.touched">
+              Gate Pass Date is required.
+            </span>
+            </div>
         <div class="col form-group">
             <label for="gatepassno" class="col-form-label font-weight-bold">Gate Pass No :</label>
-           <input type="text" Id="gatepassno" readonly class="form-control">
+           <input type="text" name="gatepassno" Id="gatepassno"  #gatepassno="ngModel"
+            [(ngModel)]="assetGatePassModel.gatePassNo"   readonly class="form-control">
         </div>
         <div class="col form-group">
-            <label for="isreturnable" class="col-form-label font-weight-bold">Is Returnable :</label>
-            <select class="custom-select" id="isreturnable">
-                  <option>Returnable</option>
-                  <option>Non-Returnable</option>
-                </select>
+            <label for="isreturnable" class="col-form-label font-weight-bold">Gate Pass Status : </label>
+            <select class="form-control" appSelectRequiredValidator  [appSelectValidator]="undefined" id="gatepass_status"
+            name="gatepass_status" #gatepass_status="ngModel" [ngClass]="gatepass_status.errors?.defaultSelected  && gatepass_status.touched ? 'select-validated' : ''"
+            [(ngModel)]="assetGatePassModel.gatePassTypeId">
+            <option [value]="undefined" selected>Select Gate Pass Type.</option>          
+            <option *ngFor="let gatePassType of gatePassTypeList" [value]="gatePassType.id">
+              {{gatePassType.typeName}}
+            </option>
+          </select>
+          <span [ngClass]="(gatepass_status.errors?.defaultSelected  && gatepass_status.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
+          *ngIf="gatepass_status.errors?.defaultSelected  && gatepass_status.touched">
+         Gate Pass Status is required.
+        </span>
         </div>
       <div class="col form-group">
           <label for="preparedBy" class="col-form-label font-weight-bold">Prepared By :</label>
-          <input type="text" Id="preparedBy" class="form-control" readonly>
+          <input type="text" name="preparedBy" Id="preparedBy"  [value]="assetGatePassModel.gatePassNo"
+                 readonly class="form-control">          
       </div>
       </div>
       <div class="row">
               <label for="sendtoname" class="col-form-label col font-weight-bold">Send Address Detail :</label>
       </div>
       <div class="row">
-         <div class="col form-group">
-            <input type="text" Id="sendtoname" class="form-control" placeholder="Enter Name">
+         <div class="col form-group" [class.was-validated]="sendtoname.errors?.required  && sendtoname.touched">
+            <input type="text" Id="sendtoname" name="sendtoname" required maxlength="50"
+            [(ngModel)]="assetGatePassModel.assetGatePassSenderDetail[0].name" #sendtoname ="ngModel"
+            class="form-control" placeholder="Enter Name">
+            <span class="invalid-feedback" *ngIf="sendtoname.errors?.required && sendtoname.touched">
+              Name is required.
+            </span>
           </div>
-          <div class="col form-group">
-              <input type="text" Id="sendtocompany" class="form-control" placeholder="Enter Company Name">
+          <div class="col form-group" [class.was-validated]="sendtocompany.errors?.required  && sendtocompany.touched">
+              <input type="text" Id="sendtocompany" name="sendtocompany" required maxlength="80"
+              [(ngModel)]="assetGatePassModel.assetGatePassSenderDetail[0].companyName"
+              #sendtocompany ="ngModel"
+              class="form-control" placeholder="Enter Company Name">
+              <span class="invalid-feedback" *ngIf="sendtocompany.errors?.required && sendtocompany.touched">
+               Company Name is required.
+              </span>
           </div>
-          <div class="col form-group">
-              <input type="text" Id="sendtoaddress" class="form-control" placeholder="Enter Address">
+          <div class="col form-group" [class.was-validated]="sendtoaddress.errors?.required  && sendtoaddress.touched">
+              <input type="text" Id="sendtoaddress" name="sendtoaddress" required maxlength="100"
+              [(ngModel)]="assetGatePassModel.assetGatePassSenderDetail[0].address"
+              #sendtoaddress ="ngModel"
+               class="form-control" placeholder="Enter Address">
+               <span class="invalid-feedback" *ngIf="sendtoaddress.errors?.required && sendtoaddress.touched">
+                Address is required.
+               </span>
           </div>
-          <div class="col form-group">
-              <input type="text" Id="sendtoPhone" class="form-control" placeholder="Enter Phone Number">
+          <div class="col form-group" [class.was-validated]="sendtoPhone.errors?.required  && sendtoPhone.touched" >
+              <input type="text" Id="sendtoPhone" name="sendtoPhone" required maxlength="100"
+              [(ngModel)]="assetGatePassModel.assetGatePassSenderDetail[0].phone"
+              #sendtoPhone ="ngModel"
+              class="form-control" placeholder="Enter Phone Number">
+              <span class="invalid-feedback" *ngIf="sendtoPhone.errors?.required && sendtoPhone.touched">
+                Phone Number is required.
+               </span>
           </div>
       </div>
 
@@ -50,66 +88,137 @@
 
         <div class="col form-group">
             <label for="remarks" class="col-form-label font-weight-bold">Remarks</label>
-            <textarea class="form-control" rows="2" id="remarks"></textarea>
+            <textarea id="remarks" name="remarks"
+            [(ngModel)]="assetGatePassModel.remarks"
+            #remarks ="ngModel"
+             class="form-control" rows="2" ></textarea>
         </div>
       </div>
 
       <div class="row">
-              <label for="sendtoname" class="col-form-label col form-group font-weight-bold">Asset Detail :</label>
+              <label for="asset_TagId" 
+               class="col-form-label col form-group font-weight-bold">Asset Detail : </label>
       </div>
       <div class="card border border-primary">
           <div class="card-body text-primary">
+              <div class=row *ngIf="errorMessage">
+                    <label for="sendtoname" style="color: red" class="col-form-label col font-weight-bold">{{errorMessage}}</label>
+              </div>
       <div class="row">
           <div class="col form-group">
-              <input type="text" Id="assetTagId" class="form-control" placeholder="Enter Asset Tag Id">
+                <select class="form-control" id="assetTagId" [disabled]="isAssetEdit"
+                name="assetTagId" #assetTagId="ngModel"  required
+                [(ngModel)]="selectedAsset" (ngModelChange) ="SetAssetDetail(selectedAsset)" 
+                [ngClass]="assetTagId.errors?.required && assetTagId.touched  ? 'select-validated' : ''">
+                <option [value]="defaultAssetId" selected>Select Asset Tag.</option>               
+                <option *ngFor="let asset of assetModelList" [value]="asset.id">
+                  {{asset.assetTagId}}
+                </option>
+              </select>
+              <span [ngClass]="(assetTagId.errors?.required  && assetTagId.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
+              *ngIf="assetTagId.errors?.required  && assetTagId.touched">
+              Asset Tag Id is required.
+            </span>
+             
           </div>
           <div class="col form-group">
-              <input type="text" Id="assetname" class="form-control" readonly placeholder="Asset Name">
+              <input type="text" Id="assetname" 
+              name="assetname"
+              [(ngModel)]="assetGatePassDetailModel.asset.assetName"
+              #assetname ="ngModel"
+              class="form-control" readonly placeholder="Asset Name">
           </div>
           <div class="col form-group">
-              <input type="text" Id="modelnumber" class="form-control" readonly placeholder="Model Number">
+              <input type="text" Id="modelnumber" name="modelnumber"
+              [(ngModel)]="assetGatePassDetailModel.asset.assetDetail[0].modelNumber"
+              #modelnumber ="ngModel"    
+              class="form-control" readonly placeholder="Model Number">
           </div>
           <div class="col form-group">
-              <input type="text" Id="serialnumber" class="form-control" readonly placeholder="Serail Number">
+              <input type="text" Id="serialnumber" name="serialnumber"
+              [(ngModel)]="assetGatePassDetailModel.asset.assetDetail[0].serialNumber"
+              #serialnumber ="ngModel"
+              class="form-control" readonly placeholder="Serail Number">
           </div>
       </div>
-      <div class="row">
-          <div class="col form-group">
+      <div class="row">         
+          <div class="col form-group"> 
               <label for="sendqty" class="col-form-label font-weight-bold">Send Quantity :</label>
-              <input type="text" Id="sendqty" class="form-control" placeholder="Enter Send Quantity">
+              <input type="text" Id="sendqty" name="sendqty"
+              [(ngModel)]="assetGatePassDetailModel.sendQty" (blur)="updateQuantityModel()" [readOnly] ="!!assetGatePassDetailModel.receivedQty"
+              #sendqty ="ngModel"              
+               class="form-control" placeholder="Enter Send Quantity">
+               <span  [ngClass]="(!isValidQty && (sendqty.touched || receivedqty.touched)) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
+               *ngIf="(!isValidQty && (sendqty.touched || receivedqty.touched))">
+                  Send or Received Quantity is required.
+                 </span>
           </div>
+          <div class="col form-group">
+                <label for="receivedqty" class="col-form-label font-weight-bold">Received Quantity :</label>
+                <input type="text" Id="receivedqty" name="receivedqty"  (blur)="updateQuantityModel()"
+                [(ngModel)]="assetGatePassDetailModel.receivedQty" [readOnly] ="!!assetGatePassDetailModel.sendQty"
+                #receivedqty ="ngModel" 
+                class="form-control" placeholder="Enter Received Quantity">
+            </div>
+           
+         
           <div class="col form-group">
               <label for="sendqtyunits" class="col-form-label font-weight-bold">Units :</label>
-              <select class="custom-select" id="sendqtyunits">
-                    <option>No.</option>
-                    <option>KG</option>
-                  </select>
+              <select class="form-control" id="sendqtyunits" name="sendqtyunits" 
+              #sendqtyunits="ngModel" [ngClass]="sendqtyunits.errors?.required  && sendqtyunits.touched ? 'select-validated' : ''"
+              [(ngModel)]="assetGatePassDetailModel.sendQtyUnitId" required>
+              <option [value]="undefined" selected>Select Unit.</option>             
+              <option *ngFor="let qtyUnit of quantityUnitList" [value]="qtyUnit.id">
+                {{qtyUnit.unit}}
+              </option>
+            </select>
+            <span [ngClass]="(sendqtyunits.errors?.required  && sendqtyunits.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
+            *ngIf="sendqtyunits.errors?.required  && assetTagId.touched">
+            Unit is required.
+          </span>
           </div>
           <div class="col form-group">
-              <label for="receivedqty" class="col-form-label font-weight-bold">Received Quantity :</label>
-              <input type="text" Id="receivedqty" class="form-control" placeholder="Enter Received Quantity">
-          </div>
-          <div class="col form-group">
+                <label for="asset_status" class="col-form-label col form-group font-weight-bold">Asset Status :</label>
+                <select class="form-control"  id="asset_status"
+                name="asset_status" #asset_status="ngModel" [ngClass]="asset_status.errors?.required  && asset_status.touched ? 'select-validated' : ''"
+                [(ngModel)]="assetGatePassDetailModel.assetTypeId" required>
+                <option [value]="undefined" selected>Select Asset Type.</option>                
+                <option *ngFor="let assetType of gatePassTypeList" [value]="assetType.id">
+                  {{assetType.typeName}}
+                </option>
+              </select>
+              <span [ngClass]="(asset_status.errors?.required  && asset_status.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
+            *ngIf="asset_status.errors?.required  && assetTagId.touched">
+            Asset Status is required.
+          </span>
+            </div>
+          
+          <!-- <div class="col form-group">
               <label for="receivedqtyunits" class="col-form-label font-weight-bold">Units :</label>
-              <select class="custom-select" id="receivedqtyunits">
-                  <option>No.</option>
-                  <option>KG</option>
-                </select>
-          </div>
+              <select class="form-control" appSelectRequiredValidator appSelectValidator="undefined"
+              id="receivedqtyunits"
+             name="receivedqtyunits" #receivedqtyunits="ngModel" [ngClass]="receivedqtyunits.errors?.defaultSelected  && assetCategory.touched ? 'select-validated' : ''"
+             [(ngModel)]="receivedQtyUnit">
+             <option [value]="assetGatePass_DetailModel.receivedQtyUnit" selected>Select Unit.</option>
+            
+             <option *ngFor="let qtyUnit of quantityUnitList" [ngValue]="qtyUnit">
+               {{qtyUnit.unit}}
+             </option>
+           </select>
+          </div> -->
       </div>
-      <div class="row">
-          <label for="isreturnable" class="col-form-label col form-group font-weight-bold">Is Returnable :</label>
-      </div>
-      <div class="row">
-          <div class="col form-group">
-              <select class="custom-select" id="isreturnable">
-                    <option>Returnable</option>
-                    <option>Non-Returnable</option>
-                  </select>
-          </div>
-          <div class="col form-group">
-              <button type="button" class="btn btn-primary  mr-1 btn-sm"><i class="fa fa-plus-circle fa-fw"></i>&nbsp;Add</button>
-              <button type="button" class="btn btn-primary  mr-1 btn-sm"><i class="fa fa-refresh fa-fw"></i>&nbsp;Reset</button>
+     
+      <div class="row">         
+          <div class="col form-group text-right">
+              <button type="button" *ngIf="!isAssetEdit" 
+              [disabled]="!(assetTagId.valid && sendqtyunits.valid && asset_status.valid && isValidQty)"            
+               [ngClass]="!(assetTagId.valid && sendqtyunits.valid && asset_status.valid && isValidQty) ? 'btn-disabled' : 'btn-primary'"
+                (click) ="addAsset()" class="btn btn-primary  mr-1 btn-sm"><i class="fa fa-plus-circle fa-fw"></i>&nbsp;Add</button>
+              <button type="button" *ngIf="isAssetEdit"
+              [disabled]="!(sendqtyunits.valid && asset_status.valid && isValidQty)"            
+               [ngClass]="!(sendqtyunits.valid && asset_status.valid && isValidQty) ? 'btn-disabled' : 'btn-primary'"
+              (click) ="updateAsset(assetGatePassDetailModel.asset.id)" class="btn btn-primary  mr-1 btn-sm"><i class="fa fa-plus-circle fa-fw"></i>&nbsp;Update</button>
+              <button type="button" (click) ="resetAsset()" class="btn btn-primary  btn-sm"><i class="fa fa-refresh fa-fw"></i>&nbsp;Reset</button>
           </div>
         </div>
         <div class="row">
@@ -127,17 +236,17 @@
                     <th></th>
                   </thead>
                 <tbody>
-                  <tr>
-                    <td>TAG0001111</td>
-                    <td>Laptop</td>
-                    <td>Dell</td>
-                    <td>M1234554</td>
-                    <td>SR2334234</td>
-                    <td>10</td>
-                    <td></td>
-                    <td>Retrunable</td>
-                    <td class="text-center"> <a href="#"><i class="fa fa-pencil-square-o fa-fw"></i></a> |
-                      <a href="#"><i class="fa fa-trash-o fa-fw"></i></a></td>
+                  <tr *ngFor="let assetDetail of assetGatePassModel.assetGatePassDetail">
+                        <td>{{ assetDetail.asset.assetTagId}}</td>
+                        <td>{{ assetDetail.asset.assetName}}</td>
+                        <td>{{ assetDetail.asset.assetDetail[0].brandName}}</td>
+                        <td>{{ assetDetail.asset.assetDetail[0].modelNumber}}</td>
+                        <td>{{ assetDetail.asset.assetDetail[0].serialNumber}}</td>
+                        <td>{{ (assetDetail.sendQty === undefined) ? "" : assetDetail.sendQty  }}  {{ (assetDetail.sendQty === undefined) ? "" : assetDetail.sendQtyUnit.unit }} </td>
+                        <td>{{ (assetDetail.receivedQty === undefined) ? "" : assetDetail.receivedQty }} {{ (assetDetail.receivedQty === undefined) ? "" : assetDetail.sendQtyUnit.unit}}</td>
+                        <td>{{ assetDetail.assetType.typeName}}</td>
+                        <td class="text-center"> <i class="fa fa-pencil-square-o fa-fw"  (click)="editAsset(assetDetail.asset.id)"></i> |
+                         <i class="fa fa-trash-o fa-fw" (click)="deleteAsset(assetDetail.asset.id)"></i></td>                   
                   </tr>
                 </tbody>
               </table>
@@ -146,9 +255,16 @@
       </div>
       </div>
   </div>
-  <div class="card-footer  text-right">
-    <button type="button" class="btn btn-primary mr-1 m-1 btn-sm "><i class="fa fa-save fa-fw"></i>&nbsp;Create</button>
-    <button type="button" class="btn btn-primary m-1 btn-sm "><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+  <div class="card-footer  text-right">      
+      <span class="font-weight-bold" [class.text-success]="this.responseMessage.isSuccess" [class.text-danger]="!this.responseMessage.isSuccess"
+      *ngIf="isSaveMessageVisible">
+      {{responseMessage.message}}
+    </span>  
+    <button type="submit" [disabled]="!(gatepassdate.valid && gatepass_status.valid && sendtoname.valid
+    && sendtocompany.valid && sendtoaddress.valid && sendtoPhone.valid)"
+     [ngClass]="!(gatepassdate.valid && gatepass_status.valid && sendtoname.valid
+     && sendtocompany.valid && sendtoaddress.valid && sendtoPhone.valid) ? 'btn-disabled' : 'btn-primary'" class="btn btn-primary mr-1 m-1 btn-sm "><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
+    <button type="button" (click)="resetForm()" class="btn btn-primary m-1 btn-sm "><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
   </div>
 
 </div>

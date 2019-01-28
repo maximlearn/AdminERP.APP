@@ -9,8 +9,9 @@ import { AuthGuardService } from './guards/auth-guard.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './shared/jwt.interceptor';
 
+
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent ],
   imports: [
     BrowserModule,
     AppRoutingModule,

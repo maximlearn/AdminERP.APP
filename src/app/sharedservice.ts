@@ -15,6 +15,7 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAssetClient {
     getAllAsset(): Observable<AssetModel[] | null>;
+    getAllAssetTag(): Observable<AssetModel[] | null>;
     getAllAssetCategory(): Observable<AssetCategoryModel[] | null>;
     getAllVendor(): Observable<VendorModel[] | null>;
     saveAsset(assetData?: string | null | undefined): Observable<ResponseModel | null>;
@@ -61,6 +62,58 @@ export class AssetClient implements IAssetClient {
     }
 
     protected processGetAllAsset(response: HttpResponseBase): Observable<AssetModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(AssetModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AssetModel[] | null>(<any>null);
+    }
+
+    getAllAssetTag(): Observable<AssetModel[] | null> {
+        let url_ = this.baseUrl + "/api/Asset/GetAllAssetTag";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllAssetTag(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllAssetTag(<any>response_);
+                } catch (e) {
+                    return <Observable<AssetModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AssetModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllAssetTag(response: HttpResponseBase): Observable<AssetModel[] | null> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -290,6 +343,341 @@ export class AssetClient implements IAssetClient {
             }));
         }
         return _observableOf<AssetModel | null>(<any>null);
+    }
+}
+
+export interface IAssetGatePassClient {
+    getAllAssetGatePassList(): Observable<AssetGatePassModel[] | null>;
+    getAllGatePassType(): Observable<GatePassTypeModel[] | null>;
+    getAllUnit(): Observable<QuantityUnitModel[] | null>;
+    getGatePassDetailById(gatePassId?: number | undefined): Observable<AssetGatePassModel | null>;
+    saveAssetGatePass(assetGatePassModel: AssetGatePassModel): Observable<ResponseModel | null>;
+    deleteAssetGatePass(gatePassId?: number | undefined): Observable<ResponseModel | null>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class AssetGatePassClient implements IAssetGatePassClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    getAllAssetGatePassList(): Observable<AssetGatePassModel[] | null> {
+        let url_ = this.baseUrl + "/api/GatePass/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllAssetGatePassList(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllAssetGatePassList(<any>response_);
+                } catch (e) {
+                    return <Observable<AssetGatePassModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AssetGatePassModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllAssetGatePassList(response: HttpResponseBase): Observable<AssetGatePassModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(AssetGatePassModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AssetGatePassModel[] | null>(<any>null);
+    }
+
+    getAllGatePassType(): Observable<GatePassTypeModel[] | null> {
+        let url_ = this.baseUrl + "/api/GatePass/GetAllGatePassType";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllGatePassType(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllGatePassType(<any>response_);
+                } catch (e) {
+                    return <Observable<GatePassTypeModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GatePassTypeModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllGatePassType(response: HttpResponseBase): Observable<GatePassTypeModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GatePassTypeModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GatePassTypeModel[] | null>(<any>null);
+    }
+
+    getAllUnit(): Observable<QuantityUnitModel[] | null> {
+        let url_ = this.baseUrl + "/api/GatePass/GetAllUnit";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllUnit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllUnit(<any>response_);
+                } catch (e) {
+                    return <Observable<QuantityUnitModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<QuantityUnitModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllUnit(response: HttpResponseBase): Observable<QuantityUnitModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(QuantityUnitModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<QuantityUnitModel[] | null>(<any>null);
+    }
+
+    getGatePassDetailById(gatePassId?: number | undefined): Observable<AssetGatePassModel | null> {
+        let url_ = this.baseUrl + "/api/GatePass/GetGatePassById?";
+        if (gatePassId === null)
+            throw new Error("The parameter 'gatePassId' cannot be null.");
+        else if (gatePassId !== undefined)
+            url_ += "gatePassId=" + encodeURIComponent("" + gatePassId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetGatePassDetailById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetGatePassDetailById(<any>response_);
+                } catch (e) {
+                    return <Observable<AssetGatePassModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AssetGatePassModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetGatePassDetailById(response: HttpResponseBase): Observable<AssetGatePassModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? AssetGatePassModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AssetGatePassModel | null>(<any>null);
+    }
+
+    saveAssetGatePass(assetGatePassModel: AssetGatePassModel): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/GatePass/SaveAssetGatePass";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(assetGatePassModel);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSaveAssetGatePass(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSaveAssetGatePass(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSaveAssetGatePass(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+
+    deleteAssetGatePass(gatePassId?: number | undefined): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/GatePass/DeleteAssetGatePass?";
+        if (gatePassId === null)
+            throw new Error("The parameter 'gatePassId' cannot be null.");
+        else if (gatePassId !== undefined)
+            url_ += "gatePassId=" + encodeURIComponent("" + gatePassId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteAssetGatePass(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteAssetGatePass(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteAssetGatePass(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
     }
 }
 
@@ -744,84 +1132,28 @@ export interface IResponseModel {
     isExist: boolean;
 }
 
-export class UserRoleModel implements IUserRoleModel {
-    userId!: number;
-    roleId!: number;
-    menuList?: MenuModel[] | undefined;
-    functionList?: FunctionModel[] | undefined;
-
-    constructor(data?: IUserRoleModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.userId = data["userId"];
-            this.roleId = data["roleId"];
-            if (data["menuList"] && data["menuList"].constructor === Array) {
-                this.menuList = [];
-                for (let item of data["menuList"])
-                    this.menuList.push(MenuModel.fromJS(item));
-            }
-            if (data["functionList"] && data["functionList"].constructor === Array) {
-                this.functionList = [];
-                for (let item of data["functionList"])
-                    this.functionList.push(FunctionModel.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): UserRoleModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new UserRoleModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["roleId"] = this.roleId;
-        if (this.menuList && this.menuList.constructor === Array) {
-            data["menuList"] = [];
-            for (let item of this.menuList)
-                data["menuList"].push(item.toJSON());
-        }
-        if (this.functionList && this.functionList.constructor === Array) {
-            data["functionList"] = [];
-            for (let item of this.functionList)
-                data["functionList"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IUserRoleModel {
-    userId: number;
-    roleId: number;
-    menuList?: MenuModel[] | undefined;
-    functionList?: FunctionModel[] | undefined;
-}
-
-export class MenuModel implements IMenuModel {
+export class AssetGatePassModel implements IAssetGatePassModel {
     id!: number;
-    menuTitle?: string | undefined;
-    parentMenuId?: number | undefined;
-    menuLink?: string | undefined;
-    templateUrl?: string | undefined;
-    controller?: string | undefined;
-    controllerAs?: string | undefined;
-    isDisabled!: boolean;
-    isStateRequired!: boolean;
-    displayOrder!: number;
-    tag?: string | undefined;
+    gatePassNo?: string | undefined;
+    gatePassDate!: Date;
+    gatePassTypeId!: number;
+    receivedBy?: number | undefined;
+    remarks?: string | undefined;
+    isActive!: boolean;
+    gatePassStatusId?: number | undefined;
+    createdBy!: number;
+    createdDate!: Date;
+    modifiedBy!: number;
+    modifiedDate!: Date;
+    gatePassStatus?: StatusModel | undefined;
+    gatePassType?: GatePassTypeModel | undefined;
+    createdByNavigation?: UserModel | undefined;
+    receivedByNavigation?: UserModel | undefined;
+    company?: CompanyModel | undefined;
+    assetGatePassDetail?: AssetGatePassDetailModel[] | undefined;
+    assetGatePassSenderDetail?: AssetGatePassSenderDetailModel[] | undefined;
 
-    constructor(data?: IMenuModel) {
+    constructor(data?: IAssetGatePassModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -833,22 +1165,38 @@ export class MenuModel implements IMenuModel {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.menuTitle = data["menuTitle"];
-            this.parentMenuId = data["parentMenuId"];
-            this.menuLink = data["menuLink"];
-            this.templateUrl = data["templateUrl"];
-            this.controller = data["controller"];
-            this.controllerAs = data["controllerAs"];
-            this.isDisabled = data["isDisabled"];
-            this.isStateRequired = data["isStateRequired"];
-            this.displayOrder = data["displayOrder"];
-            this.tag = data["tag"];
+            this.gatePassNo = data["gatePassNo"];
+            this.gatePassDate = data["gatePassDate"] ? new Date(data["gatePassDate"].toString()) : <any>undefined;
+            this.gatePassTypeId = data["gatePassTypeId"];
+            this.receivedBy = data["receivedBy"];
+            this.remarks = data["remarks"];
+            this.isActive = data["isActive"];
+            this.gatePassStatusId = data["gatePassStatusId"];
+            this.createdBy = data["createdBy"];
+            this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
+            this.modifiedBy = data["modifiedBy"];
+            this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
+            this.gatePassStatus = data["gatePassStatus"] ? StatusModel.fromJS(data["gatePassStatus"]) : <any>undefined;
+            this.gatePassType = data["gatePassType"] ? GatePassTypeModel.fromJS(data["gatePassType"]) : <any>undefined;
+            this.createdByNavigation = data["createdByNavigation"] ? UserModel.fromJS(data["createdByNavigation"]) : <any>undefined;
+            this.receivedByNavigation = data["receivedByNavigation"] ? UserModel.fromJS(data["receivedByNavigation"]) : <any>undefined;
+            this.company = data["company"] ? CompanyModel.fromJS(data["company"]) : <any>undefined;
+            if (data["assetGatePassDetail"] && data["assetGatePassDetail"].constructor === Array) {
+                this.assetGatePassDetail = [];
+                for (let item of data["assetGatePassDetail"])
+                    this.assetGatePassDetail.push(AssetGatePassDetailModel.fromJS(item));
+            }
+            if (data["assetGatePassSenderDetail"] && data["assetGatePassSenderDetail"].constructor === Array) {
+                this.assetGatePassSenderDetail = [];
+                for (let item of data["assetGatePassSenderDetail"])
+                    this.assetGatePassSenderDetail.push(AssetGatePassSenderDetailModel.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): MenuModel {
+    static fromJS(data: any): AssetGatePassModel {
         data = typeof data === 'object' ? data : {};
-        let result = new MenuModel();
+        let result = new AssetGatePassModel();
         result.init(data);
         return result;
     }
@@ -856,41 +1204,63 @@ export class MenuModel implements IMenuModel {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["menuTitle"] = this.menuTitle;
-        data["parentMenuId"] = this.parentMenuId;
-        data["menuLink"] = this.menuLink;
-        data["templateUrl"] = this.templateUrl;
-        data["controller"] = this.controller;
-        data["controllerAs"] = this.controllerAs;
-        data["isDisabled"] = this.isDisabled;
-        data["isStateRequired"] = this.isStateRequired;
-        data["displayOrder"] = this.displayOrder;
-        data["tag"] = this.tag;
+        data["gatePassNo"] = this.gatePassNo;
+        data["gatePassDate"] = this.gatePassDate ? this.gatePassDate.toISOString() : <any>undefined;
+        data["gatePassTypeId"] = this.gatePassTypeId;
+        data["receivedBy"] = this.receivedBy;
+        data["remarks"] = this.remarks;
+        data["isActive"] = this.isActive;
+        data["gatePassStatusId"] = this.gatePassStatusId;
+        data["createdBy"] = this.createdBy;
+        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
+        data["modifiedBy"] = this.modifiedBy;
+        data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
+        data["gatePassStatus"] = this.gatePassStatus ? this.gatePassStatus.toJSON() : <any>undefined;
+        data["gatePassType"] = this.gatePassType ? this.gatePassType.toJSON() : <any>undefined;
+        data["createdByNavigation"] = this.createdByNavigation ? this.createdByNavigation.toJSON() : <any>undefined;
+        data["receivedByNavigation"] = this.receivedByNavigation ? this.receivedByNavigation.toJSON() : <any>undefined;
+        data["company"] = this.company ? this.company.toJSON() : <any>undefined;
+        if (this.assetGatePassDetail && this.assetGatePassDetail.constructor === Array) {
+            data["assetGatePassDetail"] = [];
+            for (let item of this.assetGatePassDetail)
+                data["assetGatePassDetail"].push(item.toJSON());
+        }
+        if (this.assetGatePassSenderDetail && this.assetGatePassSenderDetail.constructor === Array) {
+            data["assetGatePassSenderDetail"] = [];
+            for (let item of this.assetGatePassSenderDetail)
+                data["assetGatePassSenderDetail"].push(item.toJSON());
+        }
         return data; 
     }
 }
 
-export interface IMenuModel {
+export interface IAssetGatePassModel {
     id: number;
-    menuTitle?: string | undefined;
-    parentMenuId?: number | undefined;
-    menuLink?: string | undefined;
-    templateUrl?: string | undefined;
-    controller?: string | undefined;
-    controllerAs?: string | undefined;
-    isDisabled: boolean;
-    isStateRequired: boolean;
-    displayOrder: number;
-    tag?: string | undefined;
+    gatePassNo?: string | undefined;
+    gatePassDate: Date;
+    gatePassTypeId: number;
+    receivedBy?: number | undefined;
+    remarks?: string | undefined;
+    isActive: boolean;
+    gatePassStatusId?: number | undefined;
+    createdBy: number;
+    createdDate: Date;
+    modifiedBy: number;
+    modifiedDate: Date;
+    gatePassStatus?: StatusModel | undefined;
+    gatePassType?: GatePassTypeModel | undefined;
+    createdByNavigation?: UserModel | undefined;
+    receivedByNavigation?: UserModel | undefined;
+    company?: CompanyModel | undefined;
+    assetGatePassDetail?: AssetGatePassDetailModel[] | undefined;
+    assetGatePassSenderDetail?: AssetGatePassSenderDetailModel[] | undefined;
 }
 
-export class FunctionModel implements IFunctionModel {
+export class StatusModel implements IStatusModel {
     id!: number;
-    functionCode?: string | undefined;
-    functionName?: string | undefined;
-    functionDescription?: string | undefined;
+    statusName?: string | undefined;
 
-    constructor(data?: IFunctionModel) {
+    constructor(data?: IStatusModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -902,15 +1272,13 @@ export class FunctionModel implements IFunctionModel {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.functionCode = data["functionCode"];
-            this.functionName = data["functionName"];
-            this.functionDescription = data["functionDescription"];
+            this.statusName = data["statusName"];
         }
     }
 
-    static fromJS(data: any): FunctionModel {
+    static fromJS(data: any): StatusModel {
         data = typeof data === 'object' ? data : {};
-        let result = new FunctionModel();
+        let result = new StatusModel();
         result.init(data);
         return result;
     }
@@ -918,18 +1286,54 @@ export class FunctionModel implements IFunctionModel {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["functionCode"] = this.functionCode;
-        data["functionName"] = this.functionName;
-        data["functionDescription"] = this.functionDescription;
+        data["statusName"] = this.statusName;
         return data; 
     }
 }
 
-export interface IFunctionModel {
+export interface IStatusModel {
     id: number;
-    functionCode?: string | undefined;
-    functionName?: string | undefined;
-    functionDescription?: string | undefined;
+    statusName?: string | undefined;
+}
+
+export class GatePassTypeModel implements IGatePassTypeModel {
+    id!: number;
+    typeName?: string | undefined;
+
+    constructor(data?: IGatePassTypeModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.typeName = data["typeName"];
+        }
+    }
+
+    static fromJS(data: any): GatePassTypeModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new GatePassTypeModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["typeName"] = this.typeName;
+        return data; 
+    }
+}
+
+export interface IGatePassTypeModel {
+    id: number;
+    typeName?: string | undefined;
 }
 
 export class UserModel implements IUserModel {
@@ -1146,6 +1550,458 @@ export interface IUserSecurityAnswerModel {
     userId: number;
     securityQuestionId: number;
     answer?: string | undefined;
+}
+
+export class CompanyModel implements ICompanyModel {
+    id!: number;
+    companyName?: string | undefined;
+    address1?: string | undefined;
+    phone?: string | undefined;
+    email?: string | undefined;
+    country?: string | undefined;
+    webSiteUrl?: string | undefined;
+    companyLogoId?: string | undefined;
+    isActive?: boolean | undefined;
+    createdBy!: number;
+    createdDate!: Date;
+    modifiedBy!: number;
+    modifiedDate!: Date;
+
+    constructor(data?: ICompanyModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.companyName = data["companyName"];
+            this.address1 = data["address1"];
+            this.phone = data["phone"];
+            this.email = data["email"];
+            this.country = data["country"];
+            this.webSiteUrl = data["webSiteUrl"];
+            this.companyLogoId = data["companyLogoId"];
+            this.isActive = data["isActive"];
+            this.createdBy = data["createdBy"];
+            this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
+            this.modifiedBy = data["modifiedBy"];
+            this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): CompanyModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new CompanyModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["companyName"] = this.companyName;
+        data["address1"] = this.address1;
+        data["phone"] = this.phone;
+        data["email"] = this.email;
+        data["country"] = this.country;
+        data["webSiteUrl"] = this.webSiteUrl;
+        data["companyLogoId"] = this.companyLogoId;
+        data["isActive"] = this.isActive;
+        data["createdBy"] = this.createdBy;
+        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
+        data["modifiedBy"] = this.modifiedBy;
+        data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ICompanyModel {
+    id: number;
+    companyName?: string | undefined;
+    address1?: string | undefined;
+    phone?: string | undefined;
+    email?: string | undefined;
+    country?: string | undefined;
+    webSiteUrl?: string | undefined;
+    companyLogoId?: string | undefined;
+    isActive?: boolean | undefined;
+    createdBy: number;
+    createdDate: Date;
+    modifiedBy: number;
+    modifiedDate: Date;
+}
+
+export class AssetGatePassDetailModel implements IAssetGatePassDetailModel {
+    id!: number;
+    assetGatePassId?: number | undefined;
+    assetId?: number | undefined;
+    sendQty?: number | undefined;
+    sendQtyUnitId?: number | undefined;
+    receivedQty?: number | undefined;
+    receivedQtyUnitId?: number | undefined;
+    assetTypeId?: number | undefined;
+    asset?: AssetModel | undefined;
+    assetType?: GatePassTypeModel | undefined;
+    receivedQtyUnit?: QuantityUnitModel | undefined;
+    sendQtyUnit?: QuantityUnitModel | undefined;
+
+    constructor(data?: IAssetGatePassDetailModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.assetGatePassId = data["assetGatePassId"];
+            this.assetId = data["assetId"];
+            this.sendQty = data["sendQty"];
+            this.sendQtyUnitId = data["sendQtyUnitId"];
+            this.receivedQty = data["receivedQty"];
+            this.receivedQtyUnitId = data["receivedQtyUnitId"];
+            this.assetTypeId = data["assetTypeId"];
+            this.asset = data["asset"] ? AssetModel.fromJS(data["asset"]) : <any>undefined;
+            this.assetType = data["assetType"] ? GatePassTypeModel.fromJS(data["assetType"]) : <any>undefined;
+            this.receivedQtyUnit = data["receivedQtyUnit"] ? QuantityUnitModel.fromJS(data["receivedQtyUnit"]) : <any>undefined;
+            this.sendQtyUnit = data["sendQtyUnit"] ? QuantityUnitModel.fromJS(data["sendQtyUnit"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): AssetGatePassDetailModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new AssetGatePassDetailModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["assetGatePassId"] = this.assetGatePassId;
+        data["assetId"] = this.assetId;
+        data["sendQty"] = this.sendQty;
+        data["sendQtyUnitId"] = this.sendQtyUnitId;
+        data["receivedQty"] = this.receivedQty;
+        data["receivedQtyUnitId"] = this.receivedQtyUnitId;
+        data["assetTypeId"] = this.assetTypeId;
+        data["asset"] = this.asset ? this.asset.toJSON() : <any>undefined;
+        data["assetType"] = this.assetType ? this.assetType.toJSON() : <any>undefined;
+        data["receivedQtyUnit"] = this.receivedQtyUnit ? this.receivedQtyUnit.toJSON() : <any>undefined;
+        data["sendQtyUnit"] = this.sendQtyUnit ? this.sendQtyUnit.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IAssetGatePassDetailModel {
+    id: number;
+    assetGatePassId?: number | undefined;
+    assetId?: number | undefined;
+    sendQty?: number | undefined;
+    sendQtyUnitId?: number | undefined;
+    receivedQty?: number | undefined;
+    receivedQtyUnitId?: number | undefined;
+    assetTypeId?: number | undefined;
+    asset?: AssetModel | undefined;
+    assetType?: GatePassTypeModel | undefined;
+    receivedQtyUnit?: QuantityUnitModel | undefined;
+    sendQtyUnit?: QuantityUnitModel | undefined;
+}
+
+export class QuantityUnitModel implements IQuantityUnitModel {
+    id!: number;
+    unit?: string | undefined;
+
+    constructor(data?: IQuantityUnitModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.unit = data["unit"];
+        }
+    }
+
+    static fromJS(data: any): QuantityUnitModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new QuantityUnitModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["unit"] = this.unit;
+        return data; 
+    }
+}
+
+export interface IQuantityUnitModel {
+    id: number;
+    unit?: string | undefined;
+}
+
+export class AssetGatePassSenderDetailModel implements IAssetGatePassSenderDetailModel {
+    id!: number;
+    assetGatePassId!: number;
+    name?: string | undefined;
+    companyName?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    email?: string | undefined;
+
+    constructor(data?: IAssetGatePassSenderDetailModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.assetGatePassId = data["assetGatePassId"];
+            this.name = data["name"];
+            this.companyName = data["companyName"];
+            this.address = data["address"];
+            this.phone = data["phone"];
+            this.email = data["email"];
+        }
+    }
+
+    static fromJS(data: any): AssetGatePassSenderDetailModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new AssetGatePassSenderDetailModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["assetGatePassId"] = this.assetGatePassId;
+        data["name"] = this.name;
+        data["companyName"] = this.companyName;
+        data["address"] = this.address;
+        data["phone"] = this.phone;
+        data["email"] = this.email;
+        return data; 
+    }
+}
+
+export interface IAssetGatePassSenderDetailModel {
+    id: number;
+    assetGatePassId: number;
+    name?: string | undefined;
+    companyName?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    email?: string | undefined;
+}
+
+export class UserRoleModel implements IUserRoleModel {
+    userId!: number;
+    roleId!: number;
+    menuList?: MenuModel[] | undefined;
+    functionList?: FunctionModel[] | undefined;
+
+    constructor(data?: IUserRoleModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+            this.roleId = data["roleId"];
+            if (data["menuList"] && data["menuList"].constructor === Array) {
+                this.menuList = [];
+                for (let item of data["menuList"])
+                    this.menuList.push(MenuModel.fromJS(item));
+            }
+            if (data["functionList"] && data["functionList"].constructor === Array) {
+                this.functionList = [];
+                for (let item of data["functionList"])
+                    this.functionList.push(FunctionModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UserRoleModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserRoleModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["roleId"] = this.roleId;
+        if (this.menuList && this.menuList.constructor === Array) {
+            data["menuList"] = [];
+            for (let item of this.menuList)
+                data["menuList"].push(item.toJSON());
+        }
+        if (this.functionList && this.functionList.constructor === Array) {
+            data["functionList"] = [];
+            for (let item of this.functionList)
+                data["functionList"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IUserRoleModel {
+    userId: number;
+    roleId: number;
+    menuList?: MenuModel[] | undefined;
+    functionList?: FunctionModel[] | undefined;
+}
+
+export class MenuModel implements IMenuModel {
+    id!: number;
+    menuTitle?: string | undefined;
+    parentMenuId?: number | undefined;
+    menuLink?: string | undefined;
+    templateUrl?: string | undefined;
+    controller?: string | undefined;
+    controllerAs?: string | undefined;
+    isDisabled!: boolean;
+    isStateRequired!: boolean;
+    displayOrder!: number;
+    tag?: string | undefined;
+
+    constructor(data?: IMenuModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.menuTitle = data["menuTitle"];
+            this.parentMenuId = data["parentMenuId"];
+            this.menuLink = data["menuLink"];
+            this.templateUrl = data["templateUrl"];
+            this.controller = data["controller"];
+            this.controllerAs = data["controllerAs"];
+            this.isDisabled = data["isDisabled"];
+            this.isStateRequired = data["isStateRequired"];
+            this.displayOrder = data["displayOrder"];
+            this.tag = data["tag"];
+        }
+    }
+
+    static fromJS(data: any): MenuModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new MenuModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["menuTitle"] = this.menuTitle;
+        data["parentMenuId"] = this.parentMenuId;
+        data["menuLink"] = this.menuLink;
+        data["templateUrl"] = this.templateUrl;
+        data["controller"] = this.controller;
+        data["controllerAs"] = this.controllerAs;
+        data["isDisabled"] = this.isDisabled;
+        data["isStateRequired"] = this.isStateRequired;
+        data["displayOrder"] = this.displayOrder;
+        data["tag"] = this.tag;
+        return data; 
+    }
+}
+
+export interface IMenuModel {
+    id: number;
+    menuTitle?: string | undefined;
+    parentMenuId?: number | undefined;
+    menuLink?: string | undefined;
+    templateUrl?: string | undefined;
+    controller?: string | undefined;
+    controllerAs?: string | undefined;
+    isDisabled: boolean;
+    isStateRequired: boolean;
+    displayOrder: number;
+    tag?: string | undefined;
+}
+
+export class FunctionModel implements IFunctionModel {
+    id!: number;
+    functionCode?: string | undefined;
+    functionName?: string | undefined;
+    functionDescription?: string | undefined;
+
+    constructor(data?: IFunctionModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.functionCode = data["functionCode"];
+            this.functionName = data["functionName"];
+            this.functionDescription = data["functionDescription"];
+        }
+    }
+
+    static fromJS(data: any): FunctionModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new FunctionModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["functionCode"] = this.functionCode;
+        data["functionName"] = this.functionName;
+        data["functionDescription"] = this.functionDescription;
+        return data; 
+    }
+}
+
+export interface IFunctionModel {
+    id: number;
+    functionCode?: string | undefined;
+    functionName?: string | undefined;
+    functionDescription?: string | undefined;
 }
 
 export class LoginDetails implements ILoginDetails {

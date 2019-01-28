@@ -10,9 +10,7 @@ import { DatePipe } from '@angular/common';
   templateUrl: './asset-list.component.html',
   styleUrls: ['./asset-list.component.scss']
 })
-export class AssetListComponent implements OnInit {
-  modalRef: BsModalRef;
-  @ViewChild('template') inner;
+export class AssetListComponent implements OnInit { 
   private paginationPageSize;
   private paginationNumberFormatter;  
   private gridApi;
@@ -32,6 +30,7 @@ export class AssetListComponent implements OnInit {
 
     rowData: any;
   constructor(private modalService: BsModalService, private assetClient : AssetClient)  {}
+  modalRef: BsModalRef;
   ngOnInit() {
     this.paginationPageSize = 10;
     this.paginationNumberFormatter = function(params) {

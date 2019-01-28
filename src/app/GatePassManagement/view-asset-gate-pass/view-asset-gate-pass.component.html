@@ -1,0 +1,101 @@
+<div class="container">
+  <div class="modal-header">
+    <h5 class="modal-title pull-left">View Gate Pass</h5>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body text-primary mb-3">
+    <div class="row">
+      <div class="col form-group text-center">
+        <img src="assets/images/john.png" class="imageClass mt-4">
+      </div>
+      <div class="col form-group text-right">
+        <div class="card text-center mt-0">
+          <div class="card-body">
+            <h5 class="card-title mb-1">{{gatePassData.company.companyName}}</h5>
+            <h6 class="card-subtitle mt-1">{{gatePassData.company.address1}}</h6>
+            <p class="card-text mb-0 mt-0"> {{gatePassData.company.phone }}</p>
+            <p class="card-text mb-0 mt-0"> {{ gatePassData.company.email}}</p>
+            <a href="#" class="card-link"> {{gatePassData.company.webSiteUrl}}</a>
+
+          </div>
+        </div>
+      </div>
+      <div class="col form-group text-right">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">Date : {{gatePassData.gatePassDate | date: 'dd/MM/yyyy'}} </h5>
+            <h6 class="card-subtitle mb-1 mt-1">Gate Pass No : {{gatePassData.gatePassNo}}</h6>
+            <p class="card-text mb-0 mt-0">Status : {{gatePassData.gatePassStatus.statusName}}</p>
+            <p class="card-text mb-0 mt-0">Type : {{ gatePassData.gatePassType.typeName}}</p>
+            <p class="card-text mb-0 mt-0">Prepared By : {{gatePassData.createdByNavigation.firstName + ',' +
+              gatePassData.createdByNavigation.firstName}}</p>
+            <p class="card-text mb-0 mt-0">Received By : {{gatePassData.receivedByNavigation.firstName + ' ' +
+              gatePassData.receivedByNavigation.lastName}}</p>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="col form-group">
+        <div class="card text-left mt-0">
+          <div class="card-body">
+            <h6 class="card-title">Send Address Detail : </h6>
+            <p class="card-text"> {{gatePassData.assetGatePassSenderDetail[0].name +
+              ',' + gatePassData.assetGatePassSenderDetail[0].companyName +
+              ',' + gatePassData.assetGatePassSenderDetail[0].address +
+              ',' + gatePassData.assetGatePassSenderDetail[0].phone +
+              ',' + gatePassData.assetGatePassSenderDetail[0]?.email}}</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-2">
+      <div class="col form-group">
+        <div class="card text-right mt-0">
+          <div class="card-body  ">
+            <button type="button" class="btn btn-primary btn-sm mr-2"><i class="fa fa-save fa-fw"></i>&nbsp;Print</button>
+            <button type="button" class="btn btn-primary btn-sm mr-2"><i class="fa fa-close fa-fw"></i>&nbsp;Approve</button>
+            <button type="buton" class="btn btn-primary btn-sm mr-2"><i class="fa fa-save fa-fw"></i>&nbsp;Reject</button>
+            <button type="button" class="btn btn-primary btn-sm"><i class="fa fa-close fa-fw"></i>&nbsp;PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col form-group">
+        <table class="table table-bordered table-md text-primary">
+          <thead>
+            <th>Asset Tag Id</th>
+            <th>Asset Name</th>
+            <th>Brand Name</th>
+            <th>Model No.</th>
+            <th>Serail No.</th>
+            <th>Send Qty</th>
+            <th>Received Qty</th>
+            <th>Type</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let assetDetail of gatePassData.assetGatePassDetail">
+              <td>{{ assetDetail.asset.assetTagId}}</td>
+              <td>{{ assetDetail.asset.assetName}}</td>
+              <td>{{ assetDetail.asset.assetDetail[0].brandName}}</td>
+              <td>{{ assetDetail.asset.assetDetail[0].modelNumber}}</td>
+              <td>{{ assetDetail.asset.assetDetail[0].serialNumber}}</td>
+              <td>{{ (assetDetail.sendQty === undefined) ? "" : assetDetail.sendQty }} {{ (assetDetail.sendQty ===
+                undefined) ? "" : assetDetail.sendQtyUnit.unit }} </td>
+              <td>{{ (assetDetail.receivedQty === undefined) ? "" : assetDetail.receivedQty }} {{
+                (assetDetail.receivedQty === undefined) ? "" : assetDetail.sendQtyUnit.unit}}</td>
+              <td>{{ assetDetail.assetType.typeName}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
