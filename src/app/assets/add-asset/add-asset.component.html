@@ -136,10 +136,10 @@
               <span [ngClass]="!validDocument ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
               *ngIf="!validDocument">
                 file type should be .pdf, .doc, .docx.
-               </span>
+              </span>
             </div>
-            
-            
+
+
           </div>
           <div class="col form-group">
             <label for="assetImage" class="col-form-label font-weight-bold">Asset Image :</label>
@@ -150,7 +150,7 @@
               <span [ngClass]="!validImage ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
               *ngIf="!validImage">
                 file type should be .jpeg, .png, .jpg, .gif.
-               </span>
+              </span>
             </div>
           </div>
           <!-- <div class="col form-group">
@@ -166,6 +166,7 @@
         <button type="submit" [disabled]="!assetForm.form.valid" [ngClass]="!assetForm.form.valid ? 'btn-disabled' : 'btn-primary'"
           class="btn  mr-1 m-1  btn-sm"><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
         <button type="button" class="btn btn-primary mr-2 m-1 btn-sm" (click)="resetForm()"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary mr-2 m-1 btn-sm" (click)="bsModalRef.hide()"><i class="fa fa-close fa-fw"></i>&nbsp;Close</button>
       </div>
 
     </div>

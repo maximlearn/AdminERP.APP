@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { AssetModel } from 'src/app/sharedservice';
-
+import { IFile } from '../models/asset.model';
+import { map, catchError } from 'rxjs/operators';
+import {
+  AssetModel, AssetDetailModel, AssetCategoryModel, VendorModel, AssetClient, ResponseModel,
+} from 'src/app/sharedservice';
+import { AssetService } from '../assets.service';
 
 @Component({
   selector: 'app-asset',
