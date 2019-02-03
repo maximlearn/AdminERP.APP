@@ -1,3 +1,18 @@
+.imageClass{
+  width:300;
+  height:200px;
+}
+
+.col {
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+.downloadDocument{
+  font-size:0.8rem;
+  padding: 0.01rem 0.01rem 0.1rem 0.5rem;
+}
+
 .form-group {
     margin-bottom: 0.1rem;
   }
@@ -5,7 +20,7 @@
     border-color: #97999b;
     height: calc(1.5rem + 2px);
     font-size:0.8rem;
-    padding: 0.01rem 0.01rem 0.1rem 0.5rem;  
+    padding: 0.01rem 0.01rem 0.1rem 0.5rem;
   }
   .text-primary {
     color: #7a7b7e!important;
@@ -30,10 +45,8 @@
     padding: 0.5rem;
   }
   .card-header {
-    padding: .20rem 0.35rem;
+    padding: .35rem 0.35rem;
     margin-bottom: 0px;
-    font-size:1rem;
-    font-weight: 400;
   }
   .card-footer {
     padding: 0.1rem 0.1rem;
@@ -41,9 +54,9 @@
   }
   
   .font-weight-bold {
-    font-size:0.8rem;
-    font-weight: 400;
-    
+    font-weight: normal;
+    font-size: 0.8rem;
+  
   }
   
   .custom-select{
@@ -73,17 +86,9 @@
     font-size: 1rem
   }
   
-  .btn-sm-update{
-    padding: 0.0rem 0.10rem;
-    width: 6rem;
-    height: 1.6rem;
-  
-  }
-  
   .btn-sm{
-    padding: 0.0rem 0.10rem;
-    width: 5rem;
-    height: 1.6rem;
+    padding: 0.20rem 0.75rem;
+    width:6rem;
   
   }
   .modal-width {
@@ -92,12 +97,12 @@
   
   
   .select-validated{
-    border: 1px solid #dc3545;  
+    border: 1px solid #dc3545;
   }
   
   .invalid-feedback-hide {
     display: none;
-    
+  
   }
   .invalid-feedback-show {
     display: block;
@@ -129,30 +134,3 @@
     font-weight: bold
   }
   
-  .table td {  
-    border-bottom: 1px solid #dee2e6;
-    font-weight: 400;
-    font-size: .8rem;
-    padding: .55rem;
-  }
-  
-  .table th {  
-    border-bottom: 1px solid #dee2e6;
-    font-weight: 600;
-    font-size: .9rem;
-    padding: .25rem;
-  }
-  
-
-
-// @media (min-width: 992px) {
-//   .modal-dialog {
-//     max-width: 980px !important;
-//     width:   980px !important;
-//   }
-
-  .modal-lg {
-    max-width: 1000px !important;
-    width:   1000px !important;
-} 
-

@@ -8,8 +8,8 @@ import { HeaderComponent } from './components/header/header.component';
 import { DashboardModule } from '../dashboard/dashboard.module';
 import { menuFilterPipe } from '../shared/menu-filter.pipe';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthClient } from '../sharedservice';
-import { JwtInterceptor } from '../shared/jwt.interceptor';
+
+
 
 @NgModule({
     imports: [

@@ -12,13 +12,17 @@ import { CompareDateValidatorDirective } from '../shared/compare-date-validator.
 
 import { AssetComponent } from './asset/asset.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { SelectRequiredValidatorDirective } from '../shared/select-required-validator.directive';
+
+import { ViewAssetComponent } from './view-asset/view-asset.component';
+import { EditAssetComponent } from './edit-asset/edit-asset.component';
+
+import { SharedModule } from '../shared/shared-module.module';
 
 
 
 @NgModule({
   declarations: [AddAssetComponent, AssetListComponent,
-     CompareDateValidatorDirective, AssetComponent],
+     CompareDateValidatorDirective, ViewAssetComponent, EditAssetComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -26,9 +30,10 @@ import { SelectRequiredValidatorDirective } from '../shared/select-required-vali
     AgGridModule.withComponents([AssetListComponent]),
     BsDatepickerModule.forRoot(),
     ModalModule.forRoot()  ,
-    HttpClientModule
+    HttpClientModule,
+    SharedModule
   ],  
-  entryComponents: [AssetComponent]
+  entryComponents: [ViewAssetComponent,EditAssetComponent]
 
 })
 export class AssetsModule { }

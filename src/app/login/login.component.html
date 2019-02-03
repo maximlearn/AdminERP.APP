@@ -1,10 +1,57 @@
-<div class="container py-5">
+<div class="container">
+        <div class="card card-container">
+            <!-- <img class="profile-img-card" src="//lh3.googleusercontent.com/-6V8xOA6M7BA/AAAAAAAAAAI/AAAAAAAAAAA/rzlHcD0KYwo/photo.jpg?sz=120" alt="" /> -->
+            <img id="profile-img" class="profile-img-card" src="../assets/images/defaultlogo.png" />
+            <p id="profile-name" class="profile-name-card"></p>
+            <form  name="form" #loginForm="ngForm"  (ngSubmit) = "Authenticate(userlogin)">
+                    <div class="card-body">
+                           
+                            <div class="form-group" >                               
+                                <input type="text" class="form-control" placeholder="Enter Employee Id"
+                                name="empId" id="empId" [(ngModel)]="userlogin.UserId"  #empId="ngModel" required autofocus >
+                                <div class="invalid-feedback">Oops, you missed this one.</div>
+                            </div>
+                            <div class="form-group">                               
+                                <input type="password" class="form-control" id="password" placeholder="Enter Password"
+                                 name="password" [(ngModel)]="userlogin.Password" #password="ngModel"
+                                 autocomplete="new-password">
+                                <div class="invalid-feedback">Enter your password too!</div>
+                            </div>
+                            <div id="remember" class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="remember-me"> Remember me
+                                    </label>
+                                </div>
+                            <button id="btnLogin" class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Login</button> 
+                            
+                       
+                    </div>
+                <!-- <span id="reauth-email" class="reauth-email"></span>
+                <input type="text" class="form-control form-control-lg rounded-0" 
+                  placeholder="Enter Employee Id"                name="empId" id="empId" [(ngModel)]="userlogin.UserId"  #empId="ngModel"
+                                   required autofocus>
+                                  <div class="invalid-feedback">Oops, you missed this one.</div>
+                <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                <div id="remember" class="checkbox">
+                    <label>
+                        <input type="checkbox" value="remember-me"> Remember me
+                    </label>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button> -->
+            </form><!-- /form -->
+            <a href="#" class="forgot-password">
+                Forgot the password?
+            </a>
+        </div><!-- /card-container -->
+    </div><!-- /container -->
+
+<!-- <div class="container py-5">
   <div class="row">
       <div class="col-md-12">
           <div class="row">
               <div class="col-md-6 mx-auto">
 
-                  <!-- form card login -->
+                 
                   <form  name="form" #loginForm="ngForm"  (ngSubmit) = "Authenticate(userlogin)">
                   <div class="card rounded-0" >
                       <div class="card-header">
@@ -35,20 +82,20 @@
                               <button type="submit" class="btn btn-success btn-lg float-right" id="btnLogin" >Login</button>
                          
                       </div>
-                      <!--/card-block-->
+                    
                   </div>
                 </form>
-                  <!-- /form card login -->
+                
 
               </div>
 
 
           </div>
-          <!--/row-->
+        
 
       </div>
-      <!--/col-->
+     
   </div>
-  <!--/row-->
+ 
 </div>
-<!--/container-->
+ -->

@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { AssetGatePassClient, AssetGatePassModel,  AssetGatePassDetailModel, AssetGatePassSenderDetailModel, QuantityUnitModel, AssetClient, AssetModel, AssetDetailModel, ResponseModel, GatePassTypeModel } from 'src/app/sharedservice';
 import { BsDatepickerConfig } from 'ngx-bootstrap';
 import { NgForm } from '@angular/forms';
+import { jsonpCallbackContext } from '@angular/common/http/src/module';
+
 
 
 
@@ -18,13 +20,13 @@ export class CreateGatePassComponent implements OnInit {
   quantityUnitList: QuantityUnitModel[];
   errorMessage: string;
   assetModelList: AssetModel[];
-  assetId: number = undefined;//= <AssetModel>{ assetDetail : [{}] }  
-  defaultAssetId : number = undefined;
+  assetId: number = -101;//= <AssetModel>{ assetDetail : [{}] }  
+  //defaultAssetId : number = undefined;
   @ViewChild('gatePassForm') gatePassForm: NgForm;
   responseMessage: ResponseModel;
   isAssetEdit: boolean = false;
   isValidQty: boolean = false;
-  isSaveMessageVisible : boolean = false;
+  
 
   constructor(private gatePassClient: AssetGatePassClient, private assetClient: AssetClient) {
     this.datePickerConfig = Object.assign({},
@@ -43,7 +45,7 @@ export class CreateGatePassComponent implements OnInit {
 
   }
   getDefaultGatePassModel(): AssetGatePassModel {
-    return <AssetGatePassModel>{
+    return <AssetGatePassModel>{ gatePassTypeId : -101,
       assetGatePassDetail: [{
         asset: <AssetModel>{ assetDetail: [{}] }
       }],
@@ -52,10 +54,9 @@ export class CreateGatePassComponent implements OnInit {
   }
 
   getDefaultGatePassDetailModel(): AssetGatePassDetailModel {
-    return <AssetGatePassDetailModel>{
+    return <AssetGatePassDetailModel>{ assetTypeId : -101,sendQtyUnitId:-101,
       asset: <AssetModel>{ assetDetail: [{}] },
-      sendQtyUnit: <QuantityUnitModel>{},
-      receivedQtyUnit: <QuantityUnitModel>{},
+      sendQtyUnit: <QuantityUnitModel>{ },     
       assetType: <GatePassTypeModel>{},
 
     }
@@ -68,12 +69,16 @@ export class CreateGatePassComponent implements OnInit {
     this.assetId = value;
   }
 
-  SetAssetDetail(assetId: number) {   
+  SetAssetDetail(assetId: number) { 
+    if (assetId !=-101)  
     this.assetGatePassDetailModel.asset = this.assetModelList.filter(x =>x.id == assetId)[0];
+    else
+    this.assetGatePassDetailModel.asset = <AssetModel>{ assetDetail : [{}]};
+
   }
 
   SaveAssetGatePass(assetGatePassModel: AssetGatePassModel) {
-    this.isSaveMessageVisible=true;
+  
     this.gatePassClient.saveAssetGatePass(assetGatePassModel).subscribe(data => {
       this.responseMessage = data; console.log(this.responseMessage)
     },
@@ -102,7 +107,6 @@ export class CreateGatePassComponent implements OnInit {
       this.assetGatePassModel.assetGatePassDetail.push(assetGatePassDetailModel);
       this.assetGatePassDetailModel = this.getDefaultGatePassDetailModel();
       this.resetAsset();
-
     }
     else {
       this.errorMessage = "Asset already added. Please add another one."
@@ -153,8 +157,9 @@ export class CreateGatePassComponent implements OnInit {
     this.gatePassForm.controls['assetTagId'].markAsUntouched();
     this.gatePassForm.controls['sendqtyunits'].markAsUntouched();
     this.gatePassForm.controls['asset_status'].markAsUntouched();
-    this.selectedAsset = this.defaultAssetId;
+    this.selectedAsset = -101;
     this.isAssetEdit = false;   
+    this.errorMessage=null;
   }
 
   resetForm()
@@ -164,6 +169,7 @@ export class CreateGatePassComponent implements OnInit {
     this.assetGatePassModel.gatePassDate = new Date();
     this.assetGatePassModel.gatePassNo = "GP-11111";
     this.gatePassForm.controls['gatepass_status'].markAsUntouched();
+    this.responseMessage=null;
   }
 
 }

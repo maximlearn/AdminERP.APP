@@ -1,7 +1,7 @@
 <div class="container">
   <div class="modal-header">
     <h5 class="modal-title pull-left">Edit Gate Pass</h5>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeForm()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -27,7 +27,7 @@
             </div>
             <div class="col form-group">
               <label for="isreturnable" class="col-form-label font-weight-bold">Gate Pass Status : </label>
-              <select class="form-control" appSelectRequiredValidator [appSelectValidator]="undefined" id="gatepass_status"
+              <select class="form-control" appSelectRequiredValidator appSelectValidator="undefined" id="gatepass_status"
                 name="gatepass_status" #gatepass_status="ngModel" [ngClass]="gatepass_status.errors?.defaultSelected  && gatepass_status.touched ? 'select-validated' : ''"
                 [(ngModel)]="assetGatePassModel.gatePassTypeId">
                 <option [value]="undefined" selected>Select Gate Pass Type.</option>
@@ -93,15 +93,14 @@
             <label for="asset_TagId" class="col-form-label col form-group font-weight-bold">Asset Detail : </label>
           </div>
           <div class="card border border-primary">
-            <div class="card-body text-primary">
+            <div class="card-body text-primary" *ngIf="assetGatePassDetailModel">
               <div class=row *ngIf="errorMessage">
                 <label for="sendtoname" style="color: red" class="col-form-label col font-weight-bold">{{errorMessage}}</label>
               </div>
               <div class="row">
                 <div class="col form-group">
                   <select class="form-control" id="assetTagId" [disabled]="isAssetEdit" name="assetTagId" #assetTagId="ngModel"
-                    required [(ngModel)]="selectedAsset" (ngModelChange) ="SetAssetDetail(selectedAsset)" 
-                    [ngClass]="assetTagId.errors?.required && assetTagId.touched  ? 'select-validated' : ''">
+                    required [(ngModel)]="selectedAsset" (ngModelChange)="SetAssetDetail(selectedAsset)" [ngClass]="assetTagId.errors?.required && assetTagId.touched  ? 'select-validated' : ''">
                     <option [value]="defaultAssetId" selected>Select Asset Tag.</option>
                     <option *ngFor="let asset of assetModelList" [value]="asset.id">
                       {{asset.assetTagId}}
@@ -143,33 +142,33 @@
                     [readOnly]="!!assetGatePassDetailModel.sendQty" #receivedqty="ngModel" class="form-control"
                     placeholder="Enter Received Quantity">
                 </div>
-
-
                 <div class="col form-group">
                   <label for="sendqtyunits" class="col-form-label font-weight-bold">Units :</label>
-                  <select class="form-control" id="sendqtyunits" name="sendqtyunits" #sendqtyunits="ngModel" [ngClass]="sendqtyunits.errors?.required  && sendqtyunits.touched ? 'select-validated' : ''"
-                    [(ngModel)]="assetGatePassDetailModel.sendQtyUnitId" required>
-                    <option [value]="undefined" selected>Select Unit.</option>
+                  <select class="form-control" id="sendqtyunits" name="sendqtyunits" appSelectRequiredValidator
+                    appSelectValidator="-101" #sendqtyunits="ngModel" [ngClass]="sendqtyunits.errors?.defaultSelected  && sendqtyunits.touched ? 'select-validated' : ''"
+                    [(ngModel)]="assetGatePassDetailModel.sendQtyUnitId">
+                    <option value="-101" selected>Select Unit.</option>
                     <option *ngFor="let qtyUnit of quantityUnitList" [value]="qtyUnit.id">
                       {{qtyUnit.unit}}
                     </option>
                   </select>
-                  <span [ngClass]="(sendqtyunits.errors?.required  && sendqtyunits.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
-                    *ngIf="sendqtyunits.errors?.required  && assetTagId.touched">
+                  <span [ngClass]="(sendqtyunits.errors?.defaultSelected  && sendqtyunits.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
+                    *ngIf="sendqtyunits.errors?.defaultSelected  && sendqtyunits.touched">
                     Unit is required.
                   </span>
                 </div>
                 <div class="col form-group">
                   <label for="asset_status" class="col-form-label col form-group font-weight-bold">Asset Status :</label>
-                  <select class="form-control" id="asset_status" name="asset_status" #asset_status="ngModel" [ngClass]="asset_status.errors?.required  && asset_status.touched ? 'select-validated' : ''"
-                    [(ngModel)]="assetGatePassDetailModel.assetTypeId" required>
-                    <option [value]="undefined" selected>Select Asset Type.</option>
+                  <select class="form-control" id="asset_status" appSelectRequiredValidator appSelectValidator="-101"
+                    name="asset_status" #asset_status="ngModel" [ngClass]="asset_status.errors?.defaultSelected  && asset_status.touched ? 'select-validated' : ''"
+                    [(ngModel)]="assetGatePassDetailModel.assetTypeId">
+                    <option value="-101" selected>Select Asset Type.</option>
                     <option *ngFor="let assetType of gatePassTypeList" [value]="assetType.id">
                       {{assetType.typeName}}
                     </option>
                   </select>
-                  <span [ngClass]="(asset_status.errors?.required  && asset_status.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
-                    *ngIf="asset_status.errors?.required  && assetTagId.touched">
+                  <span [ngClass]="(asset_status.errors?.defaultSelected  && asset_status.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
+                    *ngIf="asset_status.errors?.defaultSelected  && asset_status.touched">
                     Asset Status is required.
                   </span>
                 </div>
@@ -196,7 +195,7 @@
                     (click)="addAsset()" class="btn btn-primary  mr-1 btn-sm"><i class="fa fa-plus-circle fa-fw"></i>&nbsp;Add</button>
                   <button type="button" *ngIf="isAssetEdit" [disabled]="!(sendqtyunits.valid && asset_status.valid && isValidQty)"
                     [ngClass]="!(sendqtyunits.valid && asset_status.valid && isValidQty) ? 'btn-disabled' : 'btn-primary'"
-                    (click)="updateAsset(assetGatePassDetailModel.asset.id)" class="btn btn-primary  mr-1 btn-sm"><i
+                    (click)="updateAsset(assetGatePassDetailModel.asset.id)" class="btn btn-primary  mr-1 btn-sm-update"><i
                       class="fa fa-plus-circle fa-fw"></i>&nbsp;Update</button>
                   <button type="button" (click)="resetAsset()" class="btn btn-primary  btn-sm"><i class="fa fa-refresh fa-fw"></i>&nbsp;Reset</button>
                 </div>
@@ -222,11 +221,11 @@
                         <td>{{ assetDetail.asset.assetDetail[0].brandName}}</td>
                         <td>{{ assetDetail.asset.assetDetail[0].modelNumber}}</td>
                         <td>{{ assetDetail.asset.assetDetail[0].serialNumber}}</td>
-                        <td>{{ (assetDetail.sendQty === undefined) ? "" : assetDetail.sendQty }} {{
+                        <td>{{ (assetDetail.sendQty === null) ? "" : assetDetail.sendQty }} {{
                           (assetDetail.sendQty
-                          === undefined) ? "" : assetDetail.sendQtyUnit.unit }} </td>
-                        <td>{{ (assetDetail.receivedQty === undefined) ? "" : assetDetail.receivedQty }} {{
-                          (assetDetail.receivedQty === undefined) ? "" : assetDetail.sendQtyUnit.unit}}</td>
+                          === null) ? "" : assetDetail.sendQtyUnit.unit }} </td>
+                        <td>{{ (assetDetail.receivedQty === null) ? "" : assetDetail.receivedQty }} {{
+                          (assetDetail.receivedQty === null) ? "" : assetDetail.sendQtyUnit.unit}}</td>
                         <td>{{ assetDetail.assetType.typeName}}</td>
                         <td class="text-center"> <i class="fa fa-pencil-square-o fa-fw" (click)="editAsset(assetDetail.asset.id)"></i>
                           |
@@ -240,8 +239,8 @@
           </div>
         </div>
         <div class="card-footer  text-right">
-          <span class="font-weight-bold" [class.text-success]="this.responseMessage.isSuccess" [class.text-danger]="!this.responseMessage.isSuccess"
-            *ngIf="isSaveMessageVisible">
+          <span class="font-weight-bold" [class.text-success]="responseMessage.isSuccess" [class.text-danger]="!responseMessage.isSuccess"
+            *ngIf="responseMessage">
             {{responseMessage.message}}
           </span>
           <button type="submit" [disabled]="!(gatepassdate.valid && gatepass_status.valid && sendtoname.valid

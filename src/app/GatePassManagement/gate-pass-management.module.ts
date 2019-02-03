@@ -8,13 +8,13 @@ import { FormsModule } from '@angular/forms';
 import { AgGridModule } from 'ag-grid-angular';
 import { BsDatepickerModule, ModalModule } from 'ngx-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
-import { SelectRequiredValidatorDirective } from '../shared/select-required-validator.directive';
 import { ViewAssetGatePassComponent } from './view-asset-gate-pass/view-asset-gate-pass.component';
 import { EditAssetGatePassComponent } from './edit-asset-gate-pass/edit-asset-gate-pass.component';
+import { SharedModule } from '../shared/shared-module.module';
 
 
 @NgModule({
-  declarations: [CreateGatePassComponent,ListGatePassComponent, ViewAssetGatePassComponent ,EditAssetGatePassComponent, SelectRequiredValidatorDirective],
+  declarations: [CreateGatePassComponent,ListGatePassComponent, ViewAssetGatePassComponent ,EditAssetGatePassComponent],
   imports: [
     CommonModule,
     GatePassManagementRoutingModule,
@@ -22,7 +22,8 @@ import { EditAssetGatePassComponent } from './edit-asset-gate-pass/edit-asset-ga
     AgGridModule.withComponents([ListGatePassComponent]),
     BsDatepickerModule.forRoot(),
     ModalModule.forRoot()  ,
-    HttpClientModule
+    HttpClientModule,
+    SharedModule
    
   ],
   entryComponents: [ViewAssetGatePassComponent,EditAssetGatePassComponent]

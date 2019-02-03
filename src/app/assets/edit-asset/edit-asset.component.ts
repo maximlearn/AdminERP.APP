@@ -1,48 +1,39 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { BsDatepickerConfig } from 'ngx-bootstrap';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
+import { BsDatepickerConfig, BsModalRef } from 'ngx-bootstrap';
 import { IFile } from '../models/asset.model';
-import { map, catchError } from 'rxjs/operators';
-
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { NgForm } from '@angular/forms';
 import * as $ from 'jquery';
 import {
-  AssetModel, AssetDetailModel, AssetCategoryModel, VendorModel, AssetClient, ResponseModel,
+  AssetModel, AssetDetailModel, AssetCategoryModel, VendorModel, AssetClient, ResponseModel, DocumentModel,
 } from 'src/app/sharedservice';
 import { AssetService } from '../assets.service';
 
 @Component({
-  selector: 'app-add-asset',
-  templateUrl: './add-asset.component.html',
-  styleUrls: ['./add-asset.component.scss']
+  selector: 'app-edit-asset',
+  templateUrl: './edit-asset.component.html',
+  styleUrls: ['./edit-asset.component.scss']
 })
-export class AddAssetComponent implements OnInit {
+
+export class EditAssetComponent implements OnInit {
   datePickerConfig: Partial<BsDatepickerConfig>;
   filesToUpload: Array<IFile>;
   selectedFileNames: Array<IFile> = [];
   @ViewChild('assetForm') assetForm: NgForm;
-  uploadResult: any;
 
-  
   validDocument: boolean = true;
   validImage: boolean = true;
 
   assetData: AssetModel;
-  assetDetail: AssetDetailModel;
   asset_Category: AssetCategoryModel[];
   asset_Vendor: VendorModel[];
-
-  responseMessage : ResponseModel;
-  constructor(private assetClient: AssetClient, private assetService: AssetService) {
+  responseMessage: ResponseModel;
+  assetImage: DocumentModel;
+  @Output() pevent: EventEmitter<any> = new EventEmitter();
+  constructor(private assetClient: AssetClient, private assetService: AssetService, public bsModalRef: BsModalRef) {
     this.datePickerConfig = Object.assign({},
       { containerClass: 'theme-dark-blue', showWeekNumbers: false, dateInputFormat: 'DD/MM/YYYY' });
 
-    this.assetData = this.getDefaultAssetModel();
-  }
 
-  getDefaultAssetModel()
-  {
-    return <AssetModel>{ assetCategoryId:-101, assetDetail : [{}] } ;
   }
 
   ngOnInit() {
@@ -50,11 +41,12 @@ export class AddAssetComponent implements OnInit {
       this.asset_Category = data
     }, (err) => { console.log(err) });
     this.assetClient.getAllVendor().subscribe((data) => { this.asset_Vendor = data }, (err) => { console.log(err) });
+   if  (this.assetData.documentList != undefined)
+    this.assetImage = this.assetData.documentList.filter(x => x.fileLabel == "AssetImage")[0];
   }
- 
 
   fileChangeEvent(fileInput: any, fileInputLabel: string) {
-    this.uploadResult = "";
+
     this.filesToUpload = <Array<IFile>>fileInput.target.files;
 
     var fileType = this.filesToUpload[0].type;
@@ -87,8 +79,6 @@ export class AddAssetComponent implements OnInit {
     if (this.selectedFileNames.some(x => x.filelabel === fileInputLabel)) {
       this.selectedFileNames = this.selectedFileNames.filter(x => x.filelabel !== fileInputLabel);
 
-      // let fileIndex : number  =this.selectedFileNames.findIndex(x => x.filelabel === fileInputLabel)
-      // this.selectedFileNames.slice(fileIndex, 1);
     }
     for (let file of this.filesToUpload) {
       file.filelabel = fileInputLabel;
@@ -98,14 +88,11 @@ export class AddAssetComponent implements OnInit {
 
   resetForm() {
     this.assetForm.reset();
-    this.responseMessage=null;
     $(".warrantyDocument").html('Browse Warranty Document');
     $(".assetImage").html('Browse Asset Image');
 
   }
   uploadFiles(): FormData {
-    this.uploadResult = "";
-
     if (this.selectedFileNames.length > 0) {
       const formData = new FormData();
       for (let file of this.selectedFileNames)
@@ -116,22 +103,8 @@ export class AddAssetComponent implements OnInit {
 
   SaveAsset(assetData: AssetModel) {
     let formData = this.uploadFiles();
-   
-    if(assetData.id==0){
-      this.assetService.SaveAsset(assetData, formData).subscribe(
-        data => {
-         
-          this.responseMessage = data;
-         
-           console.log(this.responseMessage)
-        },
-        error => {
-          this.responseMessage = error;
-        }
-      );
-    }
-    else
-    {
+    assetData.documentList = null;    
+    if (assetData.id == 0) {
       this.assetService.SaveAsset(assetData, formData).subscribe(
         data => {
           this.responseMessage = data; console.log(this.responseMessage)
@@ -141,11 +114,41 @@ export class AddAssetComponent implements OnInit {
         }
       );
     }
+    else {
+      this.assetService.UpdateAsset(assetData, formData).subscribe(
+        data => {
+          this.responseMessage = data; console.log(this.responseMessage)
 
+        },
+        error => {
+          this.responseMessage = error;
+        }
+      );
+    }
+  }
+
+  closeForm() {
+    this.pevent.emit({ data: "Parent Refreshed." });
+    this.bsModalRef.hide();
   }
 
   executeValidator(controlName: string) {
     this.assetForm.controls[controlName].updateValueAndValidity();
-
   }
+
+  DownloadDocument(documentId: string) {
+    this.assetClient.downloadDocument(documentId).subscribe(data => { this.downloadFile(data) })
+    //alert(documentId);
+  }
+
+  downloadFile(data: DocumentModel) {
+    const linkSource = 'data:' + data.fileType + ';base64,' + data.fileImage;
+    const downloadLink = document.createElement("a");
+    downloadLink.href = linkSource;
+    downloadLink.download = data.fileName;
+    downloadLink.click();
+  }
+
 }
+
+

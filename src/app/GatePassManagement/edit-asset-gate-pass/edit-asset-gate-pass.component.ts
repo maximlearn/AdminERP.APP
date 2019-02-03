@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation, EventEmitter, Output } from '@angular/core';
-import { AssetGatePassClient, AssetGatePassModel,  AssetGatePassDetailModel, AssetGatePassSenderDetailModel, QuantityUnitModel, AssetClient, AssetModel, AssetDetailModel, ResponseModel, GatePassTypeModel } from 'src/app/sharedservice';
+import { AssetGatePassClient, AssetGatePassModel, AssetGatePassDetailModel, AssetGatePassSenderDetailModel, QuantityUnitModel, AssetClient, AssetModel, AssetDetailModel, ResponseModel, GatePassTypeModel } from 'src/app/sharedservice';
 import { BsDatepickerConfig, BsModalRef } from 'ngx-bootstrap';
 import { NgForm } from '@angular/forms';
 
@@ -14,25 +14,31 @@ export class EditAssetGatePassComponent implements OnInit {
   closeBtnName: string;
   assetGatePassModel: AssetGatePassModel;
   assetGatePassDetailModel: AssetGatePassDetailModel;
+  blanAssetGatePassDetailModel: AssetGatePassDetailModel;
+
   datePickerConfig: Partial<BsDatepickerConfig>;
   gatePassTypeList: GatePassTypeModel[];
   quantityUnitList: QuantityUnitModel[];
   errorMessage: string;
   assetModelList: AssetModel[];
   assetId: number = undefined;//= <AssetModel>{ assetDetail : [{}] }  
-  defaultAssetId : number = undefined;
+  defaultAssetId: number = undefined;
   @ViewChild('gatePassForm') gatePassForm: NgForm;
   responseMessage: ResponseModel;
   isAssetEdit: boolean = false;
   isValidQty: boolean = false;
-  isSaveMessageVisible : boolean = false;
-  constructor(public bsModalRef: BsModalRef,private gatePassClient: AssetGatePassClient, private assetClient: AssetClient) {
+
+  @Output() pevent: EventEmitter<any> = new EventEmitter();
+  constructor(public bsModalRef: BsModalRef, private gatePassClient: AssetGatePassClient, private assetClient: AssetClient) {
     this.datePickerConfig = Object.assign({},
       { containerClass: 'theme-dark-blue', showWeekNumbers: false, dateInputFormat: 'DD/MM/YYYY' });
-      this.assetGatePassDetailModel = this.getDefaultGatePassDetailModel();
-   }
+    //this.assetGatePassDetailModel = this.getDefaultGatePassDetailModel();
+    
+  }
 
   ngOnInit() {
+    console.log(this.assetGatePassModel);
+    this.gatePassClient.getBlankGatePassDetail().subscribe( data => {this.blanAssetGatePassDetailModel = data;this.assetGatePassDetailModel=data;  console.log(this.assetGatePassDetailModel);});
     this.gatePassClient.getAllGatePassType().subscribe(data => { this.gatePassTypeList = data; });
     this.gatePassClient.getAllUnit().subscribe(data => { this.quantityUnitList = data; });
     this.assetClient.getAllAssetTag().subscribe(data => { this.assetModelList = data; console.log(this.assetModelList); });
@@ -45,12 +51,13 @@ export class EditAssetGatePassComponent implements OnInit {
     this.assetId = value;
   }
 
-  SetAssetDetail(assetId: number) {  
-    this.assetGatePassDetailModel.asset = this.assetModelList.filter(x =>x.id == assetId)[0];
+  SetAssetDetail(assetId: number) {
+    this.assetGatePassDetailModel.asset = this.assetModelList.filter(x => x.id == assetId)[0];
   }
 
-  SaveAssetGatePass(assetGatePassModel: AssetGatePassModel) {
-    this.isSaveMessageVisible=true;
+  SaveAssetGatePass(assetGatePassModel: any) {
+  
+    //this.assetGatePassModel = assetGatePassModel;
     this.gatePassClient.saveAssetGatePass(assetGatePassModel).subscribe(data => {
       this.responseMessage = data; console.log(this.responseMessage)
     },
@@ -63,8 +70,7 @@ export class EditAssetGatePassComponent implements OnInit {
   getDefaultGatePassDetailModel(): AssetGatePassDetailModel {
     return <AssetGatePassDetailModel>{
       asset: <AssetModel>{ assetDetail: [{}] },
-      sendQtyUnit: <QuantityUnitModel>{},
-      receivedQtyUnit: <QuantityUnitModel>{},
+      sendQtyUnit: <QuantityUnitModel>{},      
       assetType: <GatePassTypeModel>{},
 
     }
@@ -72,22 +78,21 @@ export class EditAssetGatePassComponent implements OnInit {
 
   updateQuantityModel() {
     if ((this.assetGatePassDetailModel.sendQty || this.assetGatePassDetailModel.receivedQty))
-       this.isValidQty=true;
-       else 
-       this.isValidQty =false;
+      this.isValidQty = true;
+    else
+      this.isValidQty = false;
   }
 
-  addAsset() {
-    let assetGatePassDetailModel: AssetGatePassDetailModel = this.getDefaultGatePassDetailModel();
-    assetGatePassDetailModel = this.assetGatePassDetailModel;    
+  addAsset() {   
     this.errorMessage = null;
     let isAssetExist: boolean =
-      this.assetGatePassModel.assetGatePassDetail.some(x => x.asset.assetTagId === assetGatePassDetailModel.asset.assetTagId)
-    if (!isAssetExist) {
-      assetGatePassDetailModel.assetType = this.gatePassTypeList.filter(x=>x.id == assetGatePassDetailModel.assetTypeId)[0];
-      assetGatePassDetailModel.sendQtyUnit = this.quantityUnitList.filter(x=>x.id == assetGatePassDetailModel.sendQtyUnitId)[0];
-      this.assetGatePassModel.assetGatePassDetail.push(assetGatePassDetailModel);
-      this.assetGatePassDetailModel = this.getDefaultGatePassDetailModel();
+      this.assetGatePassModel.assetGatePassDetail.some(x => x.asset.assetTagId === this.assetGatePassDetailModel.asset.assetTagId)
+    if (!isAssetExist) {     
+      
+       this.assetGatePassDetailModel.assetType = this.gatePassTypeList.filter(x => x.id == this.assetGatePassDetailModel.assetTypeId)[0];
+       this.assetGatePassDetailModel.sendQtyUnit = this.quantityUnitList.filter(x => x.id == this.assetGatePassDetailModel.sendQtyUnitId)[0];
+     
+      this.assetGatePassModel.assetGatePassDetail.push(this.assetGatePassDetailModel);
       this.resetAsset();
 
     }
@@ -102,12 +107,14 @@ export class EditAssetGatePassComponent implements OnInit {
     let isAssetExist: boolean =
       this.assetGatePassModel.assetGatePassDetail.some(x => x.asset.id === assetId);
     if (isAssetExist) {
-      let assetGatePassDetail: AssetGatePassDetailModel = this.assetGatePassModel.assetGatePassDetail.find(x => x.asset.id === assetId)
-     
-      let index = this.assetGatePassModel.assetGatePassDetail.indexOf(assetGatePassDetail); 
-      this.assetGatePassDetailModel.assetType = this.gatePassTypeList.filter(x=>x.id == this.assetGatePassDetailModel.assetTypeId)[0];
-      this.assetGatePassDetailModel.sendQtyUnit = this.quantityUnitList.filter(x=>x.id == this.assetGatePassDetailModel.sendQtyUnitId)[0];
-      this.assetGatePassModel.assetGatePassDetail[index] = this.assetGatePassDetailModel;
+      let assetGatePassDetail: AssetGatePassDetailModel = this.assetGatePassModel.assetGatePassDetail.find(x => x.asset.id === assetId)[0]
+      let index = this.assetGatePassModel.assetGatePassDetail.indexOf(assetGatePassDetail);
+      this.assetGatePassDetailModel.assetType = this.gatePassTypeList.filter(x => x.id == this.assetGatePassDetailModel.assetTypeId)[0];
+      this.assetGatePassDetailModel.sendQtyUnit = this.quantityUnitList.filter(x => x.id == this.assetGatePassDetailModel.sendQtyUnitId)[0];
+      this.assetGatePassModel.assetGatePassDetail[index].sendQty = (this.assetGatePassDetailModel.sendQty != undefined) ? this.assetGatePassDetailModel.sendQty : null;
+      this.assetGatePassModel.assetGatePassDetail[index].receivedQty = (this.assetGatePassDetailModel.receivedQty != undefined) ? this.assetGatePassDetailModel.receivedQty : null;
+      this.assetGatePassModel.assetGatePassDetail[index].assetType = this.assetGatePassDetailModel.assetType;
+      this.assetGatePassModel.assetGatePassDetail[index].sendQtyUnit = this.assetGatePassDetailModel.sendQtyUnit;
       this.resetAsset();
     }
     else {
@@ -121,6 +128,7 @@ export class EditAssetGatePassComponent implements OnInit {
     if (isAssetExist) {
       this.assetGatePassModel.assetGatePassDetail = this.assetGatePassModel.assetGatePassDetail.filter(x => x.asset.id != assetId)
       this.errorMessage = "Asset remove from the list."
+      this.resetAsset();
     }
   }
 
@@ -128,33 +136,35 @@ export class EditAssetGatePassComponent implements OnInit {
     let isAssetExist: boolean =
       this.assetGatePassModel.assetGatePassDetail.some(x => x.asset.id === assetId)
     if (isAssetExist) {
-      let assetGatePassDetailModel: AssetGatePassDetailModel[] = this.assetGatePassModel.assetGatePassDetail.map(x => Object.assign({}, x));
-      this.assetGatePassDetailModel = assetGatePassDetailModel.filter(x => x.asset.id == assetId)[0];
-      this.selectedAsset = assetId //this.assetGatePassDetailModel.asset.id;
+      let assetGatePassDetailModel: AssetGatePassDetailModel[] = this.assetGatePassModel.assetGatePassDetail.filter(x => x.asset.id === assetId) //this.assetGatePassModel.assetGatePassDetail.map(x => Object.assign({}, x));
+      this.assetGatePassDetailModel = assetGatePassDetailModel.filter(x => x.asset.id === assetId)[0];
+      this.selectedAsset = this.assetGatePassDetailModel.asset.id;
       this.isAssetEdit = true;
+      this.isValidQty = true;
     }
   }
 
   resetAsset() {
-    this.assetGatePassDetailModel = this.getDefaultGatePassDetailModel();
+    this.assetGatePassDetailModel = this.blanAssetGatePassDetailModel;
     this.gatePassForm.controls['assetTagId'].markAsUntouched();
     this.gatePassForm.controls['sendqtyunits'].markAsUntouched();
     this.gatePassForm.controls['asset_status'].markAsUntouched();
-    this.selectedAsset = this.defaultAssetId;   
-    this.isAssetEdit =false;
+    this.selectedAsset = this.defaultAssetId;
+    this.isAssetEdit = false;
+    this.errorMessage = null
+
   }
 
-  resetForm()
-  {  
+  resetForm() {
     this.assetGatePassModel.assetGatePassDetail = this.assetGatePassModel.assetGatePassDetail.filter(o => o.asset.assetTagId != undefined);
     this.assetGatePassModel.gatePassDate = new Date();
     this.assetGatePassModel.gatePassNo = "GP-11111";
     this.gatePassForm.controls['gatepass_status'].markAsUntouched();
+    this.responseMessage = null;
   }
-  @Output() pevent: EventEmitter<any> = new EventEmitter();
-  closeForm()
-  {   
-    this.pevent.emit({data: "Parent Refreshed."});
+
+  closeForm() {
+    this.pevent.emit({ data: "Parent Refreshed." });
     this.bsModalRef.hide();
   }
 

@@ -18,7 +18,7 @@ export class ListGatePassComponent implements OnInit {
   rowData: any;
   gatePassId: number;
   responseMessage: ResponseModel;
-  isMessageVisible : boolean = false;
+ 
   constructor(private gatePassClient: AssetGatePassClient, private modalService: BsModalService) { }
 
   ngOnInit() {
@@ -54,7 +54,7 @@ export class ListGatePassComponent implements OnInit {
   public onRowClicked(e) {
     if (e.event.target !== undefined) {
       const actionType = e.event.target.getAttribute('data-action-type');
-      this.isMessageVisible = false;
+      this.responseMessage=null;
       switch (actionType) {
         case 'view':
           this.gatePassId = e.data.id;
@@ -71,8 +71,7 @@ export class ListGatePassComponent implements OnInit {
 
   deleteAssetGatePass(gatePassId : number) {
     this.gatePassClient.deleteAssetGatePass(this.gatePassId).subscribe(data => {
-      this.responseMessage = data;
-      this.isMessageVisible = true;
+      this.responseMessage = data;      
       this.rowData = this.gatePassClient.getAllAssetGatePassList();
     },
       error => {
@@ -90,7 +89,7 @@ export class ListGatePassComponent implements OnInit {
       data => {
         initialState.assetGatePassModel = data;
         this.modalRef = this.modalService.show(EditAssetGatePassComponent, { class: 'modal-lg', initialState });
-        this.modalRef.content.closeBtnName = 'Close';
+       // this.modalRef.content.closeBtnName = 'Close';
         this.modalRef.content.pevent.subscribe(data => {
           //  alert(data.data);
           this.rowData = this.gatePassClient.getAllAssetGatePassList();
@@ -115,7 +114,7 @@ export class ListGatePassComponent implements OnInit {
       data => {
         initialState.gatePassData = data;
         this.modalRef = this.modalService.show(ViewAssetGatePassComponent, { class: 'modal-lg', initialState });
-        this.modalRef.content.closeBtnName = 'Close';
+       // this.modalRef.content.closeBtnName = 'Close';
       },
       error => {
         initialState.gatePassData = error.error;
