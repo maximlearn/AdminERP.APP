@@ -11,8 +11,8 @@ import { EditAssetGatePassComponent } from '../edit-asset-gate-pass/edit-asset-g
   styleUrls: ['./list-gate-pass.component.scss']
 })
 export class ListGatePassComponent implements OnInit {
-  private paginationPageSize;
-  private paginationNumberFormatter;
+  paginationPageSize : number;
+  paginationNumberFormatter : any;
   private gridApi;
   modalRef: BsModalRef;
   rowData: any;

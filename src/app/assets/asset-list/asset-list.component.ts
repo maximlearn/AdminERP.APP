@@ -6,7 +6,7 @@ import {
   Input
 } from "@angular/core";
 import { BsModalService, BsModalRef } from "ngx-bootstrap/modal";
-import { AssetComponent } from "../asset/asset.component";
+
 import { AddAssetComponent } from "../add-asset/add-asset.component";
 import { AssetClient, ResponseModel, DocumentModel } from "src/app/sharedservice";
 import { DatePipe } from "@angular/common";
@@ -19,15 +19,14 @@ import { ViewAssetComponent } from '../view-asset/view-asset.component';
   styleUrls: ["./asset-list.component.scss"]
 })
 export class AssetListComponent implements OnInit {
-  private paginationPageSize;
-  private paginationNumberFormatter;
+   paginationPageSize : number;
+   paginationNumberFormatter : any;
   private gridApi;
   private assetId: number;
   rowData: any;
   responseMessage : ResponseModel;
   
-  columnDefs = [
-    // tslint:disable-next-line:max-line-length
+  columnDefs = [  
     {
       headerName: "Action",
       template:
@@ -102,7 +101,7 @@ export class AssetListComponent implements OnInit {
     );
   }
 
-  onPageSizeChanged(newPageSize) {
+  onPageSizeChanged(newPageSize : number) {
     const value = (<HTMLInputElement>document.getElementById("page-size"))
       .value;
     this.gridApi.paginationSetPageSize(Number(value));

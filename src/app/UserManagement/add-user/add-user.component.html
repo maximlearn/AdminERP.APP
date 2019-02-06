@@ -1,81 +1,110 @@
 <div class="container">
     <div class="row">
       <div class="col-md-5">
-  <form>
+  <form  name="form" #userorm = "ngForm" (ngSubmit)="SaveUser(user)">
   <div class="card border border-primary">
     <div class="card-header text-white bg-secondary">
         <i class="fa fa-user fa-fw"></i>&nbsp;Add User
     </div>
 
-    <div class="card-body text-primary">
+    <div class="card-body text-primary">        
         <div class="row">
-            <div class="col form-group">
-            <label for="title" class="font-weight-bold  col-form-label">Title :</label>
-            <select class="custom-select" id="title" >
-              <option selected>Select Title.</option>
-              <option value="1">Mr.</option>
-              <option value="2">Mrs.</option>
-
-            </select>
-          </div>
-        </div>
-        <div class="row">
-            <div class="col form-group">
+            <div class="col form-group" [class.was-validated]="firstName.errors?.required  && firstName.touched">
             <label for="firstName" class="font-weight-bold  col-form-label">First Name :</label>
-              <input type="text" Id="firstName" class="form-control" placeholder="Enter Fisrt Name">
+              <input type="text" Id="firstName" name="firstName" class="form-control" [(ngModel)]="user.firstName"
+               #firstName="ngModel"  placeholder="Enter Fisrt Name" required>
+               <span class="invalid-feedback" *ngIf="firstName.errors?.required && firstName.touched">
+                  First Name is required.
+                </span>
           </div>
         </div>
         <div class="row">
-            <div class="col form-group">
+            <div class="col form-group"  [class.was-validated]="lastName.errors?.required  && lastName.touched">
             <label for="lastName" class="font-weight-bold  col-form-label">Last Name :</label>
-             <input type="text" Id="lastName" class="form-control" placeholder="Enter Last Name">
+             <input type="text" Id="lastName" name="lastName" class="form-control" placeholder="Enter Last Name"
+             [(ngModel)]="user.lastName" #lastName="ngModel" required>
+             <span class="invalid-feedback" *ngIf="lastName.errors?.required && lastName.touched">
+                Last Name is required.
+              </span>
           </div>
         </div>
+        <!-- <div class="row">
+          <div class="col form-group">
+          <label for="title" class="font-weight-bold  col-form-label">Gender :</label>
+          
+        </div>
+      </div> -->
         <div class="row">
-            <div class="col form-group">
+            <div class="col form-group" [class.was-validated]="employeeId.errors?.required  && employeeId.touched">
             <label for="employeeId" class="font-weight-bold  col-form-label">Employee Id :</label>
-              <input type="text" Id="employeeId" class="form-control" placeholder="Enter Employee ID">
+              <input type="text" Id="employeeId" [readOnly]="user.id !=0" name="employeeId" class="form-control" placeholder="Enter Employee ID"
+              [(ngModel)]="user.empId" #employeeId="ngModel" required >
+              <span class="invalid-feedback" *ngIf="employeeId.errors?.required && employeeId.touched">
+                  Last Name is required.
+                </span>
           </div>
         </div>
         <div class="row">
-            <div class="col form-group">
+            <div class="col form-group"  [class.was-validated]="phoneno.errors?.required  && phoneno.touched">
             <label for="phoneno" class="font-weight-bold  col-form-label">Phone No. :</label>
-            <input type="text" Id="phoneno" class="form-control" placeholder="Enter Phone Number">
+            <input type="text" Id="phoneno" name="phoneno" class="form-control" placeholder="Enter Phone Number"
+            [(ngModel)]="user.phone" #phoneno="ngModel" required>
+            <span class="invalid-feedback" *ngIf="phoneno.errors?.required && phoneno.touched">
+                Phone Number is required.
+              </span>
           </div>
         </div>
         <div class="row">
             <div class="col form-group">
             <label for="email" class="font-weight-bold  col-form-label">Email :</label>
-            <input type="text" Id="email" class="form-control" placeholder="Enter Email Address">
+            <input type="text" Id="email" name="email"  [(ngModel)]="user.email" #email="ngModel" class="form-control" placeholder="Enter Email Address">
           </div>
         </div>
         <div class="row">
             <div class="col form-group">
             <label for="department" class="font-weight-bold  col-form-label">Department :</label>
-            <select class="custom-select" id="department">
-                  <option selected>Select Department.</option>
-                  <option value="1">Admin</option>
-                  <option value="2">Human Resource</option>
-                  <option value="3">Finance</option>
+            <select class="form-control" id="department" name="department" 
+             appSelectRequiredValidator  appSelectValidator="-101"
+             [ngClass]="department.errors?.defaultSelected  && department.touched ? 'select-validated' : ''"
+            [(ngModel)]="user.deptId" #department="ngModel">
+                  <option value="-101" selected>Select Department.</option>
+                  <option *ngFor="let department of departmentList" [value]="department.id">
+                    {{department.departmentName}}
+                  </option>
                 </select>
+                <span [ngClass]="(department.errors?.defaultSelected  && department.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
+                *ngIf="department.errors?.defaultSelected  && department.touched">
+                Department is required.
+              </span>
           </div>
         </div>
         <div class="row">
             <div class="col form-group">
             <label for="role" class="font-weight-bold  col-form-label">Role :</label>
-              <select class="custom-select" id="role">
-                  <option selected>Select Role.</option>
-                  <option value="1">Super Admin</option>
-                  <option value="1">Admin</option>
-                  <option value="2">User</option>
-                  <option value="3">Gate Man</option>
+              <select class="form-control" id="role" name="role"
+              [ngClass]="role.errors?.defaultSelected  && role.touched ? 'select-validated' : ''"
+              appSelectRequiredValidator  appSelectValidator="-101"
+              [(ngModel)]="user.roleId" #role="ngModel">
+                  <option value="-101" selected>Select Role.</option>
+                  <option *ngFor="let role of roleList" [value]="role.id">
+                    {{role.roleName}}
+                  </option>
                 </select>
+                <span [ngClass]="(role.errors?.defaultSelected  && role.touched) ? 'invalid-feedback-show' : 'invalid-feedback-hide'"
+                *ngIf="role.errors?.defaultSelected  && role.touched">
+                Role is required.
+              </span>
           </div>
         </div>
     </div>
     <div class="card-footer text-right">
-           <button type="button" class="btn btn-primary mr-1 m-1 btn-sm "><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
-          <button type="button" class="btn btn-primary m-1 btn-sm"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+        <span class="font-weight-bold" [class.text-success]="responseMessage.isSuccess" [class.text-danger]="!responseMessage.isSuccess"
+        *ngIf="responseMessage ">
+        {{responseMessage.message}}
+      </span>       
+           <button [style.visibility]="isSaveDisplay"  type="submit" id="btnsaveuser" [disabled]="!userorm.form.valid" [ngClass]="!userorm.form.valid ? 'btn-disabled' : 'btn-primary'" class="btn btn-primary mr-1 m-1 btn-sm"><i class="fa fa-save fa-fw"></i>&nbsp;
+         {{user.id == 0 ? "Save" : "Update"}}  </button>
+          <button type="button"(click)="resetForm()" class="btn btn-primary m-1 btn-sm"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
     </div>
 
   </div>
@@ -87,7 +116,16 @@
               <i class="fa fa-users fa-fw"></i>&nbsp; User List
           </div>
           <div class="card-body ">
-              <table class="table table-bordered table-md text-primary">
+            <div class="row">
+              <div class="col" style="overflow: hidden;">
+                  <ag-grid-angular style='width: 100%; height: 370px;' class="ag-theme-balham" id="gridApi" [enableSorting]="true"
+                    [enableFilter]="true" [rowData]="rowData | async" [pagination]="true" [paginationPageSize]='this.paginationPageSize'
+                    [paginationNumberFormatter]='paginationNumberFormatter' [columnDefs]="columnDefs" [animateRows]="true"
+                    (rowClicked)="onRowClicked($event)" (gridReady)="onGridReady($event)">
+                  </ag-grid-angular>
+                </div>
+              </div>
+              <!-- <table class="table table-bordered table-md text-primary">
                   <thead>
                     <th >Name</th>
                     <th>Emp Id</th>
@@ -108,7 +146,7 @@
 
                   </tr>
                 </tbody>
-              </table>
+              </table> -->
 
           </div>
 

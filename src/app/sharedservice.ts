@@ -1008,6 +1008,341 @@ export class AuthClient implements IAuthClient {
     }
 }
 
+export interface IUserClient {
+    getRoleList(): Observable<RoleModel[] | null>;
+    getDepartmentList(): Observable<DepartmentModel[] | null>;
+    getAllUser(): Observable<UserModel[] | null>;
+    deleteUser(userId?: number | undefined): Observable<ResponseModel | null>;
+    saveUser(user: UserModel): Observable<ResponseModel | null>;
+    getUserDetailById(userId?: number | undefined): Observable<ResponseModel | null>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class UserClient implements IUserClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    getRoleList(): Observable<RoleModel[] | null> {
+        let url_ = this.baseUrl + "/api/user/GetRoleList";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRoleList(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRoleList(<any>response_);
+                } catch (e) {
+                    return <Observable<RoleModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<RoleModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRoleList(response: HttpResponseBase): Observable<RoleModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(RoleModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<RoleModel[] | null>(<any>null);
+    }
+
+    getDepartmentList(): Observable<DepartmentModel[] | null> {
+        let url_ = this.baseUrl + "/api/user/GetDepartmentList";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetDepartmentList(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetDepartmentList(<any>response_);
+                } catch (e) {
+                    return <Observable<DepartmentModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<DepartmentModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetDepartmentList(response: HttpResponseBase): Observable<DepartmentModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DepartmentModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<DepartmentModel[] | null>(<any>null);
+    }
+
+    getAllUser(): Observable<UserModel[] | null> {
+        let url_ = this.baseUrl + "/api/user/GetAllUser";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllUser(<any>response_);
+                } catch (e) {
+                    return <Observable<UserModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UserModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllUser(response: HttpResponseBase): Observable<UserModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(UserModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserModel[] | null>(<any>null);
+    }
+
+    deleteUser(userId?: number | undefined): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/user/DeleteUser?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteUser(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteUser(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+
+    saveUser(user: UserModel): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/user/SaveUser";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(user);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSaveUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSaveUser(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSaveUser(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+
+    getUserDetailById(userId?: number | undefined): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/user/GetUserDetailById?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserDetailById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserDetailById(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUserDetailById(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+}
+
 export class AssetModel implements IAssetModel {
     id!: number;
     assetTagId?: string | undefined;
@@ -1626,7 +1961,6 @@ export interface IGatePassTypeModel {
 
 export class UserModel implements IUserModel {
     id!: number;
-    title?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
     empId?: string | undefined;
@@ -1640,6 +1974,8 @@ export class UserModel implements IUserModel {
     modifiedBy!: number;
     modifiedDate!: Date;
     token?: string | undefined;
+    role?: RoleModel | undefined;
+    dept?: DepartmentModel | undefined;
     userCredential?: UserCredentialModel[] | undefined;
     userSecurityAnswer?: UserSecurityAnswerModel[] | undefined;
 
@@ -1655,7 +1991,6 @@ export class UserModel implements IUserModel {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.title = data["title"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
             this.empId = data["empId"];
@@ -1669,6 +2004,8 @@ export class UserModel implements IUserModel {
             this.modifiedBy = data["modifiedBy"];
             this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
             this.token = data["token"];
+            this.role = data["role"] ? RoleModel.fromJS(data["role"]) : <any>undefined;
+            this.dept = data["dept"] ? DepartmentModel.fromJS(data["dept"]) : <any>undefined;
             if (data["userCredential"] && data["userCredential"].constructor === Array) {
                 this.userCredential = [] as any;
                 for (let item of data["userCredential"])
@@ -1692,7 +2029,6 @@ export class UserModel implements IUserModel {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["title"] = this.title;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["empId"] = this.empId;
@@ -1706,6 +2042,8 @@ export class UserModel implements IUserModel {
         data["modifiedBy"] = this.modifiedBy;
         data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
         data["token"] = this.token;
+        data["role"] = this.role ? this.role.toJSON() : <any>undefined;
+        data["dept"] = this.dept ? this.dept.toJSON() : <any>undefined;
         if (this.userCredential && this.userCredential.constructor === Array) {
             data["userCredential"] = [];
             for (let item of this.userCredential)
@@ -1722,7 +2060,6 @@ export class UserModel implements IUserModel {
 
 export interface IUserModel {
     id: number;
-    title?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
     empId?: string | undefined;
@@ -1736,8 +2073,130 @@ export interface IUserModel {
     modifiedBy: number;
     modifiedDate: Date;
     token?: string | undefined;
+    role?: RoleModel | undefined;
+    dept?: DepartmentModel | undefined;
     userCredential?: UserCredentialModel[] | undefined;
     userSecurityAnswer?: UserSecurityAnswerModel[] | undefined;
+}
+
+export class RoleModel implements IRoleModel {
+    id!: number;
+    roleName?: string | undefined;
+    roleDescription?: string | undefined;
+    createdBy!: number;
+    createdDate!: Date;
+    modifiedBy!: number;
+    modifiedDate!: Date;
+
+    constructor(data?: IRoleModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.roleName = data["roleName"];
+            this.roleDescription = data["roleDescription"];
+            this.createdBy = data["createdBy"];
+            this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
+            this.modifiedBy = data["modifiedBy"];
+            this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): RoleModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new RoleModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["roleName"] = this.roleName;
+        data["roleDescription"] = this.roleDescription;
+        data["createdBy"] = this.createdBy;
+        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
+        data["modifiedBy"] = this.modifiedBy;
+        data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IRoleModel {
+    id: number;
+    roleName?: string | undefined;
+    roleDescription?: string | undefined;
+    createdBy: number;
+    createdDate: Date;
+    modifiedBy: number;
+    modifiedDate: Date;
+}
+
+export class DepartmentModel implements IDepartmentModel {
+    id!: number;
+    departmentName?: string | undefined;
+    isActive!: boolean;
+    createdBy!: number;
+    createdDate!: Date;
+    modifiedBy!: number;
+    modifiedDate!: Date;
+
+    constructor(data?: IDepartmentModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.departmentName = data["departmentName"];
+            this.isActive = data["isActive"];
+            this.createdBy = data["createdBy"];
+            this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
+            this.modifiedBy = data["modifiedBy"];
+            this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DepartmentModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new DepartmentModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["departmentName"] = this.departmentName;
+        data["isActive"] = this.isActive;
+        data["createdBy"] = this.createdBy;
+        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
+        data["modifiedBy"] = this.modifiedBy;
+        data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IDepartmentModel {
+    id: number;
+    departmentName?: string | undefined;
+    isActive: boolean;
+    createdBy: number;
+    createdDate: Date;
+    modifiedBy: number;
+    modifiedDate: Date;
 }
 
 export class UserCredentialModel implements IUserCredentialModel {

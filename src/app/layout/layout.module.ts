@@ -14,10 +14,10 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 @NgModule({
     imports: [
         CommonModule,
-        LayoutRoutingModule,
-        NgbDropdownModule,
+        LayoutRoutingModule,      
         DashboardModule,
-        HttpClientModule
+        HttpClientModule,
+        NgbDropdownModule
     ],
     declarations: [LayoutComponent, SidebarComponent, HeaderComponent, menuFilterPipe]
   

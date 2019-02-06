@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/93536d4a-8214-4a64-890b-cfe82a5ce515/resourceGroups/AdminERP/providers/Microsoft.Web/sites/gatepasserp",
+    "appService.deploySubpath": "dist\\AdminERP"
+}

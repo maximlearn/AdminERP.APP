@@ -13,7 +13,7 @@ import { NumberSequence } from 'ag-grid-community';
 export class LoginComponent implements OnInit {
   @ViewChild('loginForm') loginForm: NgForm;
   error: string = '';
-  userlogin = {}
+  userlogin = <LoginDetails>{};
 
   constructor(private router: Router, private authClient: AuthClient) {
     //this.userlogin = new LoginDetails();

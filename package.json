@@ -27,7 +27,7 @@
     "@angular/platform-browser": "^7.1.4",
     "@angular/platform-browser-dynamic": "^7.1.4",
     "@angular/router": "^7.1.4",
-    "@ng-bootstrap/ng-bootstrap": "^2.0.0-alpha.0",
+    "@ng-bootstrap/ng-bootstrap": "^4.0.2",
     "@ng-bootstrap/schematics": "^2.0.0-alpha.1",
     "@schematics/angular": "^0.7.3",
     "@types/jquery": "^3.3.29",

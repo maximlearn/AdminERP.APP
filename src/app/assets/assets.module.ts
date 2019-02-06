@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 
 import { CompareDateValidatorDirective } from '../shared/compare-date-validator.directive';
 
-import { AssetComponent } from './asset/asset.component';
+
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { ViewAssetComponent } from './view-asset/view-asset.component';

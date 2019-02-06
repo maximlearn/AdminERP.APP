@@ -22,11 +22,8 @@ export class AddAssetComponent implements OnInit {
   selectedFileNames: Array<IFile> = [];
   @ViewChild('assetForm') assetForm: NgForm;
   uploadResult: any;
-
-  
   validDocument: boolean = true;
   validImage: boolean = true;
-
   assetData: AssetModel;
   assetDetail: AssetDetailModel;
   asset_Category: AssetCategoryModel[];
@@ -86,9 +83,6 @@ export class AddAssetComponent implements OnInit {
     fileInput.target.nextSibling.innerHTML = this.filesToUpload[0].name;
     if (this.selectedFileNames.some(x => x.filelabel === fileInputLabel)) {
       this.selectedFileNames = this.selectedFileNames.filter(x => x.filelabel !== fileInputLabel);
-
-      // let fileIndex : number  =this.selectedFileNames.findIndex(x => x.filelabel === fileInputLabel)
-      // this.selectedFileNames.slice(fileIndex, 1);
     }
     for (let file of this.filesToUpload) {
       file.filelabel = fileInputLabel;
@@ -141,7 +135,6 @@ export class AddAssetComponent implements OnInit {
         }
       );
     }
-
   }
 
   executeValidator(controlName: string) {
