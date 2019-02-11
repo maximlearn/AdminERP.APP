@@ -56,30 +56,32 @@ textarea.form-control{
 }
 .btn-primary {
   color: #fff;
-  background-color: rgba(73, 68, 68, 0.705);
-  border-color: rgba(73, 68, 68, 0.705);
-  font-size: 1rem
+  background-color: rgb(18, 145, 49);
+  border-color: rgb(18, 145, 49);
+  font-size:1rem;
+ 
 }
 
 .btn-primary:hover {
   color: #fff;
-  background-color: rgba(46, 156, 52, 0.733);
-  border-color: rgba(3, 156, 67, 0.959);
+  background-color: rgb(12, 97, 33);
+  border-color: rgb(12, 97, 33);
 }
 
 .btn-disabled {
   color: #fff;
   background-color: rgba(107, 105, 105, 0.705);
   border-color: rgba(73, 68, 68, 0.705);
-  font-size: 1rem
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .btn-sm{
-  padding: 0.10rem 0.65rem;
+  padding: 0.0rem 0.05rem;
   width:6rem;
-  height: 1.8rem;
 
 }
+
 .modal-width {
 width: 400px;
 }

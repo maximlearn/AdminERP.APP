@@ -1,101 +1,120 @@
 <div class="container">
     <div class="row">
-      <div class="col">
+        <div class="col">
 
             <div class="card border border-primary">
-                    <div class="card-header text-white bg-secondary">
-        <i class="fa fa-database fa-fw"></i>&nbsp;Asset Gate Pass Report
+                <div class="card-header text-white bg-secondary">
+                    <i class="fa fa-database fa-fw"></i>&nbsp;Asset Report
+                </div>
+
+                <div class="card-body text-primary">
+                    <div class="row">
+                        <div class="col-4 form-group">
+                            <label for="gptodate" class="col-form-label font-weight-bold">Asset Tag Id :</label>
+                            <input type="text" Id="gptodate" class="form-control" placeholder="Purchase To Date">
+                        </div>
+                        <div class="col-4 form-group">
+                            <label for="gptodate" class="col-form-label font-weight-bold">Asset Category :</label>
+                            <input type="text" Id="gpfromdate" class="form-control" placeholder="Gate Pass From Date">
+
+                        </div>
+                        <div class="col-4 form-group">
+                                <label for="gptodate" class="col-form-label font-weight-bold">Purchase From/Vendor Name :</label>
+                                <input type="text" Id="gpfromdate" class="form-control" placeholder="Gate Pass From Date">
+    
+                            </div>
+                    </div>
+                    <!-- <div class="row">
+                        <div class="col-3 form-group">
+                            <input type="text" Id="gptodate" class="form-control" placeholder="Purchase To Date">
+                        </div>
+                        <div class="col-3 form-group">
+                            <input type="text" Id="gpfromdate" class="form-control" placeholder="Gate Pass From Date">
+                        </div>
+                        <div class="col form-group">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" style="margin-top: 5px" type="checkbox" id="inlineCheckbox1"
+                                    value="option1">
+                                <label class="form-check-label" style="margin-top: 5px" for="inlineCheckbox1">All</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                                <label class="form-check-label" for="inlineCheckbox2">Pending</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option1">
+                                <label class="form-check-label" for="inlineCheckbox3">Approved</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="option2">
+                                <label class="form-check-label" for="inlineCheckbox4">Reject</label>
+                            </div>
+
+                        </div>
+                    </div> -->
+                    <!-- <div class="row">
+                        <div class="col-6 form-group">
+                            <label for="gptodate" class="col-form-label font-weight-bold">Returnable Status :</label>
+                        </div>
+                        <div class="col-6 form-group">
+                            <label for="gptodate" class="col-form-label font-weight-bold">Report Type :</label>
+                        </div>
+                    </div> -->
+                    <!-- <div class="row">
+                        <div class="col-6 form-group">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                                <label class="form-check-label mt-8" for="inlineCheckbox1">All</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input mt-8" type="checkbox" id="inlineCheckbox2" value="option2">
+                                <label class="form-check-label mt-8" for="inlineCheckbox2">Retrunable</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option1">
+                                <label class="form-check-label" for="inlineCheckbox3">Non-Returnable</label>
+                            </div>
+                        </div>
+                        <div class="col-6 form-group">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="inlineCheckbox1" value="option1">
+                                <label class="form-check-label" for="inlineCheckbox1">Summary Report</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="inlineCheckbox2" value="option2">
+                                <label class="form-check-label" for="inlineCheckbox2">Details with Item</label>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-6 form-group text-left ">
+                            <button type="button" class="btn btn-primary btn-sm m-1"><i class="fa fa-save fa-fw"></i>&nbsp;PDF</button>
+                            <button type="button" class="btn btn-primary btn-sm m-1"><i class="fa fa-close fa-fw"></i>&nbsp;Excel</button>
+                        </div>
+                        <div class="col-6 form-group text-right ">
+                            <button type="button" class="btn btn-primary btn-sm m-1"><i class="fa fa-save fa-fw"></i>&nbsp;Submit</button>
+                            <button type="button" class="btn btn-primary btn-sm m-1"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <div class="card-body text-primary">
-        <div class="row">
-            <div class="col-6 form-group">
-             <label for="gptodate" class="col-form-label font-weight-bold">Gate Pass Date :</label>
-            </div>
-            <div class="col-6 form-group">
-                <label for="gptodate" class="col-form-label font-weight-bold">Approval Status :</label>
-               </div>
+    <div class="row">
+        <div class="col" style=" overflow: hidden;">
+            <ag-grid-angular style='width: 100%; height: 370px;' class="ag-theme-balham" [enableSorting]="true"
+                [enableFilter]="true" [rowData]="rowData | async" [pagination]="true" [paginationPageSize]='paginationPageSize'
+                [paginationNumberFormatter]='paginationNumberFormatter' [columnDefs]="columnDefs" 
+                id="gridApi" (gridReady)="onGridReady($event)">
+            </ag-grid-angular>
         </div>
-        <div class="row">
-            <div class="col-3 form-group">
-                <input type="text" Id="gptodate" class="form-control" placeholder="Gate Pass To Date">
-               </div>
-            <div class="col-3 form-group">
-                <input type="text" Id="gpfromdate" class="form-control" placeholder="Gate Pass From Date">
-            </div>
-            <div class="col form-group">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" style="margin-top: 5px" type="checkbox" id="inlineCheckbox1" value="option1">
-                    <label class="form-check-label" style="margin-top: 5px" for="inlineCheckbox1">All</label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                    <label class="form-check-label" for="inlineCheckbox2">Pending</label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option1">
-                      <label class="form-check-label" for="inlineCheckbox3">Approved</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="option2">
-                      <label class="form-check-label" for="inlineCheckbox4">Reject</label>
-                    </div>
+    </div>
 
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6 form-group">
-             <label for="gptodate" class="col-form-label font-weight-bold">Returnable Status :</label>
-            </div>
-            <div class="col-6 form-group">
-                <label for="gptodate" class="col-form-label font-weight-bold">Report Type :</label>
-               </div>
-        </div>
-        <div class="row">
-            <div class="col-6 form-group">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input"  type="checkbox" id="inlineCheckbox1" value="option1">
-                    <label class="form-check-label mt-8" for="inlineCheckbox1">All</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input mt-8" type="checkbox" id="inlineCheckbox2" value="option2">
-                    <label class="form-check-label mt-8" for="inlineCheckbox2">Retrunable</label>
-                </div>
-                <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option1">
-                      <label class="form-check-label" for="inlineCheckbox3">Non-Returnable</label>
-                </div>
-            </div>
-            <div class="col-6 form-group">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="inlineCheckbox1" value="option1">
-                    <label class="form-check-label" for="inlineCheckbox1">Summary Report</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="inlineCheckbox2" value="option2">
-                    <label class="form-check-label" for="inlineCheckbox2">Details with Item</label>
-                </div>
-            </div>
-        </div>
-     </div>
-     <div class="card-footer">
-        <div class="row">
-            <div class="col-6 form-group text-left ">
-                <button type="button" class="btn btn-primary btn-sm m-1"><i class="fa fa-save fa-fw"></i>&nbsp;PDF</button>
-                <button type="button" class="btn btn-primary btn-sm m-1"><i class="fa fa-close fa-fw"></i>&nbsp;Excel</button>
-            </div>
-            <div class="col-6 form-group text-right ">
-                <button type="button" class="btn btn-primary btn-sm m-1"><i class="fa fa-save fa-fw"></i>&nbsp;Submit</button>
-                <button type="button" class="btn btn-primary btn-sm m-1"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
-            </div>
-        </div>
-     </div>
-  </div>
-
-  </div>
-  </div>
-
-  <div class="row mt-3">
+        <!-- <div class="row mt-3">
       <div class="col">
           <table class="table table-bordered table-md text-primary">
               <thead>
@@ -126,9 +145,9 @@
             </tbody>
           </table>
       </div>
-    </div>
+    </div> -->
 
-    <div class="row mt-3">
+        <!-- <div class="row mt-3">
         <div class="col">
             <table class="table table-bordered table-md text-primary">
                 <thead>
@@ -165,5 +184,5 @@
               </tbody>
             </table>
         </div>
-      </div>
-  </div>
+      </div> -->
+    </div>

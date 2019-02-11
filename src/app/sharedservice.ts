@@ -1008,6 +1008,407 @@ export class AuthClient implements IAuthClient {
     }
 }
 
+export interface ICompanyClient {
+    getAllCompanies(): Observable<CompanyModel[] | null>;
+    saveCompany(companyData?: string | null | undefined): Observable<ResponseModel | null>;
+    updateCompany(companyData?: string | null | undefined): Observable<ResponseModel | null>;
+    getAssetById(assetId?: number | undefined): Observable<AssetModel | null>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class CompanyClient implements ICompanyClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    getAllCompanies(): Observable<CompanyModel[] | null> {
+        let url_ = this.baseUrl + "/api/company/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllCompanies(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllCompanies(<any>response_);
+                } catch (e) {
+                    return <Observable<CompanyModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CompanyModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllCompanies(response: HttpResponseBase): Observable<CompanyModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CompanyModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CompanyModel[] | null>(<any>null);
+    }
+
+    saveCompany(companyData?: string | null | undefined): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/company/AddCompany?";
+        if (companyData !== undefined)
+            url_ += "companyData=" + encodeURIComponent("" + companyData) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSaveCompany(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSaveCompany(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSaveCompany(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+
+    updateCompany(companyData?: string | null | undefined): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/company/UpdateCompany?";
+        if (companyData !== undefined)
+            url_ += "companyData=" + encodeURIComponent("" + companyData) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateCompany(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateCompany(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateCompany(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+
+    getAssetById(assetId?: number | undefined): Observable<AssetModel | null> {
+        let url_ = this.baseUrl + "/api/company/GetAsset?";
+        if (assetId === null)
+            throw new Error("The parameter 'assetId' cannot be null.");
+        else if (assetId !== undefined)
+            url_ += "assetId=" + encodeURIComponent("" + assetId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAssetById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAssetById(<any>response_);
+                } catch (e) {
+                    return <Observable<AssetModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AssetModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAssetById(response: HttpResponseBase): Observable<AssetModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? AssetModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AssetModel | null>(<any>null);
+    }
+}
+
+export interface IReportClient {
+    getAllGatePassStatus(): Observable<StatusModel[] | null>;
+    getGatePassSummaryReport(): Observable<AssetGatePassModel[] | null>;
+    getGatePassReportWithItems(): Observable<ReportModel[] | null>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class ReportClient implements IReportClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    getAllGatePassStatus(): Observable<StatusModel[] | null> {
+        let url_ = this.baseUrl + "/api/report/GetAllGatePassStatus";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllGatePassStatus(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllGatePassStatus(<any>response_);
+                } catch (e) {
+                    return <Observable<StatusModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<StatusModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllGatePassStatus(response: HttpResponseBase): Observable<StatusModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(StatusModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<StatusModel[] | null>(<any>null);
+    }
+
+    getGatePassSummaryReport(): Observable<AssetGatePassModel[] | null> {
+        let url_ = this.baseUrl + "/api/report/GetGatePassSummaryReport";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetGatePassSummaryReport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetGatePassSummaryReport(<any>response_);
+                } catch (e) {
+                    return <Observable<AssetGatePassModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AssetGatePassModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetGatePassSummaryReport(response: HttpResponseBase): Observable<AssetGatePassModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(AssetGatePassModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AssetGatePassModel[] | null>(<any>null);
+    }
+
+    getGatePassReportWithItems(): Observable<ReportModel[] | null> {
+        let url_ = this.baseUrl + "/api/report/GetGatePassReportWithItems";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetGatePassReportWithItems(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetGatePassReportWithItems(<any>response_);
+                } catch (e) {
+                    return <Observable<ReportModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ReportModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetGatePassReportWithItems(response: HttpResponseBase): Observable<ReportModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(ReportModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ReportModel[] | null>(<any>null);
+    }
+}
+
 export interface IUserClient {
     getRoleList(): Observable<RoleModel[] | null>;
     getDepartmentList(): Observable<DepartmentModel[] | null>;
@@ -1352,8 +1753,8 @@ export class AssetModel implements IAssetModel {
     isActive!: boolean;
     createdBy!: number;
     createdDate!: Date;
-    modifiedBy!: number;
-    modifiedDate!: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
     documentList?: DocumentModel[] | undefined;
     assetCategory?: AssetCategoryModel | undefined;
     assetDetail?: AssetDetailModel[] | undefined;
@@ -1436,8 +1837,8 @@ export interface IAssetModel {
     isActive: boolean;
     createdBy: number;
     createdDate: Date;
-    modifiedBy: number;
-    modifiedDate: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
     documentList?: DocumentModel[] | undefined;
     assetCategory?: AssetCategoryModel | undefined;
     assetDetail?: AssetDetailModel[] | undefined;
@@ -1521,8 +1922,8 @@ export class AssetCategoryModel implements IAssetCategoryModel {
     isActive?: boolean | undefined;
     createdBy!: number;
     createdDate!: Date;
-    modifiedBy!: number;
-    modifiedDate!: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
 
     constructor(data?: IAssetCategoryModel) {
         if (data) {
@@ -1571,8 +1972,8 @@ export interface IAssetCategoryModel {
     isActive?: boolean | undefined;
     createdBy: number;
     createdDate: Date;
-    modifiedBy: number;
-    modifiedDate: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
 }
 
 export class AssetDetailModel implements IAssetDetailModel {
@@ -1766,8 +2167,8 @@ export class AssetGatePassModel implements IAssetGatePassModel {
     gatePassStatusId?: number | undefined;
     createdBy!: number;
     createdDate!: Date;
-    modifiedBy!: number;
-    modifiedDate!: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
     gatePassStatus?: StatusModel | undefined;
     gatePassType?: GatePassTypeModel | undefined;
     createdByNavigation?: UserModel | undefined;
@@ -1868,8 +2269,8 @@ export interface IAssetGatePassModel {
     gatePassStatusId?: number | undefined;
     createdBy: number;
     createdDate: Date;
-    modifiedBy: number;
-    modifiedDate: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
     gatePassStatus?: StatusModel | undefined;
     gatePassType?: GatePassTypeModel | undefined;
     createdByNavigation?: UserModel | undefined;
@@ -1971,8 +2372,8 @@ export class UserModel implements IUserModel {
     isActive?: boolean | undefined;
     createdBy!: number;
     createdDate!: Date;
-    modifiedBy!: number;
-    modifiedDate!: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
     token?: string | undefined;
     role?: RoleModel | undefined;
     dept?: DepartmentModel | undefined;
@@ -2070,8 +2471,8 @@ export interface IUserModel {
     isActive?: boolean | undefined;
     createdBy: number;
     createdDate: Date;
-    modifiedBy: number;
-    modifiedDate: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
     token?: string | undefined;
     role?: RoleModel | undefined;
     dept?: DepartmentModel | undefined;
@@ -2085,8 +2486,8 @@ export class RoleModel implements IRoleModel {
     roleDescription?: string | undefined;
     createdBy!: number;
     createdDate!: Date;
-    modifiedBy!: number;
-    modifiedDate!: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
 
     constructor(data?: IRoleModel) {
         if (data) {
@@ -2135,8 +2536,8 @@ export interface IRoleModel {
     roleDescription?: string | undefined;
     createdBy: number;
     createdDate: Date;
-    modifiedBy: number;
-    modifiedDate: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
 }
 
 export class DepartmentModel implements IDepartmentModel {
@@ -2145,8 +2546,8 @@ export class DepartmentModel implements IDepartmentModel {
     isActive!: boolean;
     createdBy!: number;
     createdDate!: Date;
-    modifiedBy!: number;
-    modifiedDate!: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
 
     constructor(data?: IDepartmentModel) {
         if (data) {
@@ -2195,8 +2596,8 @@ export interface IDepartmentModel {
     isActive: boolean;
     createdBy: number;
     createdDate: Date;
-    modifiedBy: number;
-    modifiedDate: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
 }
 
 export class UserCredentialModel implements IUserCredentialModel {
@@ -2311,8 +2712,8 @@ export class CompanyModel implements ICompanyModel {
     isActive?: boolean | undefined;
     createdBy!: number;
     createdDate!: Date;
-    modifiedBy!: number;
-    modifiedDate!: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
 
     constructor(data?: ICompanyModel) {
         if (data) {
@@ -2379,8 +2780,8 @@ export interface ICompanyModel {
     isActive?: boolean | undefined;
     createdBy: number;
     createdDate: Date;
-    modifiedBy: number;
-    modifiedDate: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
 }
 
 export class AssetGatePassDetailModel implements IAssetGatePassDetailModel {
@@ -2789,6 +3190,86 @@ export class LoginDetails implements ILoginDetails {
 export interface ILoginDetails {
     userId?: string | undefined;
     password?: string | undefined;
+}
+
+export class ReportModel implements IReportModel {
+    gatePassNo?: string | undefined;
+    gatePassDate?: string | undefined;
+    senderName?: string | undefined;
+    sendAddress?: string | undefined;
+    remarks?: string | undefined;
+    gatePassStatus?: string | undefined;
+    gatePassType?: string | undefined;
+    assetTagId?: string | undefined;
+    assetName?: string | undefined;
+    assetCategoryName?: string | undefined;
+    receivedBy?: string | undefined;
+    createdBy?: string | undefined;
+
+    constructor(data?: IReportModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.gatePassNo = data["gatePassNo"];
+            this.gatePassDate = data["gatePassDate"];
+            this.senderName = data["senderName"];
+            this.sendAddress = data["sendAddress"];
+            this.remarks = data["remarks"];
+            this.gatePassStatus = data["gatePassStatus"];
+            this.gatePassType = data["gatePassType"];
+            this.assetTagId = data["assetTagId"];
+            this.assetName = data["assetName"];
+            this.assetCategoryName = data["assetCategoryName"];
+            this.receivedBy = data["receivedBy"];
+            this.createdBy = data["createdBy"];
+        }
+    }
+
+    static fromJS(data: any): ReportModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new ReportModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["gatePassNo"] = this.gatePassNo;
+        data["gatePassDate"] = this.gatePassDate;
+        data["senderName"] = this.senderName;
+        data["sendAddress"] = this.sendAddress;
+        data["remarks"] = this.remarks;
+        data["gatePassStatus"] = this.gatePassStatus;
+        data["gatePassType"] = this.gatePassType;
+        data["assetTagId"] = this.assetTagId;
+        data["assetName"] = this.assetName;
+        data["assetCategoryName"] = this.assetCategoryName;
+        data["receivedBy"] = this.receivedBy;
+        data["createdBy"] = this.createdBy;
+        return data; 
+    }
+}
+
+export interface IReportModel {
+    gatePassNo?: string | undefined;
+    gatePassDate?: string | undefined;
+    senderName?: string | undefined;
+    sendAddress?: string | undefined;
+    remarks?: string | undefined;
+    gatePassStatus?: string | undefined;
+    gatePassType?: string | undefined;
+    assetTagId?: string | undefined;
+    assetName?: string | undefined;
+    assetCategoryName?: string | undefined;
+    receivedBy?: string | undefined;
+    createdBy?: string | undefined;
 }
 
 export class SwaggerException extends Error {

@@ -44,6 +44,7 @@
     margin-bottom: 0px;
     font-size:1rem;
     font-weight: 400;
+    background-color: #687c85!important
   }
   .card-footer {
     padding: 0.1rem 0.1rem;
@@ -65,16 +66,17 @@
   }
   .btn-primary {
     color: #fff;
-    background-color: rgba(73, 68, 68, 0.705);
-    border-color: rgba(73, 68, 68, 0.705);
+    background-color: rgb(18, 145, 49);
+    border-color: rgb(18, 145, 49);
     font-size: 1rem
   }
   
   .btn-primary:hover {
     color: #fff;
-    background-color: rgba(46, 156, 52, 0.733);
-    border-color: rgba(3, 156, 67, 0.959);
+    background-color: rgb(12, 97, 33);
+    border-color: rgb(12, 97, 33);
   }
+  
   
   .btn-disabled {
     color: #fff;
@@ -84,8 +86,8 @@
   }
   
   .btn-sm{
-    padding: 0.20rem 0.75rem;
-    width:6rem;
+    padding: 0.0rem 0.05rem;
+    width:5rem;
   
   }
   .modal-width {

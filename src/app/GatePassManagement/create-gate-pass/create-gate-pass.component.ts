@@ -39,7 +39,7 @@ export class CreateGatePassComponent implements OnInit {
   }
   
   ngOnInit() {
-    this.gatePassClient.getAllGatePassType().subscribe(data => { this.gatePassTypeList = data; });
+    this.gatePassClient.getAllGatePassType().subscribe(data => { this.gatePassTypeList = data;this.gatePassTypeList = this.gatePassTypeList.filter(x => x.typeName != 'All'); });
     this.gatePassClient.getAllUnit().subscribe(data => { this.quantityUnitList = data; });
     this.assetClient.getAllAssetTag().subscribe(data => { this.assetModelList = data; });
 

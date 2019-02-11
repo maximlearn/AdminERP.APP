@@ -39,7 +39,7 @@ export class EditAssetGatePassComponent implements OnInit {
   ngOnInit() {
     console.log(this.assetGatePassModel);
     this.gatePassClient.getBlankGatePassDetail().subscribe( data => {this.blanAssetGatePassDetailModel = data;this.assetGatePassDetailModel=data;  console.log(this.assetGatePassDetailModel);});
-    this.gatePassClient.getAllGatePassType().subscribe(data => { this.gatePassTypeList = data; });
+    this.gatePassClient.getAllGatePassType().subscribe(data => { this.gatePassTypeList = data;this.gatePassTypeList = this.gatePassTypeList.filter(x => x.typeName != 'All'); });
     this.gatePassClient.getAllUnit().subscribe(data => { this.quantityUnitList = data; });
     this.assetClient.getAllAssetTag().subscribe(data => { this.assetModelList = data; console.log(this.assetModelList); });
   }

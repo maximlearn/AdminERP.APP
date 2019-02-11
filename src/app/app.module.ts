@@ -28,7 +28,8 @@ import { API_BASE_URL } from './sharedservice';
     {
       provide: API_BASE_URL,
       useFactory: () => {
-                    return 'https://localhost:44361/';
+                    return 'https://localhost:44361';
+                  // return 'https://adminerp.azurewebsites.net/'
              }
       }
    ],

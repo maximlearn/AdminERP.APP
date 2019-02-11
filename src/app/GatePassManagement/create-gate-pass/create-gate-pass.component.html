@@ -264,8 +264,8 @@
     && sendtocompany.valid && sendtoaddress.valid && sendtoPhone.valid)"
      [ngClass]="!(gatepassdate.valid && gatepass_status.valid && sendtoname.valid
      && sendtocompany.valid && sendtoaddress.valid && sendtoPhone.valid) ? 'btn-disabled' : 'btn-primary'" class="btn btn-primary mr-1 m-1 btn-sm "><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
-    <button type="button" (click)="resetForm()" class="btn btn-primary m-1 btn-sm "><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
-  </div>
+     <button type="button" (click) ="resetForm()" class="btn btn-primary m-1  btn-sm"><i class="fa fa-refresh fa-fw"></i>&nbsp;Reset</button>
+     </div>
 
 </div>
 </form>
