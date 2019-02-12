@@ -1,35 +1,56 @@
 <div>
   <div class="row">
     <div class="col-md-5">
-    <form>
+      <form name="form" #deptform="ngForm" (ngSubmit)="SaveDepartmant(department)">
         <div class="card border border-primary">
-            <div class="card-header text-white bg-secondary">
-          <i class="fa fa-user fa-fw"></i>&nbsp;Add Department
-      </div>
-      <div class="card-body text-primary mt-0">
-          <div class="row">
-              <div class="col form-group">
-              <label for="departmentName" class="font-weight-bold col-form-label">Department Name :</label>
-              <input type="text" Id="departmentName" class="form-control" placeholder="Enter Department Name">
+          <div class="card-header text-white bg-secondary">
+            <i class="fa fa-user fa-fw"></i>&nbsp;Add Department
+          </div>
+          <div class="card-body text-primary mt-0">
+            <div class="row">
+              <div class="col form-group"  [class.was-validated]="departmentName.errors?.required  && departmentName.touched">
+                <label for="departmentName" class="font-weight-bold col-form-label">Department Name :</label>
+                <input type="text" Id="departmentName" name="departmentName" class="form-control" [(ngModel)]="department.departmentName"
+                  #departmentName="ngModel" required placeholder="Enter Department Name">
+                <span class="invalid-feedback" *ngIf="departmentName.errors?.required && departmentName.touched">
+                  Department Name is required.
+                </span>
+                <span class="font-weight-bold" [class.text-success]="responseMessage.isSuccess" [class.text-danger]="!responseMessage.isSuccess"
+              *ngIf="responseMessage ">
+              {{responseMessage.message}}
+            </span> 
               </div>
             </div>
-      </div>
-      <div class="card-footer text-right">
-        <button type="button" class="btn btn-primary mr-1 m-1 btn-sm"><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
-        <button type="button" class="btn btn-primary m-1 btn-sm"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
-      </div>
+          </div>
+          <div class="card-footer text-right">
+              
+            <button [style.visibility]="isSaveDisplay" type="submit"
+            [disabled]="!deptform.form.valid" [ngClass]="!deptform.form.valid ? 'btn-disabled' : 'btn-primary'"
+            class="btn btn-primary mr-1 m-1 btn-sm"><i class="fa fa-save fa-fw"></i>
+              {{department.id == 0 ? "Save" : "Update"}}</button>
+            <button type="button" (click)="resetForm()" class="btn btn-primary m-1 btn-sm"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+          </div>
 
+        </div>
+      </form>
     </div>
-    </form>
-  </div>
 
     <div class="col-md-7">
-        <div class="card">
-            <div class="card-header text-white bg-secondary">
-                <i class="fa fa-user fa-fw"></i>&nbsp;List Department
+      <div class="card">
+        <div class="card-header text-white bg-secondary">
+          <i class="fa fa-user fa-fw"></i>&nbsp;List Department
+        </div>
+        <div class="card-body border border-primary">
+          <div class="row">
+            <div class="col" style="overflow: hidden;">
+              <ag-grid-angular style='width: 100%; height: 370px;' class="ag-theme-balham" id="gridApi" [enableSorting]="true"
+                [enableFilter]="true" [rowData]="rowData | async" [pagination]="true" [paginationPageSize]='this.paginationPageSize'
+                [paginationNumberFormatter]='paginationNumberFormatter' [columnDefs]="columnDefs" [animateRows]="true"
+                (rowClicked)="onRowClicked($event)" (gridReady)="onGridReady($event)">
+              </ag-grid-angular>
             </div>
-      <div class="card-body border border-primary">
-          <table class="table table-bordered table-md text-primary">
+          </div>
+          <!-- <table class="table table-bordered table-md text-primary">
               <thead>
                 <th >Department Name</th>
                 <th></th>
@@ -41,10 +62,8 @@
                   <a href="#"><i class="fa fa-trash-o fa-fw"></i></a></td>
               </tr>
             </tbody>
-          </table>
+          </table> -->
+        </div>
+      </div>
+    </div>
   </div>
-   </div>
-  </div>
-</div>
-
-

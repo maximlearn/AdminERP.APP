@@ -8,13 +8,17 @@ import { CompanyComponent } from './company/company.component';
 import { DepartmentComponent } from './department/department.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { TabsModule } from 'ngx-bootstrap';
+import { FormsModule } from '@angular/forms';
+import { AgGridModule } from 'ag-grid-angular';
 
 @NgModule({
   declarations: [AssetCategoryComponent, CompanyComponent, DepartmentComponent, ConfigurationComponent],
   imports: [
     CommonModule,
     BasicConfigRoutingModule,
-    TabsModule.forRoot()
+    TabsModule.forRoot(),
+    FormsModule,
+    AgGridModule.withComponents([DepartmentComponent]),
   ]
 })
 export class BasicConfigModule { }

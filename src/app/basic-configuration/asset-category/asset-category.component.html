@@ -1,35 +1,57 @@
 <div>
   <div class="row">
     <div class="col-md-5">
-    <form>
-        <div class="card border border-primary">
-            <div class="card-header text-white bg-secondary">
-          <i class="fa fa-user fa-fw"></i>&nbsp;Add Asset Category
-      </div>
-      <div class="card-body text-primary mt-0">
-          <div class="row">
-              <div class="col form-group">
-              <label for="assetCategory" class="font-weight-bold col-form-label">Category Name :</label>
-              <input type="text" Id="assetCategory" class="form-control" placeholder="Enter Asset Category Name">
+      <form name="assetfrm" #assetCategoryfrm="ngForm" (ngSubmit)="SaveAssetCategory(assetCategory)">
+        <div class="card border border-primary" *ngIf="assetCategory">
+          <div class="card-header text-white bg-secondary">
+            <i class="fa fa-user fa-fw"></i>&nbsp;Add Asset Category
+          </div>
+          <div class="card-body text-primary mt-0">
+            <div class="row">
+              <div class="col form-group" [class.was-validated]="asset_Category.errors?.required  && asset_Category.touched">
+                <label for="asset_Category" class="font-weight-bold col-form-label">Category Name :</label>
+                <input type="text" Id="asset_Category" name="asset_Category" class="form-control" [(ngModel)]="assetCategory.categoryName"
+                  #asset_Category="ngModel" required placeholder="Enter Asset Category Name">
+                <span class="invalid-feedback" *ngIf="asset_Category.errors?.required && asset_Category.touched">
+                  Asset Category Name is required.
+                </span>
+                <span class="font-weight-bold" [class.text-success]="responseMessage.isSuccess" [class.text-danger]="!responseMessage.isSuccess"
+                *ngIf="responseMessage ">
+                {{responseMessage.message}}
+              </span>
               </div>
             </div>
-      </div>
-      <div class="card-footer text-right">
-        <button type="button" class="btn btn-primary mr-1 m-1 btn-sm"><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
-        <button type="button" class="btn btn-primary m-1 btn-sm"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
-      </div>
+          </div>
+          <div class="card-footer text-right">
+           
+            <button [style.visibility]="isSaveDisplay" type="submit" [disabled]="!assetCategoryfrm.form.valid" [ngClass]="!assetCategoryfrm.form.valid ? 'btn-disabled' : 'btn-primary'"
+              class="btn btn-primary mr-1 m-1 btn-sm"><i class="fa fa-save fa-fw"></i>
+              {{assetCategory.id == 0 ? "Save" : "Update"}}
+            </button>
+            <button type="button" (click)="resetForm()" class="btn btn-primary m-1 btn-sm"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+          </div>
 
+        </div>
+      </form>
     </div>
-    </form>
-  </div>
 
     <div class="col-md-7">
-        <div class="card">
-            <div class="card-header text-white bg-secondary">
-                <i class="fa fa-user fa-fw"></i>&nbsp;List Asset Category
+      <div class="card">
+        <div class="card-header text-white bg-secondary">
+          <i class="fa fa-user fa-fw"></i>&nbsp;List Asset Category
+        </div>
+        <div class="card-body border border-primary">
+          <div class="row">
+            <div class="col" style="overflow: hidden;">
+              <ag-grid-angular style='width: 100%; height: 370px;' class="ag-theme-balham" id="gridApi" [enableSorting]="true"
+                [enableFilter]="true" [rowData]="rowData | async" [pagination]="true" [paginationPageSize]='this.paginationPageSize'
+                [paginationNumberFormatter]='paginationNumberFormatter' [columnDefs]="columnDefs" [animateRows]="true"
+                (rowClicked)="onRowClicked($event)" (gridReady)="onGridReady($event)">
+              </ag-grid-angular>
             </div>
-      <div class="card-body border border-primary">
-          <table class="table table-bordered table-md text-primary">
+          </div>
+
+          <!-- <table class="table table-bordered table-md text-primary">
               <thead>
                 <th >Asset Category Name</th>
                 <th></th>
@@ -47,10 +69,8 @@
                     <a href="#"><i class="fa fa-trash-o fa-fw"></i></a></td>
               </tr>
             </tbody>
-          </table>
+          </table> -->
+        </div>
+      </div>
+    </div>
   </div>
-   </div>
-  </div>
-</div>
-
-

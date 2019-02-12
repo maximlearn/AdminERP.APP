@@ -13,6 +13,235 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
+export interface IAssetCategoryClient {
+    getAllAssetCategory(): Observable<AssetCategoryModel[] | null>;
+    saveAssetCategory(assetCategoryModel: AssetCategoryModel): Observable<ResponseModel | null>;
+    getAssetCategoryById(assetCategoryId?: number | undefined): Observable<DepartmentModel | null>;
+    deleteAssetCategory(assetCategoryId?: number | undefined): Observable<ResponseModel | null>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class AssetCategoryClient implements IAssetCategoryClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    getAllAssetCategory(): Observable<AssetCategoryModel[] | null> {
+        let url_ = this.baseUrl + "/api/assetCategory/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllAssetCategory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllAssetCategory(<any>response_);
+                } catch (e) {
+                    return <Observable<AssetCategoryModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AssetCategoryModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllAssetCategory(response: HttpResponseBase): Observable<AssetCategoryModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(AssetCategoryModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AssetCategoryModel[] | null>(<any>null);
+    }
+
+    saveAssetCategory(assetCategoryModel: AssetCategoryModel): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/assetCategory/AddAssetCategory";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(assetCategoryModel);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSaveAssetCategory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSaveAssetCategory(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSaveAssetCategory(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+
+    getAssetCategoryById(assetCategoryId?: number | undefined): Observable<DepartmentModel | null> {
+        let url_ = this.baseUrl + "/api/assetCategory/GetAssetCategory?";
+        if (assetCategoryId === null)
+            throw new Error("The parameter 'assetCategoryId' cannot be null.");
+        else if (assetCategoryId !== undefined)
+            url_ += "assetCategoryId=" + encodeURIComponent("" + assetCategoryId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAssetCategoryById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAssetCategoryById(<any>response_);
+                } catch (e) {
+                    return <Observable<DepartmentModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<DepartmentModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAssetCategoryById(response: HttpResponseBase): Observable<DepartmentModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? DepartmentModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<DepartmentModel | null>(<any>null);
+    }
+
+    deleteAssetCategory(assetCategoryId?: number | undefined): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/assetCategory/DeleteAssetCategory?";
+        if (assetCategoryId === null)
+            throw new Error("The parameter 'assetCategoryId' cannot be null.");
+        else if (assetCategoryId !== undefined)
+            url_ += "assetCategoryId=" + encodeURIComponent("" + assetCategoryId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteAssetCategory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteAssetCategory(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteAssetCategory(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+}
+
 export interface IAssetClient {
     getAllAsset(): Observable<AssetModel[] | null>;
     getAllAssetTag(): Observable<AssetModel[] | null>;
@@ -1012,7 +1241,7 @@ export interface ICompanyClient {
     getAllCompanies(): Observable<CompanyModel[] | null>;
     saveCompany(companyData?: string | null | undefined): Observable<ResponseModel | null>;
     updateCompany(companyData?: string | null | undefined): Observable<ResponseModel | null>;
-    getAssetById(assetId?: number | undefined): Observable<AssetModel | null>;
+    getCompanyById(companyId?: number | undefined): Observable<CompanyModel | null>;
 }
 
 @Injectable({
@@ -1180,12 +1409,12 @@ export class CompanyClient implements ICompanyClient {
         return _observableOf<ResponseModel | null>(<any>null);
     }
 
-    getAssetById(assetId?: number | undefined): Observable<AssetModel | null> {
-        let url_ = this.baseUrl + "/api/company/GetAsset?";
-        if (assetId === null)
-            throw new Error("The parameter 'assetId' cannot be null.");
-        else if (assetId !== undefined)
-            url_ += "assetId=" + encodeURIComponent("" + assetId) + "&"; 
+    getCompanyById(companyId?: number | undefined): Observable<CompanyModel | null> {
+        let url_ = this.baseUrl + "/api/company/GetCompany?";
+        if (companyId === null)
+            throw new Error("The parameter 'companyId' cannot be null.");
+        else if (companyId !== undefined)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1197,20 +1426,20 @@ export class CompanyClient implements ICompanyClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAssetById(response_);
+            return this.processGetCompanyById(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetAssetById(<any>response_);
+                    return this.processGetCompanyById(<any>response_);
                 } catch (e) {
-                    return <Observable<AssetModel | null>><any>_observableThrow(e);
+                    return <Observable<CompanyModel | null>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<AssetModel | null>><any>_observableThrow(response_);
+                return <Observable<CompanyModel | null>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetAssetById(response: HttpResponseBase): Observable<AssetModel | null> {
+    protected processGetCompanyById(response: HttpResponseBase): Observable<CompanyModel | null> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -1221,7 +1450,7 @@ export class CompanyClient implements ICompanyClient {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? AssetModel.fromJS(resultData200) : <any>null;
+            result200 = resultData200 ? CompanyModel.fromJS(resultData200) : <any>null;
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1229,7 +1458,236 @@ export class CompanyClient implements ICompanyClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<AssetModel | null>(<any>null);
+        return _observableOf<CompanyModel | null>(<any>null);
+    }
+}
+
+export interface IDepartmentClient {
+    getAllDepartments(): Observable<DepartmentModel[] | null>;
+    saveDepartment(departmentModel: DepartmentModel): Observable<ResponseModel | null>;
+    getDepartmentById(departmentId?: number | undefined): Observable<DepartmentModel | null>;
+    deleteDepartment(departmentId?: number | undefined): Observable<ResponseModel | null>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class DepartmentClient implements IDepartmentClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    getAllDepartments(): Observable<DepartmentModel[] | null> {
+        let url_ = this.baseUrl + "/api/department/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllDepartments(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllDepartments(<any>response_);
+                } catch (e) {
+                    return <Observable<DepartmentModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<DepartmentModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllDepartments(response: HttpResponseBase): Observable<DepartmentModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DepartmentModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<DepartmentModel[] | null>(<any>null);
+    }
+
+    saveDepartment(departmentModel: DepartmentModel): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/department/AddDepartment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(departmentModel);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSaveDepartment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSaveDepartment(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSaveDepartment(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+
+    getDepartmentById(departmentId?: number | undefined): Observable<DepartmentModel | null> {
+        let url_ = this.baseUrl + "/api/department/GetDepartment?";
+        if (departmentId === null)
+            throw new Error("The parameter 'departmentId' cannot be null.");
+        else if (departmentId !== undefined)
+            url_ += "departmentId=" + encodeURIComponent("" + departmentId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetDepartmentById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetDepartmentById(<any>response_);
+                } catch (e) {
+                    return <Observable<DepartmentModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<DepartmentModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetDepartmentById(response: HttpResponseBase): Observable<DepartmentModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? DepartmentModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<DepartmentModel | null>(<any>null);
+    }
+
+    deleteDepartment(departmentId?: number | undefined): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/department/DeleteDepartment?";
+        if (departmentId === null)
+            throw new Error("The parameter 'departmentId' cannot be null.");
+        else if (departmentId !== undefined)
+            url_ += "departmentId=" + encodeURIComponent("" + departmentId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteDepartment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteDepartment(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteDepartment(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
     }
 }
 
@@ -1744,6 +2202,178 @@ export class UserClient implements IUserClient {
     }
 }
 
+export class AssetCategoryModel implements IAssetCategoryModel {
+    id!: number;
+    categoryName?: string | undefined;
+    isActive?: boolean | undefined;
+    createdBy!: number;
+    createdDate!: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
+
+    constructor(data?: IAssetCategoryModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.categoryName = data["categoryName"];
+            this.isActive = data["isActive"];
+            this.createdBy = data["createdBy"];
+            this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
+            this.modifiedBy = data["modifiedBy"];
+            this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): AssetCategoryModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new AssetCategoryModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["categoryName"] = this.categoryName;
+        data["isActive"] = this.isActive;
+        data["createdBy"] = this.createdBy;
+        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
+        data["modifiedBy"] = this.modifiedBy;
+        data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IAssetCategoryModel {
+    id: number;
+    categoryName?: string | undefined;
+    isActive?: boolean | undefined;
+    createdBy: number;
+    createdDate: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
+}
+
+export class ResponseModel implements IResponseModel {
+    statusCode!: number;
+    statusText?: string | undefined;
+    message?: string | undefined;
+    isSuccess!: boolean;
+    isExist!: boolean;
+
+    constructor(data?: IResponseModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.statusCode = data["statusCode"];
+            this.statusText = data["statusText"];
+            this.message = data["message"];
+            this.isSuccess = data["isSuccess"];
+            this.isExist = data["isExist"];
+        }
+    }
+
+    static fromJS(data: any): ResponseModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new ResponseModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["statusCode"] = this.statusCode;
+        data["statusText"] = this.statusText;
+        data["message"] = this.message;
+        data["isSuccess"] = this.isSuccess;
+        data["isExist"] = this.isExist;
+        return data; 
+    }
+}
+
+export interface IResponseModel {
+    statusCode: number;
+    statusText?: string | undefined;
+    message?: string | undefined;
+    isSuccess: boolean;
+    isExist: boolean;
+}
+
+export class DepartmentModel implements IDepartmentModel {
+    id!: number;
+    departmentName?: string | undefined;
+    isActive!: boolean;
+    createdBy!: number;
+    createdDate!: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
+
+    constructor(data?: IDepartmentModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.departmentName = data["departmentName"];
+            this.isActive = data["isActive"];
+            this.createdBy = data["createdBy"];
+            this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
+            this.modifiedBy = data["modifiedBy"];
+            this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DepartmentModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new DepartmentModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["departmentName"] = this.departmentName;
+        data["isActive"] = this.isActive;
+        data["createdBy"] = this.createdBy;
+        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
+        data["modifiedBy"] = this.modifiedBy;
+        data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IDepartmentModel {
+    id: number;
+    departmentName?: string | undefined;
+    isActive: boolean;
+    createdBy: number;
+    createdDate: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
+}
+
 export class AssetModel implements IAssetModel {
     id!: number;
     assetTagId?: string | undefined;
@@ -1916,66 +2546,6 @@ export interface IDocumentModel {
     fileImage?: string | undefined;
 }
 
-export class AssetCategoryModel implements IAssetCategoryModel {
-    id!: number;
-    categoryName?: string | undefined;
-    isActive?: boolean | undefined;
-    createdBy!: number;
-    createdDate!: Date;
-    modifiedBy?: number | undefined;
-    modifiedDate?: Date | undefined;
-
-    constructor(data?: IAssetCategoryModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.categoryName = data["categoryName"];
-            this.isActive = data["isActive"];
-            this.createdBy = data["createdBy"];
-            this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
-            this.modifiedBy = data["modifiedBy"];
-            this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): AssetCategoryModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new AssetCategoryModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["categoryName"] = this.categoryName;
-        data["isActive"] = this.isActive;
-        data["createdBy"] = this.createdBy;
-        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
-        data["modifiedBy"] = this.modifiedBy;
-        data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IAssetCategoryModel {
-    id: number;
-    categoryName?: string | undefined;
-    isActive?: boolean | undefined;
-    createdBy: number;
-    createdDate: Date;
-    modifiedBy?: number | undefined;
-    modifiedDate?: Date | undefined;
-}
-
 export class AssetDetailModel implements IAssetDetailModel {
     id!: number;
     assetId!: number;
@@ -2102,58 +2672,6 @@ export interface IVendorModel {
     id: number;
     vendorName?: string | undefined;
     isActive?: boolean | undefined;
-}
-
-export class ResponseModel implements IResponseModel {
-    statusCode!: number;
-    statusText?: string | undefined;
-    message?: string | undefined;
-    isSuccess!: boolean;
-    isExist!: boolean;
-
-    constructor(data?: IResponseModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.statusCode = data["statusCode"];
-            this.statusText = data["statusText"];
-            this.message = data["message"];
-            this.isSuccess = data["isSuccess"];
-            this.isExist = data["isExist"];
-        }
-    }
-
-    static fromJS(data: any): ResponseModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new ResponseModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["statusCode"] = this.statusCode;
-        data["statusText"] = this.statusText;
-        data["message"] = this.message;
-        data["isSuccess"] = this.isSuccess;
-        data["isExist"] = this.isExist;
-        return data; 
-    }
-}
-
-export interface IResponseModel {
-    statusCode: number;
-    statusText?: string | undefined;
-    message?: string | undefined;
-    isSuccess: boolean;
-    isExist: boolean;
 }
 
 export class AssetGatePassModel implements IAssetGatePassModel {
@@ -2534,66 +3052,6 @@ export interface IRoleModel {
     id: number;
     roleName?: string | undefined;
     roleDescription?: string | undefined;
-    createdBy: number;
-    createdDate: Date;
-    modifiedBy?: number | undefined;
-    modifiedDate?: Date | undefined;
-}
-
-export class DepartmentModel implements IDepartmentModel {
-    id!: number;
-    departmentName?: string | undefined;
-    isActive!: boolean;
-    createdBy!: number;
-    createdDate!: Date;
-    modifiedBy?: number | undefined;
-    modifiedDate?: Date | undefined;
-
-    constructor(data?: IDepartmentModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.departmentName = data["departmentName"];
-            this.isActive = data["isActive"];
-            this.createdBy = data["createdBy"];
-            this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
-            this.modifiedBy = data["modifiedBy"];
-            this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): DepartmentModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new DepartmentModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["departmentName"] = this.departmentName;
-        data["isActive"] = this.isActive;
-        data["createdBy"] = this.createdBy;
-        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
-        data["modifiedBy"] = this.modifiedBy;
-        data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IDepartmentModel {
-    id: number;
-    departmentName?: string | undefined;
-    isActive: boolean;
     createdBy: number;
     createdDate: Date;
     modifiedBy?: number | undefined;
