@@ -74,7 +74,7 @@ export class AddUserComponent implements OnInit {
      
 
       switch (actionType) {
-        case "view":
+        case "view":        
          return this.ViewUserData(e.data);
         case "edit":
           return this.user = e.data;

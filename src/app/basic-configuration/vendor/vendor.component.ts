@@ -1,17 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DepartmentModel, ResponseModel, DepartmentClient } from 'src/app/sharedservice';
+import { VendorModel, ResponseModel, VendorClient } from 'src/app/sharedservice';
 import { NgForm } from '@angular/forms';
 
 @Component({
-  selector: 'app-department',
-  templateUrl: './department.component.html',
-  styleUrls: ['./department.component.scss']
+  selector: 'app-vendor',
+  templateUrl: './vendor.component.html',
+  styleUrls: ['./vendor.component.scss']
 })
-export class DepartmentComponent implements OnInit {
- // departmentList : DepartmentModel[];
-  department: DepartmentModel = <DepartmentModel>{ id : 0 };
+export class VendorComponent implements OnInit {
+
+  vendor: VendorModel = <VendorModel>{ id : 0 };
   responseMessage: ResponseModel;
-  @ViewChild('deptform') deptform: NgForm;
+  @ViewChild('vendorform') vendorform: NgForm;
   departmentId: number;
   private gridApi; 
   rowData: any;
@@ -29,14 +29,14 @@ export class DepartmentComponent implements OnInit {
       width: 120
     },
     {
-      headerName: "Department Name", cellRenderer: function (params) {
-        return params.data.departmentName ;
+      headerName: "Vendor Name", cellRenderer: function (params) {
+        return params.data.vendorName ;
       },width : 400
     }
   ];
 
 
-  constructor(private departmentClient: DepartmentClient) { }
+  constructor(private vendorClient: VendorClient) { }
 
   ngOnInit() {
     this.paginationPageSize = 10;
@@ -55,19 +55,19 @@ export class DepartmentComponent implements OnInit {
 
       switch (actionType) {
         case "view":
-         return this.ViewDepartment(e.data);
+         return this.ViewVendor(e.data);
         case "edit":
-          return this.department = e.data;
+          return this.vendor = e.data;
         case 'delete':
-         return this.deleteDepartment(this.departmentId);
+         return this.deleteVendor(this.departmentId);
       }
     }
   }
 
-  ViewDepartment(department : DepartmentModel)
+  ViewVendor(vendor : VendorModel)
   {
     this.responseMessage =null;
-    this.department = department;
+    this.vendor = vendor;
     this.isSaveDisplay  ="hidden";
    
   }
@@ -79,32 +79,27 @@ export class DepartmentComponent implements OnInit {
   }
   onGridReady(params) {
     this.gridApi = params.api;
-    this.rowData = this.departmentClient.getAllDepartments();
+    this.rowData = this.vendorClient.getAllVendor();
   }
 
 
-  deleteDepartment(departmentId: number) {
-    this.departmentClient.deleteDepartment(departmentId).subscribe(data => {
+  deleteVendor(vendorId: number) {
+    this.vendorClient.deleteVendor(vendorId).subscribe(data => {
       this.responseMessage = data;
-      this.rowData = this.departmentClient.getAllDepartments();
+      this.rowData = this.vendorClient.getAllVendor();
     },
       error => {
         this.responseMessage = error;
       }
     );
   }
-  // editUser(userId : number)
-  // {
-  //     this.user = this.rowData
-
-  // }
-
-  SaveDepartmant(department: DepartmentModel) {
-    this.departmentClient.saveDepartment(department).subscribe(data => {
+ 
+  SaveVendor(vendor: VendorModel) {
+    this.vendorClient.saveVendor(vendor).subscribe(data => {
       this.responseMessage = data;      
-      this.rowData = this.departmentClient.getAllDepartments();
-      this.department = <DepartmentModel>{ id : 0 };
-      this.deptform.reset();
+      this.rowData = this.vendorClient.getAllVendor();
+      this.vendor = <VendorModel>{ id : 0 };
+      this.vendorform.reset();
     },
       error => {
         this.responseMessage = error;
@@ -114,11 +109,10 @@ export class DepartmentComponent implements OnInit {
 
   resetForm() {
    // this.userForm.reset();
-    this.department = <DepartmentModel>{ id : 0 };
-    this.deptform.controls['departmentName'].markAsUntouched();
+    this.vendor = <VendorModel>{ id : 0 };
+    this.vendorform.controls['vendorName'].markAsUntouched();
     this.responseMessage = null;
     this.isSaveDisplay  ="visible";
   }
 
-  
 }

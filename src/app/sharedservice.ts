@@ -1115,7 +1115,6 @@ export class AssetGatePassClient implements IAssetGatePassClient {
 }
 
 export interface IAuthClient {
-    getUserRoleMenuFunctions(roleId?: number | undefined): Observable<UserRoleModel | null>;
     authenticate(userLogin: LoginDetails): Observable<UserModel | null>;
 }
 
@@ -1130,58 +1129,6 @@ export class AuthClient implements IAuthClient {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    getUserRoleMenuFunctions(roleId?: number | undefined): Observable<UserRoleModel | null> {
-        let url_ = this.baseUrl + "/api/Auth/UserRoleMenuFunction?";
-        if (roleId === null)
-            throw new Error("The parameter 'roleId' cannot be null.");
-        else if (roleId !== undefined)
-            url_ += "roleId=" + encodeURIComponent("" + roleId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetUserRoleMenuFunctions(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetUserRoleMenuFunctions(<any>response_);
-                } catch (e) {
-                    return <Observable<UserRoleModel | null>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<UserRoleModel | null>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetUserRoleMenuFunctions(response: HttpResponseBase): Observable<UserRoleModel | null> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? UserRoleModel.fromJS(resultData200) : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<UserRoleModel | null>(<any>null);
     }
 
     authenticate(userLogin: LoginDetails): Observable<UserModel | null> {
@@ -1238,10 +1185,11 @@ export class AuthClient implements IAuthClient {
 }
 
 export interface ICompanyClient {
-    getAllCompanies(): Observable<CompanyModel[] | null>;
+    getAllCompany(): Observable<CompanyModel[] | null>;
     saveCompany(companyData?: string | null | undefined): Observable<ResponseModel | null>;
     updateCompany(companyData?: string | null | undefined): Observable<ResponseModel | null>;
     getCompanyById(companyId?: number | undefined): Observable<CompanyModel | null>;
+    deleteCompany(companyId?: number | undefined): Observable<ResponseModel | null>;
 }
 
 @Injectable({
@@ -1257,7 +1205,7 @@ export class CompanyClient implements ICompanyClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    getAllCompanies(): Observable<CompanyModel[] | null> {
+    getAllCompany(): Observable<CompanyModel[] | null> {
         let url_ = this.baseUrl + "/api/company/GetAll";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1270,11 +1218,11 @@ export class CompanyClient implements ICompanyClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAllCompanies(response_);
+            return this.processGetAllCompany(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetAllCompanies(<any>response_);
+                    return this.processGetAllCompany(<any>response_);
                 } catch (e) {
                     return <Observable<CompanyModel[] | null>><any>_observableThrow(e);
                 }
@@ -1283,7 +1231,7 @@ export class CompanyClient implements ICompanyClient {
         }));
     }
 
-    protected processGetAllCompanies(response: HttpResponseBase): Observable<CompanyModel[] | null> {
+    protected processGetAllCompany(response: HttpResponseBase): Observable<CompanyModel[] | null> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -1310,7 +1258,7 @@ export class CompanyClient implements ICompanyClient {
     }
 
     saveCompany(companyData?: string | null | undefined): Observable<ResponseModel | null> {
-        let url_ = this.baseUrl + "/api/company/AddCompany?";
+        let url_ = this.baseUrl + "/api/company/SaveCompany?";
         if (companyData !== undefined)
             url_ += "companyData=" + encodeURIComponent("" + companyData) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -1459,6 +1407,58 @@ export class CompanyClient implements ICompanyClient {
             }));
         }
         return _observableOf<CompanyModel | null>(<any>null);
+    }
+
+    deleteCompany(companyId?: number | undefined): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/company/DeleteCompany?";
+        if (companyId === null)
+            throw new Error("The parameter 'companyId' cannot be null.");
+        else if (companyId !== undefined)
+            url_ += "companyId=" + encodeURIComponent("" + companyId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteCompany(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteCompany(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteCompany(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
     }
 }
 
@@ -1867,6 +1867,451 @@ export class ReportClient implements IReportClient {
     }
 }
 
+export interface IRoleClient {
+    getUserRoleMenuFunctions(roleId?: number | undefined): Observable<UserRoleModel | null>;
+    getAllRole(): Observable<RoleModel[] | null>;
+    getBlankRoleMenu(): Observable<RoleMenuModel | null>;
+    getRoleMenuList(roleId?: number | undefined): Observable<MenuModel[] | null>;
+    getRoleFunctionList(roleId?: number | undefined): Observable<FunctionModel[] | null>;
+    saveRole(roleModel: RoleModel): Observable<ResponseModel | null>;
+    getRoleById(roleId?: number | undefined): Observable<RoleModel | null>;
+    deleteRole(roleId?: number | undefined): Observable<ResponseModel | null>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class RoleClient implements IRoleClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    getUserRoleMenuFunctions(roleId?: number | undefined): Observable<UserRoleModel | null> {
+        let url_ = this.baseUrl + "/api/role/UserRoleMenuFunction?";
+        if (roleId === null)
+            throw new Error("The parameter 'roleId' cannot be null.");
+        else if (roleId !== undefined)
+            url_ += "roleId=" + encodeURIComponent("" + roleId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserRoleMenuFunctions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserRoleMenuFunctions(<any>response_);
+                } catch (e) {
+                    return <Observable<UserRoleModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UserRoleModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUserRoleMenuFunctions(response: HttpResponseBase): Observable<UserRoleModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? UserRoleModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserRoleModel | null>(<any>null);
+    }
+
+    getAllRole(): Observable<RoleModel[] | null> {
+        let url_ = this.baseUrl + "/api/role/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllRole(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllRole(<any>response_);
+                } catch (e) {
+                    return <Observable<RoleModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<RoleModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllRole(response: HttpResponseBase): Observable<RoleModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(RoleModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<RoleModel[] | null>(<any>null);
+    }
+
+    getBlankRoleMenu(): Observable<RoleMenuModel | null> {
+        let url_ = this.baseUrl + "/api/role/GetBlankRoleMenu";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetBlankRoleMenu(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetBlankRoleMenu(<any>response_);
+                } catch (e) {
+                    return <Observable<RoleMenuModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<RoleMenuModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetBlankRoleMenu(response: HttpResponseBase): Observable<RoleMenuModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? RoleMenuModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<RoleMenuModel | null>(<any>null);
+    }
+
+    getRoleMenuList(roleId?: number | undefined): Observable<MenuModel[] | null> {
+        let url_ = this.baseUrl + "/api/role/GetRoleMenu?";
+        if (roleId === null)
+            throw new Error("The parameter 'roleId' cannot be null.");
+        else if (roleId !== undefined)
+            url_ += "roleId=" + encodeURIComponent("" + roleId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRoleMenuList(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRoleMenuList(<any>response_);
+                } catch (e) {
+                    return <Observable<MenuModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MenuModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRoleMenuList(response: HttpResponseBase): Observable<MenuModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(MenuModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MenuModel[] | null>(<any>null);
+    }
+
+    getRoleFunctionList(roleId?: number | undefined): Observable<FunctionModel[] | null> {
+        let url_ = this.baseUrl + "/api/role/GetRoleFunction?";
+        if (roleId === null)
+            throw new Error("The parameter 'roleId' cannot be null.");
+        else if (roleId !== undefined)
+            url_ += "roleId=" + encodeURIComponent("" + roleId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRoleFunctionList(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRoleFunctionList(<any>response_);
+                } catch (e) {
+                    return <Observable<FunctionModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FunctionModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRoleFunctionList(response: HttpResponseBase): Observable<FunctionModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(FunctionModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FunctionModel[] | null>(<any>null);
+    }
+
+    saveRole(roleModel: RoleModel): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/role/AddRole";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(roleModel);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSaveRole(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSaveRole(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSaveRole(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+
+    getRoleById(roleId?: number | undefined): Observable<RoleModel | null> {
+        let url_ = this.baseUrl + "/api/role/GetRole?";
+        if (roleId === null)
+            throw new Error("The parameter 'roleId' cannot be null.");
+        else if (roleId !== undefined)
+            url_ += "roleId=" + encodeURIComponent("" + roleId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRoleById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRoleById(<any>response_);
+                } catch (e) {
+                    return <Observable<RoleModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<RoleModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRoleById(response: HttpResponseBase): Observable<RoleModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? RoleModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<RoleModel | null>(<any>null);
+    }
+
+    deleteRole(roleId?: number | undefined): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/role/DeleteRole?";
+        if (roleId === null)
+            throw new Error("The parameter 'roleId' cannot be null.");
+        else if (roleId !== undefined)
+            url_ += "roleId=" + encodeURIComponent("" + roleId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteRole(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteRole(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteRole(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+}
+
 export interface IUserClient {
     getRoleList(): Observable<RoleModel[] | null>;
     getDepartmentList(): Observable<DepartmentModel[] | null>;
@@ -2180,6 +2625,235 @@ export class UserClient implements IUserClient {
     }
 
     protected processGetUserDetailById(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+}
+
+export interface IVendorClient {
+    getAllVendor(): Observable<VendorModel[] | null>;
+    saveVendor(vendorModel: VendorModel): Observable<ResponseModel | null>;
+    getVendorById(vendorId?: number | undefined): Observable<VendorModel | null>;
+    deleteVendor(vendorId?: number | undefined): Observable<ResponseModel | null>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class VendorClient implements IVendorClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    getAllVendor(): Observable<VendorModel[] | null> {
+        let url_ = this.baseUrl + "/api/vendor/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllVendor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllVendor(<any>response_);
+                } catch (e) {
+                    return <Observable<VendorModel[] | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<VendorModel[] | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllVendor(response: HttpResponseBase): Observable<VendorModel[] | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(VendorModel.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<VendorModel[] | null>(<any>null);
+    }
+
+    saveVendor(vendorModel: VendorModel): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/vendor/AddVendor";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(vendorModel);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSaveVendor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSaveVendor(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSaveVendor(response: HttpResponseBase): Observable<ResponseModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ResponseModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ResponseModel | null>(<any>null);
+    }
+
+    getVendorById(vendorId?: number | undefined): Observable<VendorModel | null> {
+        let url_ = this.baseUrl + "/api/vendor/GetVendor?";
+        if (vendorId === null)
+            throw new Error("The parameter 'vendorId' cannot be null.");
+        else if (vendorId !== undefined)
+            url_ += "vendorId=" + encodeURIComponent("" + vendorId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetVendorById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetVendorById(<any>response_);
+                } catch (e) {
+                    return <Observable<VendorModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<VendorModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetVendorById(response: HttpResponseBase): Observable<VendorModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? VendorModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<VendorModel | null>(<any>null);
+    }
+
+    deleteVendor(vendorId?: number | undefined): Observable<ResponseModel | null> {
+        let url_ = this.baseUrl + "/api/vendor/DeleteVendor?";
+        if (vendorId === null)
+            throw new Error("The parameter 'vendorId' cannot be null.");
+        else if (vendorId !== undefined)
+            url_ += "vendorId=" + encodeURIComponent("" + vendorId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteVendor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteVendor(<any>response_);
+                } catch (e) {
+                    return <Observable<ResponseModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ResponseModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteVendor(response: HttpResponseBase): Observable<ResponseModel | null> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -2634,6 +3308,10 @@ export class VendorModel implements IVendorModel {
     id!: number;
     vendorName?: string | undefined;
     isActive?: boolean | undefined;
+    createdBy!: number;
+    createdDate!: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
 
     constructor(data?: IVendorModel) {
         if (data) {
@@ -2649,6 +3327,10 @@ export class VendorModel implements IVendorModel {
             this.id = data["id"];
             this.vendorName = data["vendorName"];
             this.isActive = data["isActive"];
+            this.createdBy = data["createdBy"];
+            this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
+            this.modifiedBy = data["modifiedBy"];
+            this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
         }
     }
 
@@ -2664,6 +3346,10 @@ export class VendorModel implements IVendorModel {
         data["id"] = this.id;
         data["vendorName"] = this.vendorName;
         data["isActive"] = this.isActive;
+        data["createdBy"] = this.createdBy;
+        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
+        data["modifiedBy"] = this.modifiedBy;
+        data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -2672,6 +3358,10 @@ export interface IVendorModel {
     id: number;
     vendorName?: string | undefined;
     isActive?: boolean | undefined;
+    createdBy: number;
+    createdDate: Date;
+    modifiedBy?: number | undefined;
+    modifiedDate?: Date | undefined;
 }
 
 export class AssetGatePassModel implements IAssetGatePassModel {
@@ -3002,10 +3692,15 @@ export class RoleModel implements IRoleModel {
     id!: number;
     roleName?: string | undefined;
     roleDescription?: string | undefined;
+    isActive!: boolean;
     createdBy!: number;
     createdDate!: Date;
     modifiedBy?: number | undefined;
     modifiedDate?: Date | undefined;
+    roleMenu?: RoleMenuModel[] | undefined;
+    roleFunction?: RoleFunctionModel[] | undefined;
+    functionList?: FunctionModel[] | undefined;
+    menuList?: MenuModel[] | undefined;
 
     constructor(data?: IRoleModel) {
         if (data) {
@@ -3021,10 +3716,31 @@ export class RoleModel implements IRoleModel {
             this.id = data["id"];
             this.roleName = data["roleName"];
             this.roleDescription = data["roleDescription"];
+            this.isActive = data["isActive"];
             this.createdBy = data["createdBy"];
             this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
             this.modifiedBy = data["modifiedBy"];
             this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
+            if (data["roleMenu"] && data["roleMenu"].constructor === Array) {
+                this.roleMenu = [] as any;
+                for (let item of data["roleMenu"])
+                    this.roleMenu!.push(RoleMenuModel.fromJS(item));
+            }
+            if (data["roleFunction"] && data["roleFunction"].constructor === Array) {
+                this.roleFunction = [] as any;
+                for (let item of data["roleFunction"])
+                    this.roleFunction!.push(RoleFunctionModel.fromJS(item));
+            }
+            if (data["functionList"] && data["functionList"].constructor === Array) {
+                this.functionList = [] as any;
+                for (let item of data["functionList"])
+                    this.functionList!.push(FunctionModel.fromJS(item));
+            }
+            if (data["menuList"] && data["menuList"].constructor === Array) {
+                this.menuList = [] as any;
+                for (let item of data["menuList"])
+                    this.menuList!.push(MenuModel.fromJS(item));
+            }
         }
     }
 
@@ -3040,10 +3756,31 @@ export class RoleModel implements IRoleModel {
         data["id"] = this.id;
         data["roleName"] = this.roleName;
         data["roleDescription"] = this.roleDescription;
+        data["isActive"] = this.isActive;
         data["createdBy"] = this.createdBy;
         data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
         data["modifiedBy"] = this.modifiedBy;
         data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
+        if (this.roleMenu && this.roleMenu.constructor === Array) {
+            data["roleMenu"] = [];
+            for (let item of this.roleMenu)
+                data["roleMenu"].push(item.toJSON());
+        }
+        if (this.roleFunction && this.roleFunction.constructor === Array) {
+            data["roleFunction"] = [];
+            for (let item of this.roleFunction)
+                data["roleFunction"].push(item.toJSON());
+        }
+        if (this.functionList && this.functionList.constructor === Array) {
+            data["functionList"] = [];
+            for (let item of this.functionList)
+                data["functionList"].push(item.toJSON());
+        }
+        if (this.menuList && this.menuList.constructor === Array) {
+            data["menuList"] = [];
+            for (let item of this.menuList)
+                data["menuList"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -3052,10 +3789,235 @@ export interface IRoleModel {
     id: number;
     roleName?: string | undefined;
     roleDescription?: string | undefined;
+    isActive: boolean;
     createdBy: number;
     createdDate: Date;
     modifiedBy?: number | undefined;
     modifiedDate?: Date | undefined;
+    roleMenu?: RoleMenuModel[] | undefined;
+    roleFunction?: RoleFunctionModel[] | undefined;
+    functionList?: FunctionModel[] | undefined;
+    menuList?: MenuModel[] | undefined;
+}
+
+export class RoleMenuModel implements IRoleMenuModel {
+    id!: number;
+    roleId!: number;
+    parentMenuId!: number;
+    menuId!: number;
+
+    constructor(data?: IRoleMenuModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.roleId = data["roleId"];
+            this.parentMenuId = data["parentMenuId"];
+            this.menuId = data["menuId"];
+        }
+    }
+
+    static fromJS(data: any): RoleMenuModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new RoleMenuModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["roleId"] = this.roleId;
+        data["parentMenuId"] = this.parentMenuId;
+        data["menuId"] = this.menuId;
+        return data; 
+    }
+}
+
+export interface IRoleMenuModel {
+    id: number;
+    roleId: number;
+    parentMenuId: number;
+    menuId: number;
+}
+
+export class RoleFunctionModel implements IRoleFunctionModel {
+    id!: number;
+    roleId!: number;
+    functionId!: number;
+    isActive!: boolean;
+
+    constructor(data?: IRoleFunctionModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.roleId = data["roleId"];
+            this.functionId = data["functionId"];
+            this.isActive = data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): RoleFunctionModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new RoleFunctionModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["roleId"] = this.roleId;
+        data["functionId"] = this.functionId;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface IRoleFunctionModel {
+    id: number;
+    roleId: number;
+    functionId: number;
+    isActive: boolean;
+}
+
+export class FunctionModel implements IFunctionModel {
+    id!: number;
+    functionCode?: string | undefined;
+    functionName?: string | undefined;
+    functionDescription?: string | undefined;
+
+    constructor(data?: IFunctionModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.functionCode = data["functionCode"];
+            this.functionName = data["functionName"];
+            this.functionDescription = data["functionDescription"];
+        }
+    }
+
+    static fromJS(data: any): FunctionModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new FunctionModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["functionCode"] = this.functionCode;
+        data["functionName"] = this.functionName;
+        data["functionDescription"] = this.functionDescription;
+        return data; 
+    }
+}
+
+export interface IFunctionModel {
+    id: number;
+    functionCode?: string | undefined;
+    functionName?: string | undefined;
+    functionDescription?: string | undefined;
+}
+
+export class MenuModel implements IMenuModel {
+    id!: number;
+    menuTitle?: string | undefined;
+    parentMenuId?: number | undefined;
+    menuLink?: string | undefined;
+    templateUrl?: string | undefined;
+    controller?: string | undefined;
+    controllerAs?: string | undefined;
+    isDisabled!: boolean;
+    isStateRequired!: boolean;
+    displayOrder!: number;
+    tag?: string | undefined;
+
+    constructor(data?: IMenuModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.menuTitle = data["menuTitle"];
+            this.parentMenuId = data["parentMenuId"];
+            this.menuLink = data["menuLink"];
+            this.templateUrl = data["templateUrl"];
+            this.controller = data["controller"];
+            this.controllerAs = data["controllerAs"];
+            this.isDisabled = data["isDisabled"];
+            this.isStateRequired = data["isStateRequired"];
+            this.displayOrder = data["displayOrder"];
+            this.tag = data["tag"];
+        }
+    }
+
+    static fromJS(data: any): MenuModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new MenuModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["menuTitle"] = this.menuTitle;
+        data["parentMenuId"] = this.parentMenuId;
+        data["menuLink"] = this.menuLink;
+        data["templateUrl"] = this.templateUrl;
+        data["controller"] = this.controller;
+        data["controllerAs"] = this.controllerAs;
+        data["isDisabled"] = this.isDisabled;
+        data["isStateRequired"] = this.isStateRequired;
+        data["displayOrder"] = this.displayOrder;
+        data["tag"] = this.tag;
+        return data; 
+    }
+}
+
+export interface IMenuModel {
+    id: number;
+    menuTitle?: string | undefined;
+    parentMenuId?: number | undefined;
+    menuLink?: string | undefined;
+    templateUrl?: string | undefined;
+    controller?: string | undefined;
+    controllerAs?: string | undefined;
+    isDisabled: boolean;
+    isStateRequired: boolean;
+    displayOrder: number;
+    tag?: string | undefined;
 }
 
 export class UserCredentialModel implements IUserCredentialModel {
@@ -3172,6 +4134,7 @@ export class CompanyModel implements ICompanyModel {
     createdDate!: Date;
     modifiedBy?: number | undefined;
     modifiedDate?: Date | undefined;
+    companyLogo?: DocumentModel | undefined;
 
     constructor(data?: ICompanyModel) {
         if (data) {
@@ -3197,6 +4160,7 @@ export class CompanyModel implements ICompanyModel {
             this.createdDate = data["createdDate"] ? new Date(data["createdDate"].toString()) : <any>undefined;
             this.modifiedBy = data["modifiedBy"];
             this.modifiedDate = data["modifiedDate"] ? new Date(data["modifiedDate"].toString()) : <any>undefined;
+            this.companyLogo = data["companyLogo"] ? DocumentModel.fromJS(data["companyLogo"]) : <any>undefined;
         }
     }
 
@@ -3222,6 +4186,7 @@ export class CompanyModel implements ICompanyModel {
         data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
         data["modifiedBy"] = this.modifiedBy;
         data["modifiedDate"] = this.modifiedDate ? this.modifiedDate.toISOString() : <any>undefined;
+        data["companyLogo"] = this.companyLogo ? this.companyLogo.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -3240,6 +4205,7 @@ export interface ICompanyModel {
     createdDate: Date;
     modifiedBy?: number | undefined;
     modifiedDate?: Date | undefined;
+    companyLogo?: DocumentModel | undefined;
 }
 
 export class AssetGatePassDetailModel implements IAssetGatePassDetailModel {
@@ -3422,194 +4388,6 @@ export interface IAssetGatePassSenderDetailModel {
     email?: string | undefined;
 }
 
-export class UserRoleModel implements IUserRoleModel {
-    userId!: number;
-    roleId!: number;
-    menuList?: MenuModel[] | undefined;
-    functionList?: FunctionModel[] | undefined;
-
-    constructor(data?: IUserRoleModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.userId = data["userId"];
-            this.roleId = data["roleId"];
-            if (data["menuList"] && data["menuList"].constructor === Array) {
-                this.menuList = [] as any;
-                for (let item of data["menuList"])
-                    this.menuList!.push(MenuModel.fromJS(item));
-            }
-            if (data["functionList"] && data["functionList"].constructor === Array) {
-                this.functionList = [] as any;
-                for (let item of data["functionList"])
-                    this.functionList!.push(FunctionModel.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): UserRoleModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new UserRoleModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        data["roleId"] = this.roleId;
-        if (this.menuList && this.menuList.constructor === Array) {
-            data["menuList"] = [];
-            for (let item of this.menuList)
-                data["menuList"].push(item.toJSON());
-        }
-        if (this.functionList && this.functionList.constructor === Array) {
-            data["functionList"] = [];
-            for (let item of this.functionList)
-                data["functionList"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IUserRoleModel {
-    userId: number;
-    roleId: number;
-    menuList?: MenuModel[] | undefined;
-    functionList?: FunctionModel[] | undefined;
-}
-
-export class MenuModel implements IMenuModel {
-    id!: number;
-    menuTitle?: string | undefined;
-    parentMenuId?: number | undefined;
-    menuLink?: string | undefined;
-    templateUrl?: string | undefined;
-    controller?: string | undefined;
-    controllerAs?: string | undefined;
-    isDisabled!: boolean;
-    isStateRequired!: boolean;
-    displayOrder!: number;
-    tag?: string | undefined;
-
-    constructor(data?: IMenuModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.menuTitle = data["menuTitle"];
-            this.parentMenuId = data["parentMenuId"];
-            this.menuLink = data["menuLink"];
-            this.templateUrl = data["templateUrl"];
-            this.controller = data["controller"];
-            this.controllerAs = data["controllerAs"];
-            this.isDisabled = data["isDisabled"];
-            this.isStateRequired = data["isStateRequired"];
-            this.displayOrder = data["displayOrder"];
-            this.tag = data["tag"];
-        }
-    }
-
-    static fromJS(data: any): MenuModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new MenuModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["menuTitle"] = this.menuTitle;
-        data["parentMenuId"] = this.parentMenuId;
-        data["menuLink"] = this.menuLink;
-        data["templateUrl"] = this.templateUrl;
-        data["controller"] = this.controller;
-        data["controllerAs"] = this.controllerAs;
-        data["isDisabled"] = this.isDisabled;
-        data["isStateRequired"] = this.isStateRequired;
-        data["displayOrder"] = this.displayOrder;
-        data["tag"] = this.tag;
-        return data; 
-    }
-}
-
-export interface IMenuModel {
-    id: number;
-    menuTitle?: string | undefined;
-    parentMenuId?: number | undefined;
-    menuLink?: string | undefined;
-    templateUrl?: string | undefined;
-    controller?: string | undefined;
-    controllerAs?: string | undefined;
-    isDisabled: boolean;
-    isStateRequired: boolean;
-    displayOrder: number;
-    tag?: string | undefined;
-}
-
-export class FunctionModel implements IFunctionModel {
-    id!: number;
-    functionCode?: string | undefined;
-    functionName?: string | undefined;
-    functionDescription?: string | undefined;
-
-    constructor(data?: IFunctionModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.functionCode = data["functionCode"];
-            this.functionName = data["functionName"];
-            this.functionDescription = data["functionDescription"];
-        }
-    }
-
-    static fromJS(data: any): FunctionModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new FunctionModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["functionCode"] = this.functionCode;
-        data["functionName"] = this.functionName;
-        data["functionDescription"] = this.functionDescription;
-        return data; 
-    }
-}
-
-export interface IFunctionModel {
-    id: number;
-    functionCode?: string | undefined;
-    functionName?: string | undefined;
-    functionDescription?: string | undefined;
-}
-
 export class LoginDetails implements ILoginDetails {
     userId?: string | undefined;
     password?: string | undefined;
@@ -3728,6 +4506,70 @@ export interface IReportModel {
     assetCategoryName?: string | undefined;
     receivedBy?: string | undefined;
     createdBy?: string | undefined;
+}
+
+export class UserRoleModel implements IUserRoleModel {
+    userId!: number;
+    roleId!: number;
+    menuList?: MenuModel[] | undefined;
+    functionList?: FunctionModel[] | undefined;
+
+    constructor(data?: IUserRoleModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+            this.roleId = data["roleId"];
+            if (data["menuList"] && data["menuList"].constructor === Array) {
+                this.menuList = [] as any;
+                for (let item of data["menuList"])
+                    this.menuList!.push(MenuModel.fromJS(item));
+            }
+            if (data["functionList"] && data["functionList"].constructor === Array) {
+                this.functionList = [] as any;
+                for (let item of data["functionList"])
+                    this.functionList!.push(FunctionModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UserRoleModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserRoleModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["roleId"] = this.roleId;
+        if (this.menuList && this.menuList.constructor === Array) {
+            data["menuList"] = [];
+            for (let item of this.menuList)
+                data["menuList"].push(item.toJSON());
+        }
+        if (this.functionList && this.functionList.constructor === Array) {
+            data["functionList"] = [];
+            for (let item of this.functionList)
+                data["functionList"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IUserRoleModel {
+    userId: number;
+    roleId: number;
+    menuList?: MenuModel[] | undefined;
+    functionList?: FunctionModel[] | undefined;
 }
 
 export class SwaggerException extends Error {

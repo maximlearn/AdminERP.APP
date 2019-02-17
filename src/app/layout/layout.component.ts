@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserRoleModel, AuthClient } from '../sharedservice';
+import { UserRoleModel,  RoleClient } from '../sharedservice';
 
 @Component({
   selector: 'app-layout',
@@ -7,7 +7,7 @@ import { UserRoleModel, AuthClient } from '../sharedservice';
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent implements OnInit {
-  constructor(private authClient: AuthClient) { }
+  constructor(private roleClient: RoleClient) { }
   collapsedSideBar: boolean;
   userRoleData: UserRoleModel
   userData: any;
@@ -15,7 +15,7 @@ export class LayoutComponent implements OnInit {
 
     if (localStorage.getItem('currentUser')) {
       this.userData = JSON.parse(localStorage.getItem('currentUser'));
-      this.authClient.getUserRoleMenuFunctions(this.userData.roleId)
+      this.roleClient.getUserRoleMenuFunctions(this.userData.roleId)
         .subscribe(data => {
         this.userRoleData = data,
           console.log(this.userRoleData)

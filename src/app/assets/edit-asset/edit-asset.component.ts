@@ -6,7 +6,7 @@ import * as $ from 'jquery';
 import {
   AssetModel, AssetDetailModel, AssetCategoryModel, VendorModel, AssetClient, ResponseModel, DocumentModel,
 } from 'src/app/sharedservice';
-import { AssetService } from '../assets.service';
+import { CommonService } from 'src/app/shared/common-service.service';
 
 @Component({
   selector: 'app-edit-asset',
@@ -29,7 +29,7 @@ export class EditAssetComponent implements OnInit {
   responseMessage: ResponseModel;
   assetImage: DocumentModel;
   @Output() pevent: EventEmitter<any> = new EventEmitter();
-  constructor(private assetClient: AssetClient, private assetService: AssetService, public bsModalRef: BsModalRef) {
+  constructor(private assetClient: AssetClient, private assetService: CommonService, public bsModalRef: BsModalRef) {
     this.datePickerConfig = Object.assign({},
       { containerClass: 'theme-dark-blue', showWeekNumbers: false, dateInputFormat: 'DD/MM/YYYY' });
 
@@ -41,8 +41,8 @@ export class EditAssetComponent implements OnInit {
       this.asset_Category = data
     }, (err) => { console.log(err) });
     this.assetClient.getAllVendor().subscribe((data) => { this.asset_Vendor = data }, (err) => { console.log(err) });
-   if  (this.assetData.documentList != undefined)
-    this.assetImage = this.assetData.documentList.filter(x => x.fileLabel == "AssetImage")[0];
+    if (this.assetData.documentList != undefined)
+      this.assetImage = this.assetData.documentList.filter(x => x.fileLabel == "AssetImage")[0];
   }
 
   fileChangeEvent(fileInput: any, fileInputLabel: string) {
@@ -103,29 +103,18 @@ export class EditAssetComponent implements OnInit {
 
   SaveAsset(assetData: AssetModel) {
     let formData = this.uploadFiles();
-    assetData.documentList = null;    
-    if (assetData.id == 0) {
-      this.assetService.SaveAsset(assetData, formData).subscribe(
-        data => {
-          this.responseMessage = data; console.log(this.responseMessage)
-        },
-        error => {
-          this.responseMessage = error;
-        }
-      );
-    }
-    else {
-      this.assetService.UpdateAsset(assetData, formData).subscribe(
-        data => {
-          this.responseMessage = data; console.log(this.responseMessage)
+    assetData.documentList = null;
+    this.assetService.UpdateAsset(assetData, formData).subscribe(
+      data => {
+        this.responseMessage = data; console.log(this.responseMessage)
 
-        },
-        error => {
-          this.responseMessage = error;
-        }
-      );
-    }
+      },
+      error => {
+        this.responseMessage = error;
+      }
+    );
   }
+
 
   closeForm() {
     this.pevent.emit({ data: "Parent Refreshed." });

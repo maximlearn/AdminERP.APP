@@ -9,7 +9,7 @@ import * as $ from 'jquery';
 import {
   AssetModel, AssetDetailModel, AssetCategoryModel, VendorModel, AssetClient, ResponseModel,
 } from 'src/app/sharedservice';
-import { AssetService } from '../assets.service';
+import { CommonService } from 'src/app/shared/common-service.service';
 
 @Component({
   selector: 'app-add-asset',
@@ -21,7 +21,7 @@ export class AddAssetComponent implements OnInit {
   filesToUpload: Array<IFile>;
   selectedFileNames: Array<IFile> = [];
   @ViewChild('assetForm') assetForm: NgForm;
-  uploadResult: any;
+
   validDocument: boolean = true;
   validImage: boolean = true;
   assetData: AssetModel;
@@ -30,7 +30,7 @@ export class AddAssetComponent implements OnInit {
   asset_Vendor: VendorModel[];
 
   responseMessage : ResponseModel;
-  constructor(private assetClient: AssetClient, private assetService: AssetService) {
+  constructor(private assetClient: AssetClient, private assetService: CommonService) {
     this.datePickerConfig = Object.assign({},
       { containerClass: 'theme-dark-blue', showWeekNumbers: false, dateInputFormat: 'DD/MM/YYYY' });
 
@@ -51,7 +51,7 @@ export class AddAssetComponent implements OnInit {
  
 
   fileChangeEvent(fileInput: any, fileInputLabel: string) {
-    this.uploadResult = "";
+ 
     this.filesToUpload = <Array<IFile>>fileInput.target.files;
 
     var fileType = this.filesToUpload[0].type;
@@ -97,8 +97,7 @@ export class AddAssetComponent implements OnInit {
     $(".assetImage").html('Browse Asset Image');
 
   }
-  uploadFiles(): FormData {
-    this.uploadResult = "";
+  uploadFiles(): FormData {   
 
     if (this.selectedFileNames.length > 0) {
       const formData = new FormData();
@@ -110,8 +109,6 @@ export class AddAssetComponent implements OnInit {
 
   SaveAsset(assetData: AssetModel) {
     let formData = this.uploadFiles();
-   
-    if(assetData.id==0){
       this.assetService.SaveAsset(assetData, formData).subscribe(
         data => {
          
@@ -124,19 +121,6 @@ export class AddAssetComponent implements OnInit {
         }
       );
     }
-    else
-    {
-      this.assetService.SaveAsset(assetData, formData).subscribe(
-        data => {
-          this.responseMessage = data; console.log(this.responseMessage)
-        },
-        error => {
-          this.responseMessage = error;
-        }
-      );
-    }
-  }
-
   executeValidator(controlName: string) {
     this.assetForm.controls[controlName].updateValueAndValidity();
 

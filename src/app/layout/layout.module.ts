@@ -6,8 +6,9 @@ import { LayoutComponent } from './layout.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 import { DashboardModule } from '../dashboard/dashboard.module';
-import { menuFilterPipe } from '../shared/menu-filter.pipe';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { SharedModule } from '../shared/shared-module.module';
+
 
 
 
@@ -17,9 +18,10 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
         LayoutRoutingModule,      
         DashboardModule,
         HttpClientModule,
-        NgbDropdownModule
+        NgbDropdownModule,
+        SharedModule
     ],
-    declarations: [LayoutComponent, SidebarComponent, HeaderComponent, menuFilterPipe]
+    declarations: [LayoutComponent, SidebarComponent, HeaderComponent]
   
 })
 export class LayoutModule { }

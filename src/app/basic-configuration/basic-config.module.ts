@@ -10,15 +10,18 @@ import { ConfigurationComponent } from './configuration/configuration.component'
 import { TabsModule } from 'ngx-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { AgGridModule } from 'ag-grid-angular';
+import { SharedModule } from '../shared/shared-module.module';
+import { VendorComponent } from './vendor/vendor.component';
 
 @NgModule({
-  declarations: [AssetCategoryComponent, CompanyComponent, DepartmentComponent, ConfigurationComponent],
+  declarations: [AssetCategoryComponent, CompanyComponent, DepartmentComponent, ConfigurationComponent, VendorComponent],
   imports: [
     CommonModule,
     BasicConfigRoutingModule,
     TabsModule.forRoot(),
     FormsModule,
     AgGridModule.withComponents([DepartmentComponent]),
+    SharedModule
   ]
 })
 export class BasicConfigModule { }
