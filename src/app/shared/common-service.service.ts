@@ -1,7 +1,7 @@
 import { Injectable, InjectionToken, Inject, Optional } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { throwError } from 'rxjs';
-import { AssetModel, ResponseModel, CompanyModel } from '../sharedservice';
+import { AssetModel, ResponseModel, CompanyModel, UserModel } from '../sharedservice';
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 @Injectable({
   providedIn: 'root'
@@ -9,8 +9,8 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 export class CommonService {
   // private httpClient: HttpClient;
   // private baseUrl: string;
- //private API_URL =  'https://localhost:44361'; //'https://adminerp.azurewebsites.net/'; //
-  private API_URL =  'https://adminerp.azurewebsites.net'; //'https://adminerp.azurewebsites.net/'; //
+ private API_URL =  'https://localhost:44361'; //'https://adminerp.azurewebsites.net/'; //
+ // private API_URL =  'https://adminerp.azurewebsites.net'; //'https://adminerp.azurewebsites.net/'; //
   constructor(private httpClient: HttpClient) { }
 //   constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
 //     this.httpClient = http;    
@@ -76,4 +76,15 @@ export class CommonService {
     }
     return this.httpClient.post<ResponseModel>(url, formData, HttpHeaderOptions)
   }
+
+  public GetUserData(): UserModel {
+    let userData: UserModel;
+    userData = JSON.parse(localStorage.getItem('currentUser'));
+    return userData;   
+    }
+
+    public PdfDownLoad(pdfData: HTMLElement)
+    {}
+   
+  
 }

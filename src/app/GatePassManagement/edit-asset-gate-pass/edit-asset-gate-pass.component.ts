@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation, EventEmitter, Output } from '@angular/core';
-import { AssetGatePassClient, AssetGatePassModel, AssetGatePassDetailModel, AssetGatePassSenderDetailModel, QuantityUnitModel, AssetClient, AssetModel, AssetDetailModel, ResponseModel, GatePassTypeModel } from 'src/app/sharedservice';
+import { AssetGatePassClient, AssetGatePassModel, AssetGatePassDetailModel, AssetGatePassSenderDetailModel, QuantityUnitModel, AssetClient, AssetModel, AssetDetailModel, ResponseModel, GatePassTypeModel, UserModel } from 'src/app/sharedservice';
 import { BsDatepickerConfig, BsModalRef } from 'ngx-bootstrap';
 import { NgForm } from '@angular/forms';
+import { CommonService } from 'src/app/shared/common-service.service';
+
 
 @Component({
   selector: 'app-edit-asset-gate-pass',
@@ -27,12 +29,15 @@ export class EditAssetGatePassComponent implements OnInit {
   responseMessage: ResponseModel;
   isAssetEdit: boolean = false;
   isValidQty: boolean = false;
+  userData: UserModel;
 
   @Output() pevent: EventEmitter<any> = new EventEmitter();
-  constructor(public bsModalRef: BsModalRef, private gatePassClient: AssetGatePassClient, private assetClient: AssetClient) {
+  constructor(public bsModalRef: BsModalRef, private gatePassClient: AssetGatePassClient,
+     private assetClient: AssetClient,private commonService: CommonService) {
     this.datePickerConfig = Object.assign({},
       { containerClass: 'theme-dark-blue', showWeekNumbers: false, dateInputFormat: 'DD/MM/YYYY' });
     //this.assetGatePassDetailModel = this.getDefaultGatePassDetailModel();
+   // this.assetGatePassModel.createdByNavigation.firstName
     
   }
 
@@ -42,7 +47,15 @@ export class EditAssetGatePassComponent implements OnInit {
     this.gatePassClient.getAllGatePassType().subscribe(data => { this.gatePassTypeList = data;this.gatePassTypeList = this.gatePassTypeList.filter(x => x.typeName != 'All'); });
     this.gatePassClient.getAllUnit().subscribe(data => { this.quantityUnitList = data; });
     this.assetClient.getAllAssetTag().subscribe(data => { this.assetModelList = data; console.log(this.assetModelList); });
+    this.userData = this.commonService.GetUserData();
   }
+
+  get createdUserName()
+  { 
+     return  this.assetGatePassModel.createdByNavigation.firstName + ', ' +   this.assetGatePassModel.createdByNavigation.lastName;}
+  
+  
+     
 
   get selectedAsset() {
     return this.assetId;
@@ -57,7 +70,7 @@ export class EditAssetGatePassComponent implements OnInit {
 
   SaveAssetGatePass(assetGatePassModel: any) {
   
-    //this.assetGatePassModel = assetGatePassModel;
+    assetGatePassModel.createdBy = this.userData.id;
     this.gatePassClient.saveAssetGatePass(assetGatePassModel).subscribe(data => {
       this.responseMessage = data; console.log(this.responseMessage)
     },

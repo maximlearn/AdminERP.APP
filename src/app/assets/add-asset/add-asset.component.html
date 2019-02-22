@@ -164,8 +164,9 @@
           {{responseMessage.message}}
         </span>
         <button type="submit" [disabled]="!assetForm.form.valid" [ngClass]="!assetForm.form.valid ? 'btn-disabled' : 'btn-primary'"
-          class="btn  mr-1 m-1  btn-sm"><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
-        <button type="button" class="btn btn-primary mr-2 m-1 btn-sm" (click)="resetForm()"><i class="fa fa-refresh fa-fw"></i>&nbsp;Reset</button>
+          class="btn mr-1 m-1 btn-sm"><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
+        <button type="button" class="btn btn-primary mr-2 m-1 btn-sm" (click)="resetForm()">
+          <i class="fa fa-refresh fa-fw"></i>&nbsp;Reset</button>
       </div>
 
     </div>

@@ -24,11 +24,17 @@
           </div>
           <div class="card-footer text-right">
            
-            <button [style.visibility]="isSaveDisplay" type="submit" [disabled]="!assetCategoryfrm.form.valid" [ngClass]="!assetCategoryfrm.form.valid ? 'btn-disabled' : 'btn-primary'"
-              class="btn btn-primary mr-1 m-1 btn-sm"><i class="fa fa-save fa-fw"></i>
-              {{assetCategory.id == 0 ? "Save" : "Update"}}
+            <button [style.visibility]="isSaveDisplay" *ngIf="assetCategory.id == 0" type="submit"
+             [disabled]="!assetCategoryfrm.form.valid" [ngClass]="!assetCategoryfrm.form.valid ? 'btn-disabled' : 'btn-primary'"
+              class="btn  mr-1 m-1 btn-sm"><i class="fa fa-save fa-fw"></i>
+              Save
             </button>
-            <button type="button" (click)="resetForm()" class="btn btn-primary m-1 btn-sm"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+            <button [style.visibility]="isSaveDisplay" *ngIf="assetCategory.id> 0" type="submit" [disabled]="!assetCategoryfrm.form.valid" [ngClass]="!assetCategoryfrm.form.valid ? 'btn-disabled' : 'btn-primary'"
+            class="btn  mr-1 m-1 btn-sm-update"><i class="fa fa-save fa-fw"></i>
+           Update
+          </button>
+            <button type="button" (click)="resetForm()" class="btn btn-primary m-1 btn-sm">
+              <i class="fa fa-close fa-fw"></i>Cancel</button>
           </div>
 
         </div>
@@ -51,25 +57,7 @@
             </div>
           </div>
 
-          <!-- <table class="table table-bordered table-md text-primary">
-              <thead>
-                <th >Asset Category Name</th>
-                <th></th>
-              </thead>
-            <tbody>
-              <tr>
-                <td>Laptop</td>
-             
-                <td class="text-center"> <a href="#"><i class="fa fa-pencil-square-o fa-fw"></i></a> |
-                  <a href="#"><i class="fa fa-trash-o fa-fw"></i></a></td>
-                </tr>
-                <tr>
-                 <td>Electronics</td>
-                  <td class="text-center"> <a href="#"><i class="fa fa-pencil-square-o fa-fw"></i></a> |
-                    <a href="#"><i class="fa fa-trash-o fa-fw"></i></a></td>
-              </tr>
-            </tbody>
-          </table> -->
+         
         </div>
       </div>
     </div>

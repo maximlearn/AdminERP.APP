@@ -89,12 +89,16 @@
                 <img src="data:image/png;base64,{{company.companyLogo.fileImage}}" class="imageClass" />
               </div>
               <div class="col form-group  text-right">
-                <button [style.visibility]="isSaveDisplay" type="submit" [disabled]="!companyform.form.valid"
+                <button [style.visibility]="isSaveDisplay" *ngIf="company.id == 0" type="submit" [disabled]="!companyform.form.valid"
                   [ngClass]="!companyform.form.valid ? 'btn-disabled' : 'btn-primary'"
-                  class="btn btn-primary mr-1 m-1 btn-sm"><i class="fa fa-save fa-fw"></i>
-                  {{company.id == 0 ? "Save" : "Update"}}</button>
+                  class="btn mr-1 m-1 btn-sm"><i class="fa fa-save fa-fw"></i>
+                 Save</button>
+                  <button [style.visibility]="isSaveDisplay"  *ngIf="company.id > 0" type="submit" [disabled]="!companyform.form.valid"
+                  [ngClass]="!companyform.form.valid ? 'btn-disabled' : 'btn-primary'"
+                  class="btn mr-1 m-1 btn-sm-update"><i class="fa fa-save fa-fw"></i>
+                  Update</button>
                 <button type="button" (click)="resetForm()" class="btn btn-primary m-1 btn-sm"><i
-                    class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+                    class="fa fa-close fa-fw"></i>Cancel</button>
               </div>
             </div>
           </div>
@@ -119,29 +123,7 @@
               </ag-grid-angular>
             </div>
           </div>
-          <!-- <table class="table table-bordered table-md text-primary">
-              <thead>
-                <th >Company Name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Country</th>
-                <th>Website URL</th>
-                <th></th>
-              </thead>
-            <tbody>
-              <tr>
-                <td>ABC</td>
-                <td>98998100</td>
-                <td>abc@abc.com</td>
-                <td>India</td>
-                <td>www.abc.com</td>
-                <td class="text-center"> <a href="#"><i class="fa fa-pencil-square-o fa-fw"></i></a> |
-                  <a href="#"><i class="fa fa-trash-o fa-fw"></i></a></td>
-
-
-              </tr>
-            </tbody>
-          </table> -->
+       
         </div>
       </div>
     </div>

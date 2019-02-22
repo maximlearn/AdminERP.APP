@@ -24,11 +24,16 @@
           </div>
           <div class="card-footer text-right">
               
-            <button [style.visibility]="isSaveDisplay" type="submit"
-            [disabled]="!deptform.form.valid" [ngClass]="!deptform.form.valid ? 'btn-disabled' : 'btn-primary'"
-            class="btn btn-primary mr-1 m-1 btn-sm"><i class="fa fa-save fa-fw"></i>
-              {{department.id == 0 ? "Save" : "Update"}}</button>
-            <button type="button" (click)="resetForm()" class="btn btn-primary m-1 btn-sm"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+            <button [style.visibility]="isSaveDisplay" *ngIf="department.id == 0" type="submit"
+            [disabled]="!deptform.form.valid"  [ngClass]="!deptform.form.valid ? 'btn-disabled' : 'btn-primary'"
+            class="btn mr-1 m-1 btn-sm"><i class="fa fa-save fa-fw"></i>
+              Save</button>
+              <button [style.visibility]="isSaveDisplay" *ngIf="department.id> 0" type="submit"
+              [disabled]="!deptform.form.valid" [ngClass]="!deptform.form.valid ? 'btn-disabled' : 'btn-primary'"
+              class="btn  mr-1 m-1 btn-sm-update"><i class="fa fa-save fa-fw"></i>
+                Update</button>
+            <button type="button" (click)="resetForm()" class="btn btn-primary m-1 btn-sm">
+              <i class="fa fa-close fa-fw"></i>Cancel</button>
           </div>
 
         </div>

@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AssetGatePassClient, AssetGatePassModel,  AssetGatePassDetailModel, AssetGatePassSenderDetailModel, QuantityUnitModel, AssetClient, AssetModel, AssetDetailModel, ResponseModel, GatePassTypeModel } from 'src/app/sharedservice';
+import { AssetGatePassClient, AssetGatePassModel,  AssetGatePassDetailModel, AssetGatePassSenderDetailModel, QuantityUnitModel, AssetClient, AssetModel, AssetDetailModel, ResponseModel, GatePassTypeModel, UserModel } from 'src/app/sharedservice';
 import { BsDatepickerConfig } from 'ngx-bootstrap';
 import { NgForm } from '@angular/forms';
-import { jsonpCallbackContext } from '@angular/common/http/src/module';
+import { CommonService } from 'src/app/shared/common-service.service';
+
 
 
 
@@ -26,24 +27,32 @@ export class CreateGatePassComponent implements OnInit {
   responseMessage: ResponseModel;
   isAssetEdit: boolean = false;
   isValidQty: boolean = false;
+  gatePassNo :string = "GP-XXXXXXXX";
+  userData : UserModel;
   
 
-  constructor(private gatePassClient: AssetGatePassClient, private assetClient: AssetClient) {
+  constructor(private gatePassClient: AssetGatePassClient, private assetClient: AssetClient,
+    private commonService: CommonService) {
     this.datePickerConfig = Object.assign({},
       { containerClass: 'theme-dark-blue', showWeekNumbers: false, dateInputFormat: 'DD/MM/YYYY' });
     this.assetGatePassModel = this.getDefaultGatePassModel();
     this.assetGatePassDetailModel = this.getDefaultGatePassDetailModel();
     this.assetGatePassModel.assetGatePassDetail = this.assetGatePassModel.assetGatePassDetail.filter(o => o.asset.assetTagId != undefined);
-    this.assetGatePassModel.gatePassDate = new Date();
-    this.assetGatePassModel.gatePassNo = "GP-11111";
+    this.assetGatePassModel.gatePassDate = new Date();   
   }
   
   ngOnInit() {
     this.gatePassClient.getAllGatePassType().subscribe(data => { this.gatePassTypeList = data;this.gatePassTypeList = this.gatePassTypeList.filter(x => x.typeName != 'All'); });
     this.gatePassClient.getAllUnit().subscribe(data => { this.quantityUnitList = data; });
     this.assetClient.getAllAssetTag().subscribe(data => { this.assetModelList = data; });
+    this.userData = this.commonService.GetUserData();
+    console.log(this.userData);
 
   }
+
+  get createdUserName()
+  {  return this.userData.firstName + ', ' +  this.userData.lastName;}
+  
   getDefaultGatePassModel(): AssetGatePassModel {
     return <AssetGatePassModel>{ gatePassTypeId : -101,
       assetGatePassDetail: [{
@@ -57,8 +66,7 @@ export class CreateGatePassComponent implements OnInit {
     return <AssetGatePassDetailModel>{ assetTypeId : -101,sendQtyUnitId:-101,
       asset: <AssetModel>{ assetDetail: [{}] },
       sendQtyUnit: <QuantityUnitModel>{ },     
-      assetType: <GatePassTypeModel>{},
-
+      assetType: <GatePassTypeModel>{}
     }
   }
 
@@ -78,9 +86,11 @@ export class CreateGatePassComponent implements OnInit {
   }
 
   SaveAssetGatePass(assetGatePassModel: AssetGatePassModel) {
-  
+    assetGatePassModel.createdBy = this.userData.id;
     this.gatePassClient.saveAssetGatePass(assetGatePassModel).subscribe(data => {
-      this.responseMessage = data; console.log(this.responseMessage)
+      this.responseMessage = data;
+      this.gatePassNo =  data.gatePassNo;
+       console.log(this.responseMessage)
     },
       error => {
         this.responseMessage = error;
@@ -167,7 +177,7 @@ export class CreateGatePassComponent implements OnInit {
     this.assetGatePassModel = this.getDefaultGatePassModel();   
     this.assetGatePassModel.assetGatePassDetail = this.assetGatePassModel.assetGatePassDetail.filter(o => o.asset.assetTagId != undefined);
     this.assetGatePassModel.gatePassDate = new Date();
-    this.assetGatePassModel.gatePassNo = "GP-11111";
+    this.assetGatePassModel.gatePassNo = "GP-XXXXXXXX";
     this.gatePassForm.controls['gatepass_status'].markAsUntouched();
     this.responseMessage=null;
   }

@@ -11,7 +11,8 @@
                         <div class="row">
                             <div class="col form-group">
                                 <label for="gatepassdate" class="col-form-label font-weight-bold">Gate Pass No :</label>
-                                <input type="text" Id="gatepassdate" class="form-control" placeholder="Enter Gate Pass Date">
+                                <input type="text" Id="gatepassdate" class="form-control" 
+                                placeholder="Enter Gate Pass Date">
                             </div>
                             <div class="col form-group">
                                 <label for="type" class="col-form-label font-weight-bold">Type :</label>
@@ -74,37 +75,38 @@
                         id="gridApi" (gridReady)="onGridReady($event)">
                     </ag-grid-angular>
                 </div>
-                <!-- <div class="col">
-          <table class="table table-bordered table-md text-primary">
-              <thead>
-                <th >Gate Pass No</th>
-                <th >Gate Pass Date</th>
-                <th >Type</th>
-                <th >Status</th>
-                <th>Prepared By</th>
-                <th>Received By</th>
-                <th></th>
-              </thead>
-            <tbody>
-              <tr>
-                <td>GP12121212</td>
-                <td>03/11/208</td>
-                <td>Returnable</td>
-                <td>Approved</td>
-                <td>Sharad</td>
-                <td>Ajay</td>
-                <td class="text-center">
-                    <a href="#" title="View"><i class="fa fa-building fa-fw"></i></a>
-                    &nbsp;<a href="#" title="Edit"><i class="fa fa-pencil-square-o fa-fw"></i></a>
-                    &nbsp;<a href="#" title="Approve"><i class="fa fa-check-circle fa-fw"></i></a>
-                    &nbsp;<a href="#" title="Reject"><i class="fa fa-times-circle fa-fw"></i></a>
-                    &nbsp;<a href="#" title="Delete"><i class="fa fa-trash-o fa-fw"></i></a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-      </div> -->
+               
             </div>
         </div>
     </div>
+
+    <ng-template #template>
+        <div class="modal-header">
+          <h4 class="modal-title pull-left">Approve / Reject Gate Pass</h4>
+          <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col form-group">
+                    <label for="approverejectcomment" class="col-form-label font-weight-bold mb-2">Comment / Reason :</label>
+                    <textarea id="approverejectcomment" name="approverejectcomment" [(ngModel)]="gatePassData.comment"
+                    #approverejectcomment ="ngModel" class="form-control" rows="4" placeholder="Enter Comment for Approve/Reject" ></textarea>                   
+                    <span class="font-weight-bold" [class.text-success]="responseMessage.isSuccess" [class.text-danger]="!responseMessage.isSuccess"
+                    *ngIf="responseMessage">
+                    {{responseMessage.message}}
+                  </span>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col form-group text-right">
+                    <button type="button" (click) = "UpdateGatePassStatus('Approved')" class="btn btn-primary btn-sm mr-2" style="width: 6.3rem"><i
+                        class="fa fa-close fa-fw"></i>&nbsp;Approve</button>
+                    <button type="buton" (click) = "UpdateGatePassStatus('Reject')" class="btn btn-primary btn-sm"><i
+                        class="fa fa-save fa-fw"></i>&nbsp;Reject</button>
+                </div>
+            </div>
+        </div>
+      </ng-template>
 </div>

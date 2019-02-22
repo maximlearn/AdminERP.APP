@@ -20,7 +20,7 @@
         <div class="col form-group">
             <label for="gatepassno" class="col-form-label font-weight-bold">Gate Pass No :</label>
            <input type="text" name="gatepassno" Id="gatepassno"  #gatepassno="ngModel"
-            [(ngModel)]="assetGatePassModel.gatePassNo"   readonly class="form-control">
+            [(ngModel)]="gatePassNo"   readonly class="form-control">
         </div>
         <div class="col form-group">
             <label for="isreturnable" class="col-form-label font-weight-bold">Gate Pass Status : </label>
@@ -39,8 +39,8 @@
         </div>
       <div class="col form-group">
           <label for="preparedBy" class="col-form-label font-weight-bold">Prepared By :</label>
-          <input type="text" name="preparedBy" Id="preparedBy"  [value]="assetGatePassModel.gatePassNo"
-                 readonly class="form-control">          
+          <input type="text" name="preparedBy" Id="preparedBy"  [(ngModel)]="createdUserName"
+          #preparedBy= "ngModel"  readonly class="form-control">          
       </div>
       </div>
       <div class="row">
@@ -213,7 +213,7 @@
               <button type="button" *ngIf="!isAssetEdit" 
               [disabled]="!(assetTagId.valid && sendqtyunits.valid && asset_status.valid && isValidQty)"            
                [ngClass]="!(assetTagId.valid && sendqtyunits.valid && asset_status.valid && isValidQty) ? 'btn-disabled' : 'btn-primary'"
-                (click) ="addAsset()" class="btn btn-primary  mr-1 btn-sm"><i class="fa fa-plus-circle fa-fw"></i>&nbsp;Add</button>
+                (click) ="addAsset()" class="btn mr-1 btn-sm"><i class="fa fa-plus-circle fa-fw"></i>&nbsp;Add</button>
               <button type="button" *ngIf="isAssetEdit"
               [disabled]="!(sendqtyunits.valid && asset_status.valid && isValidQty)"            
                [ngClass]="!(sendqtyunits.valid && asset_status.valid && isValidQty) ? 'btn-disabled' : 'btn-primary'"
@@ -263,7 +263,8 @@
     <button type="submit" [disabled]="!(gatepassdate.valid && gatepass_status.valid && sendtoname.valid
     && sendtocompany.valid && sendtoaddress.valid && sendtoPhone.valid)"
      [ngClass]="!(gatepassdate.valid && gatepass_status.valid && sendtoname.valid
-     && sendtocompany.valid && sendtoaddress.valid && sendtoPhone.valid) ? 'btn-disabled' : 'btn-primary'" class="btn btn-primary mr-1 m-1 btn-sm "><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
+     && sendtocompany.valid && sendtoaddress.valid && sendtoPhone.valid) ? 'btn-disabled' : 'btn-primary'"
+      class="btn mr-1 m-1 btn-sm "><i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
      <button type="button" (click) ="resetForm()" class="btn btn-primary m-1  btn-sm"><i class="fa fa-refresh fa-fw"></i>&nbsp;Reset</button>
      </div>
 

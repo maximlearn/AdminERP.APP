@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { AssetModel, DocumentModel, AssetClient } from 'src/app/sharedservice';
-import { saveAs } from 'file-saver';
+
 
 
 @Component({

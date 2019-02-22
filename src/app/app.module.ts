@@ -9,6 +9,7 @@ import { AuthGuardService } from './guards/auth-guard.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './shared/jwt.interceptor';
 import { API_BASE_URL } from './sharedservice';
+import { PdfDownloadComponent } from './Utility/pdf-download/pdf-download.component';
 
 
 
@@ -28,8 +29,8 @@ import { API_BASE_URL } from './sharedservice';
     {
       provide: API_BASE_URL,
       useFactory: () => {
-                   // return 'https://localhost:44361';
-                   return 'https://adminerp.azurewebsites.net/'
+                    return 'https://localhost:44361';
+                   //return 'https://adminerp.azurewebsites.net/'
              }
       }
    ],

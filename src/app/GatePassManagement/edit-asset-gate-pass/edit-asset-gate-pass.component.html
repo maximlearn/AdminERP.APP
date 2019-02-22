@@ -42,8 +42,8 @@
             </div>
             <div class="col form-group">
               <label for="preparedBy" class="col-form-label font-weight-bold">Prepared By :</label>
-              <input type="text" name="preparedBy" Id="preparedBy" [value]="assetGatePassModel.gatePassNo" readonly
-                class="form-control">
+               <input type="text" name="preparedBy" Id="preparedBy"  [value]="createdUserName"
+               readonly class="form-control"> 
             </div>
           </div>
           <div class="row">
@@ -192,7 +192,7 @@
                 <div class="col form-group text-right">
                   <button type="button" *ngIf="!isAssetEdit" [disabled]="!(assetTagId.valid && sendqtyunits.valid && asset_status.valid && isValidQty)"
                     [ngClass]="!(assetTagId.valid && sendqtyunits.valid && asset_status.valid && isValidQty) ? 'btn-disabled' : 'btn-primary'"
-                    (click)="addAsset()" class="btn btn-primary  mr-1 btn-sm"><i class="fa fa-plus-circle fa-fw"></i>&nbsp;Add</button>
+                    (click)="addAsset()" class="btn mr-1 btn-sm"><i class="fa fa-plus-circle fa-fw"></i>&nbsp;Add</button>
                   <button type="button" *ngIf="isAssetEdit" [disabled]="!(sendqtyunits.valid && asset_status.valid && isValidQty)"
                     [ngClass]="!(sendqtyunits.valid && asset_status.valid && isValidQty) ? 'btn-disabled' : 'btn-primary'"
                     (click)="updateAsset(assetGatePassDetailModel.asset.id)" class="btn btn-primary  mr-1 btn-sm-update"><i

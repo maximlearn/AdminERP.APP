@@ -11,10 +11,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { ViewAssetGatePassComponent } from './view-asset-gate-pass/view-asset-gate-pass.component';
 import { EditAssetGatePassComponent } from './edit-asset-gate-pass/edit-asset-gate-pass.component';
 import { SharedModule } from '../shared/shared-module.module';
+import { PdfDownloadComponent } from '../Utility/pdf-download/pdf-download.component';
 
 
 @NgModule({
-  declarations: [CreateGatePassComponent,ListGatePassComponent, ViewAssetGatePassComponent ,EditAssetGatePassComponent],
+  declarations: [CreateGatePassComponent,ListGatePassComponent, ViewAssetGatePassComponent ,EditAssetGatePassComponent,PdfDownloadComponent],
   imports: [
     CommonModule,
     GatePassManagementRoutingModule,
@@ -26,6 +27,6 @@ import { SharedModule } from '../shared/shared-module.module';
     SharedModule
    
   ],
-  entryComponents: [ViewAssetGatePassComponent,EditAssetGatePassComponent]
+  entryComponents: [ViewAssetGatePassComponent,EditAssetGatePassComponent,PdfDownloadComponent]
 })
 export class GatePassManagementModule { }

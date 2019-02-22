@@ -102,10 +102,16 @@
         *ngIf="responseMessage ">
         {{responseMessage.message}}
       </span>       
-           <button [style.visibility]="isSaveDisplay"  type="submit" id="btnsaveuser" [disabled]="!userorm.form.valid" [ngClass]="!userorm.form.valid ? 'btn-disabled' : 'btn-primary'" class="btn btn-primary mr-1 m-1 btn-sm">
-             <i class="fa fa-save fa-fw"></i>
-         {{user.id == 0 ? "Save" : "Update"}}  </button>
-          <button type="button" (click)="resetForm()" class="btn btn-primary m-1 btn-sm"><i class="fa fa-close fa-fw"></i>Cancel</button>
+           <button [style.visibility]="isSaveDisplay" *ngIf="user.id == 0"  type="submit" id="btnsaveuser" 
+           [disabled]="!userorm.form.valid" [ngClass]="!userorm.form.valid ? 'btn-disabled' : 'btn-primary'"
+            class="btn mr-1 m-1 btn-sm">
+             <i class="fa fa-save fa-fw"></i>&nbsp;Save</button>
+         <button [style.visibility]="isSaveDisplay" *ngIf="user.id > 0"  type="submit" id="btnsaveuser"
+            [disabled]="!userorm.form.valid" [ngClass]="!userorm.form.valid ? 'btn-disabled' : 'btn-primary'"
+             class="btn mr-1 m-1 btn-sm-update">
+            <i class="fa fa-save fa-fw"></i>&nbsp;Update</button>
+          <button type="button" (click)="resetForm()" class="btn btn-primary m-1 btn-sm">
+            <i class="fa fa-close fa-fw"></i>Cancel</button>
     </div>
 
   </div>

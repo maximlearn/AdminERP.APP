@@ -31,24 +31,14 @@
     color: #7a7b7e!important;
   }
 
-  .btn-primary {
-    color: #fff;
-    background-color: rgba(73, 68, 68, 0.705);
-    border-color: rgba(73, 68, 68, 0.705);
-    font-size: 1rem
-  }
-  
-  .btn-sm{
-    padding: 0.0rem 0.10rem;
-    width: 5rem;
-    height: 1.6rem;
-  
-  }
 
   .modal-width {
   width: 800px;
   }
   
+  @media print{
+    .doNotPrint{display:none !important;}
+  }
   .table td {  
     border-bottom: 1px solid #dee2e6;
     font-weight: 400;

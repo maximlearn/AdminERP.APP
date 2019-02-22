@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { AssetGatePassClient, ResponseModel } from 'src/app/sharedservice';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
+import { AssetGatePassClient, ResponseModel, AssetGatePassModel, StatusModel } from 'src/app/sharedservice';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { ViewAssetGatePassComponent } from '../view-asset-gate-pass/view-asset-gate-pass.component';
 import { EditAssetGatePassComponent } from '../edit-asset-gate-pass/edit-asset-gate-pass.component';
+import { template } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-list-gate-pass',
@@ -17,8 +18,11 @@ export class ListGatePassComponent implements OnInit {
   modalRef: BsModalRef;
   rowData: any;
   gatePassId: number;
+  gatePassData : AssetGatePassModel = <AssetGatePassModel>{ 
+    gatePassStatus : <StatusModel>{} }
   responseMessage: ResponseModel;
- 
+  CommentApproveReject : string;
+  @ViewChild('template') approveReject: TemplateRef<any>;
   constructor(private gatePassClient: AssetGatePassClient, private modalService: BsModalService) { }
 
   ngOnInit() {
@@ -30,7 +34,12 @@ export class ListGatePassComponent implements OnInit {
   }
   columnDefs = [
     // tslint:disable-next-line:max-line-length
-    { headerName: 'Action', template: '<a title=\'View\' ><i data-action-type=\'view\' class=\'fa fa-building fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'Edit\'><i data-action-type=\'edit\' class=\'fa fa-pencil-square-o fa-fw\'></i></a>&nbsp;&nbsp;<a title=\'delete\'><i data-action-type=\'delete\' class=\'fa fa-trash-o fa-fw\'></i></a>', width: 100 },
+    { headerName: 'Action',
+     template: `<a title=\'Approve/Reject\' ><i data-action-type=\'approve\' style=\'font-size:0.9rem\' class=\'fa fa-check-circle\'></i></a>&nbsp;
+               
+                <a title=\'View\' ><i data-action-type=\'view\' class=\'fa fa-building fa-fw\'></i></a>&nbsp;
+                <a title=\'Edit\'><i data-action-type=\'edit\' class=\'fa fa-pencil-square-o fa-fw\'></i></a>&nbsp;
+                <a title=\'delete\'><i data-action-type=\'delete\' class=\'fa fa-trash-o fa-fw\'></i></a>`, width: 130 },
     { headerName: 'Gate Pass No', field: 'gatePassNo', width: 150 },
     {
       headerName: 'Gate Pass Date', cellRenderer: function (params) {
@@ -65,6 +74,10 @@ export class ListGatePassComponent implements OnInit {
         case 'delete':
           this.gatePassId = e.data.id;
           return this.deleteAssetGatePass(this.gatePassId);
+          case 'approve':  
+           this.CommentApproveReject = "";       
+          this.gatePassId = e.data.id;
+          return this.openModalforApproveReject(this.gatePassId,this.approveReject);
       }
     }
   }
@@ -78,6 +91,27 @@ export class ListGatePassComponent implements OnInit {
         this.responseMessage = error;
       }
     );
+  }
+
+  openModalforApproveReject(gatePassId : number,template: TemplateRef<any>)
+  {   
+    this.modalRef = this.modalService.show(template);
+  }
+
+  UpdateGatePassStatus(gatePassStatus : string)
+  {
+    this.gatePassData.id = this.gatePassId;
+    this.gatePassData.gatePassStatus.statusName = gatePassStatus;
+    this.gatePassClient.updateGatePassStatus(this.gatePassData).subscribe( data => {
+      this.responseMessage = data;
+    },
+    error => {
+      this.responseMessage = error;
+    })
+   // this.gatePassData.comment = this.gatePassData.comment;
+    //console.log(this.gatePassId);
+    //console.log(this.CommentApproveReject);
+
   }
 
   openModalForEdit() {
@@ -106,7 +140,7 @@ export class ListGatePassComponent implements OnInit {
 
   openModalWithComponent() {
     const initialState = {
-      gatePassData: {}
+      gatePassData : <any>{}
 
     };
 
