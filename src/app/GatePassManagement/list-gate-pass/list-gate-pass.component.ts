@@ -108,10 +108,6 @@ export class ListGatePassComponent implements OnInit {
     error => {
       this.responseMessage = error;
     })
-   // this.gatePassData.comment = this.gatePassData.comment;
-    //console.log(this.gatePassId);
-    //console.log(this.CommentApproveReject);
-
   }
 
   openModalForEdit() {

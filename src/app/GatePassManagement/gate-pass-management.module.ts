@@ -15,7 +15,7 @@ import { PdfDownloadComponent } from '../Utility/pdf-download/pdf-download.compo
 
 
 @NgModule({
-  declarations: [CreateGatePassComponent,ListGatePassComponent, ViewAssetGatePassComponent ,EditAssetGatePassComponent,PdfDownloadComponent],
+  declarations: [CreateGatePassComponent,ListGatePassComponent,EditAssetGatePassComponent,PdfDownloadComponent],
   imports: [
     CommonModule,
     GatePassManagementRoutingModule,
@@ -27,6 +27,6 @@ import { PdfDownloadComponent } from '../Utility/pdf-download/pdf-download.compo
     SharedModule
    
   ],
-  entryComponents: [ViewAssetGatePassComponent,EditAssetGatePassComponent,PdfDownloadComponent]
+  entryComponents: [EditAssetGatePassComponent,PdfDownloadComponent]
 })
 export class GatePassManagementModule { }

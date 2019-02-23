@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { AssetGatePassModel, DocumentModel } from 'src/app/sharedservice';
+import { Component, OnInit, ViewEncapsulation, ViewChild, TemplateRef } from '@angular/core';
+import { AssetGatePassModel, DocumentModel, AssetGatePassClient, ResponseModel } from 'src/app/sharedservice';
 import * as jspdf from 'jspdf'; 
 import html2canvas from 'html2canvas'; 
-import { BsModalRef } from 'ngx-bootstrap';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 
 @Component({
   selector: 'app-view-asset-gate-pass',
@@ -16,11 +16,33 @@ export class ViewAssetGatePassComponent implements OnInit {
   gatePassData: AssetGatePassModel;
   assetImage: DocumentModel; 
   isPDFDownload: boolean = false;
+  gatePassStatus : string;
+  responseMessage: ResponseModel;
+  public modalRef: BsModalRef = new BsModalRef();
 
-  constructor(public bsModalRef: BsModalRef) { }
+
+  constructor(public bsModalRef: BsModalRef, private modalService: BsModalService,private gatePassClient: AssetGatePassClient) { }
 
   ngOnInit() {
     this.assetImage = this.gatePassData.company
+  }
+
+  openModalforApproveReject(gatePassStatus: string,template: TemplateRef<any>)
+  {   this.gatePassStatus=gatePassStatus;
+    this.modalRef = this.modalService.show(template);
+  }
+
+  UpdateGatePassStatus(gatePassId: number,gatePassStatus : string)
+  {
+    this.gatePassData.id = gatePassId;
+    this.gatePassData.gatePassStatus.statusName = gatePassStatus;
+    this.gatePassClient.updateGatePassStatus(this.gatePassData).subscribe( data => {
+      this.responseMessage = data;
+      this.modalRef.hide();
+    },
+    error => {
+      this.responseMessage = error;
+    })
   }
 
  

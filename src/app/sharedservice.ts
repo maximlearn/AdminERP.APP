@@ -1515,6 +1515,76 @@ export class CompanyClient implements ICompanyClient {
     }
 }
 
+export interface IDashboardClient {
+    getAllDashboardData(userId?: number | undefined): Observable<DashboardModel | null>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class DashboardClient implements IDashboardClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    getAllDashboardData(userId?: number | undefined): Observable<DashboardModel | null> {
+        let url_ = this.baseUrl + "/api/department/GetAllDashboardData?";
+        if (userId === null)
+            throw new Error("The parameter 'userId' cannot be null.");
+        else if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllDashboardData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllDashboardData(<any>response_);
+                } catch (e) {
+                    return <Observable<DashboardModel | null>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<DashboardModel | null>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllDashboardData(response: HttpResponseBase): Observable<DashboardModel | null> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? DashboardModel.fromJS(resultData200) : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<DashboardModel | null>(<any>null);
+    }
+}
+
 export interface IDepartmentClient {
     getAllDepartments(): Observable<DepartmentModel[] | null>;
     saveDepartment(departmentModel: DepartmentModel): Observable<ResponseModel | null>;
@@ -4487,6 +4557,90 @@ export class LoginDetails implements ILoginDetails {
 export interface ILoginDetails {
     userId?: string | undefined;
     password?: string | undefined;
+}
+
+export class DashboardModel implements IDashboardModel {
+    gatPassId!: number;
+    approveGatePass!: number;
+    pendingGatePass!: number;
+    rejectGatepass!: number;
+    approveGatePassList?: AssetGatePassModel[] | undefined;
+    pendingGatePassList?: AssetGatePassModel[] | undefined;
+    rejectGatepassList?: AssetGatePassModel[] | undefined;
+
+    constructor(data?: IDashboardModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.gatPassId = data["gatPassId"];
+            this.approveGatePass = data["approveGatePass"];
+            this.pendingGatePass = data["pendingGatePass"];
+            this.rejectGatepass = data["rejectGatepass"];
+            if (data["approveGatePassList"] && data["approveGatePassList"].constructor === Array) {
+                this.approveGatePassList = [] as any;
+                for (let item of data["approveGatePassList"])
+                    this.approveGatePassList!.push(AssetGatePassModel.fromJS(item));
+            }
+            if (data["pendingGatePassList"] && data["pendingGatePassList"].constructor === Array) {
+                this.pendingGatePassList = [] as any;
+                for (let item of data["pendingGatePassList"])
+                    this.pendingGatePassList!.push(AssetGatePassModel.fromJS(item));
+            }
+            if (data["rejectGatepassList"] && data["rejectGatepassList"].constructor === Array) {
+                this.rejectGatepassList = [] as any;
+                for (let item of data["rejectGatepassList"])
+                    this.rejectGatepassList!.push(AssetGatePassModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): DashboardModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new DashboardModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["gatPassId"] = this.gatPassId;
+        data["approveGatePass"] = this.approveGatePass;
+        data["pendingGatePass"] = this.pendingGatePass;
+        data["rejectGatepass"] = this.rejectGatepass;
+        if (this.approveGatePassList && this.approveGatePassList.constructor === Array) {
+            data["approveGatePassList"] = [];
+            for (let item of this.approveGatePassList)
+                data["approveGatePassList"].push(item.toJSON());
+        }
+        if (this.pendingGatePassList && this.pendingGatePassList.constructor === Array) {
+            data["pendingGatePassList"] = [];
+            for (let item of this.pendingGatePassList)
+                data["pendingGatePassList"].push(item.toJSON());
+        }
+        if (this.rejectGatepassList && this.rejectGatepassList.constructor === Array) {
+            data["rejectGatepassList"] = [];
+            for (let item of this.rejectGatepassList)
+                data["rejectGatepassList"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IDashboardModel {
+    gatPassId: number;
+    approveGatePass: number;
+    pendingGatePass: number;
+    rejectGatepass: number;
+    approveGatePassList?: AssetGatePassModel[] | undefined;
+    pendingGatePassList?: AssetGatePassModel[] | undefined;
+    rejectGatepassList?: AssetGatePassModel[] | undefined;
 }
 
 export class ReportModel implements IReportModel {

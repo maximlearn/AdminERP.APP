@@ -1,16 +1,46 @@
 .card-tile{
     max-width: 18rem;
     height: 7rem;
-    width: 15rem
+    width: 15rem;
+    margin-bottom: .35rem; 
+}
+.card-body {
+    padding: 1.4rem!important;
+  }
+.card-title {
+    margin-bottom: .35rem; 
 }
 
 .card-tile-request{
     height: 18rem;
 }
-.card-header {
+.card-header {  
     padding: .20rem 0.35rem;
     margin-bottom: 0px;
     font-size:1rem;
-    font-weight: 600;
+    font-weight: 400;
     background-color: #687c85!important
+  }
+  .gatePass {
+    color: rgb(104, 145, 162);
+}
+
+.gatePass:hover,
+.gatePass:active,
+.gatePass:focus{
+    color: rgb(12, 97, 33);
+}
+
+.table td {  
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 400;
+    font-size: .8rem;
+    padding: .55rem;
+  }
+  
+  .table th {  
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 600;
+    font-size: .9rem;
+    padding: .25rem;
   }
