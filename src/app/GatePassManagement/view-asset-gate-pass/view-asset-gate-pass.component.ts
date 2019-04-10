@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, TemplateRef, Output, EventEmitter } from '@angular/core';
 import { AssetGatePassModel, DocumentModel, AssetGatePassClient, ResponseModel } from 'src/app/sharedservice';
 import * as jspdf from 'jspdf'; 
 import html2canvas from 'html2canvas'; 
@@ -19,7 +19,7 @@ export class ViewAssetGatePassComponent implements OnInit {
   gatePassStatus : string;
   responseMessage: ResponseModel;
   public modalRef: BsModalRef = new BsModalRef();
-
+  @Output() pevent: EventEmitter<any> = new EventEmitter();
 
   constructor(public bsModalRef: BsModalRef, private modalService: BsModalService,private gatePassClient: AssetGatePassClient) { }
 
@@ -68,9 +68,12 @@ export class ViewAssetGatePassComponent implements OnInit {
     //  this.isPDFDownload=false;
       // Generated PDF  
     }); }, 0 );
-   
-   
    }
+
+   closeForm() {
+    this.pevent.emit({ data: "Parent Refreshed." });
+    this.bsModalRef.hide();
+  }
  
  
   

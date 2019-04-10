@@ -1,7 +1,7 @@
 <div class="container">
   <div class="modal-header">
     <h5 class="modal-title pull-left">View Gate Pass</h5>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeForm()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -66,9 +66,9 @@
                 *ngIf="responseMessage">
                 {{responseMessage.message}}
               </span>
-        <button type="button"  (click)="openModalforApproveReject('Approved',template)" class="btn btn-primary btn-sm mr-2" style="width: 6.3rem"><i
+        <button type="button" *ngIf="gatePassData.gatePassStatus.statusName=='Pending'"  (click)="openModalforApproveReject('Approved',template)" class="btn btn-primary btn-sm mr-2" style="width: 6.3rem"><i
             class="fa fa-close fa-fw"></i>&nbsp;Approve</button>
-        <button type="buton"  (click)="openModalforApproveReject('Reject',template)" class="btn btn-primary btn-sm"><i class="fa fa-save fa-fw"></i>&nbsp;Reject</button>
+        <button type="buton" *ngIf="gatePassData.gatePassStatus.statusName=='Pending'"  (click)="openModalforApproveReject('Reject',template)" class="btn btn-primary btn-sm"><i class="fa fa-save fa-fw"></i>&nbsp;Reject</button>
       </div>
   </div>
   <div class="row">
@@ -137,23 +137,34 @@
       </button>
     </div>
     <div class="modal-body">
-        <div class="row">
-            <div class="col form-group">
+        <form name="approveRejectForm" #approveRejectForm="ngForm">
+                  <div class="row">
+            <div class="col form-group"  [class.was-validated]="approverejectcomment.errors?.required  && approverejectcomment.touched">
                 <label for="approverejectcomment" class="col-form-label font-weight-bold mb-2">Comment / Reason :</label>
-                <textarea id="approverejectcomment" name="approverejectcomment" [(ngModel)]="gatePassData.comment"
+                <textarea id="approverejectcomment" name="approverejectcomment"               
+                 [(ngModel)]="gatePassData.comment" required
                 #approverejectcomment ="ngModel" class="form-control" rows="4" placeholder="Enter Comment for Approve/Reject" ></textarea>                   
-              
+                <span class="invalid-feedback" *ngIf="approverejectcomment.errors?.required && approverejectcomment.touched">
+                       Comment/Reason is required.
+                      </span>
+               
             </div>
         </div>
         <div class="row mt-2">
             <div class="col form-group text-right">
                 <button type="button" (click) = "UpdateGatePassStatus(gatePassData.id,gatePassStatus)"
-                 class="btn btn-primary btn-sm mr-2" style="width: 6.3rem"><i
+                [disabled]="!approveRejectForm.form.valid"
+                 [ngClass]="!approveRejectForm.form.valid ? 'btn-disabled' : 'btn-primary'"
+                 class="btn btn-sm mr-2" style="width: 6.3rem"><i
                     class="fa fa-close fa-fw"></i>&nbsp;OK</button>
-                <button type="buton" (click) = "modalRef.hide()" class="btn btn-primary btn-sm"><i
+                <button type="buton" (click) = "modalRef.hide()"
+                [disabled]="!approveRejectForm.form.valid"
+                 [ngClass]="!approveRejectForm.form.valid ? 'btn-disabled' : 'btn-primary'"
+                class="btn btn-sm"><i
                     class="fa fa-save fa-fw"></i>&nbsp;Cancel</button>
             </div>
         </div>
+      </form>
     </div>
   </ng-template>
 </div>

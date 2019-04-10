@@ -1,21 +1,18 @@
 import { Injectable, InjectionToken, Inject, Optional } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { throwError } from 'rxjs';
+import { throwError, Subject } from 'rxjs';
 import { AssetModel, ResponseModel, CompanyModel, UserModel } from '../sharedservice';
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 @Injectable({
   providedIn: 'root'
 })
 export class CommonService {
-  // private httpClient: HttpClient;
-  // private baseUrl: string;
- private API_URL =  'https://localhost:44361'; //'https://adminerp.azurewebsites.net/'; //
- // private API_URL =  'https://adminerp.azurewebsites.net'; //'https://adminerp.azurewebsites.net/'; //
+ 
+ private API_URL =  'http://adminerp.southeastasia.cloudapp.azure.com/API/';
+ private loaderSubject = new Subject<LoaderState>();
+  loaderState = this.loaderSubject.asObservable();
   constructor(private httpClient: HttpClient) { }
-//   constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-//     this.httpClient = http;    
-//     this.baseUrl = baseUrl ? baseUrl : "";
-// }
+
 
   private errorHandler(errorResponse: HttpErrorResponse) {
     if (errorResponse.error instanceof ErrorEvent) {
@@ -85,6 +82,15 @@ export class CommonService {
 
     public PdfDownLoad(pdfData: HTMLElement)
     {}
-   
-  
+
+    public show() {
+      this.loaderSubject.next(<LoaderState>{ show: true });
+    }
+    public hide() {
+      this.loaderSubject.next(<LoaderState>{ show: false });
+    }
+}
+
+export interface LoaderState {
+  show: boolean;
 }

@@ -26,7 +26,9 @@ export class DashboardComponent implements OnInit {
       data => {
         initialState.gatePassData = data;
         this.modalRef = this.modalService.show(ViewAssetGatePassComponent, { class: 'modal-lg', initialState });
-       // this.modalRef.content.closeBtnName = 'Close';
+        this.modalRef.content.pevent.subscribe(data => {       
+        this.getDashBoardData();
+      });
       },
       error => {
         initialState.gatePassData = error.error;
@@ -35,12 +37,18 @@ export class DashboardComponent implements OnInit {
     event.preventDefault();
   }
   ngOnInit() {
-  this.dashBoardClient.getAllDashboardData(0).subscribe(data => 
-    {
-      this.dashBoard= data
-    },  error => {
-      this.responseMessage = error;
-    })
+    this.getDashBoardData();
+  }
+
+  getDashBoardData()
+  {
+    this.dashBoardClient.getAllDashboardData(0).subscribe(data => 
+      {
+        this.dashBoard= data
+      },  error => {
+        this.responseMessage = error;
+      })
+
   }
 
 }

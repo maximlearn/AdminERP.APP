@@ -19,9 +19,10 @@ import { PdfDownloadComponent } from './Utility/pdf-download/pdf-download.compon
   imports: [
     BrowserModule,
     AppRoutingModule,
-    CommonModule, 
+    CommonModule,     
+    HttpClientModule,
     
-    HttpClientModule
+    
    
   ],
   providers: [AuthGuardService,
@@ -29,8 +30,9 @@ import { PdfDownloadComponent } from './Utility/pdf-download/pdf-download.compon
     {
       provide: API_BASE_URL,
       useFactory: () => {
-                    return 'https://localhost:44361';
+                   // return 'https://localhost:44361';
                    //return 'https://adminerp.azurewebsites.net/'
+                   return 'http://adminerp.southeastasia.cloudapp.azure.com/API/'
              }
       }
    ],

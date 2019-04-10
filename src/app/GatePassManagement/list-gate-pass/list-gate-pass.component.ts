@@ -34,12 +34,19 @@ export class ListGatePassComponent implements OnInit {
   }
   columnDefs = [
     // tslint:disable-next-line:max-line-length
-    { headerName: 'Action',
-     template: `<a title=\'Approve/Reject\' ><i data-action-type=\'approve\' style=\'font-size:0.9rem\' class=\'fa fa-check-circle\'></i></a>&nbsp;
-               
-                <a title=\'View\' ><i data-action-type=\'view\' class=\'fa fa-building fa-fw\'></i></a>&nbsp;
-                <a title=\'Edit\'><i data-action-type=\'edit\' class=\'fa fa-pencil-square-o fa-fw\'></i></a>&nbsp;
-                <a title=\'delete\'><i data-action-type=\'delete\' class=\'fa fa-trash-o fa-fw\'></i></a>`, width: 130 },
+    { headerName: 'Action', cellRenderer: function (params) {     
+      console.log(params.data.gatePassStatus.statusName);
+       var html =''
+      var style="style='display:none'"
+      if (params.data.gatePassStatus.statusName == 'Pending') {
+        style = "style='display:collaspe'"
+          //display = 'block';
+      }  
+      console.log(style);   
+      return '<a title=\'Approve/Reject\''+ style +'><i data-action-type=\'approve\' style=\'font-size:0.9rem\' class=\'fa fa-check-circle\'></i>&nbsp;</a><a title=\'View\' ><i data-action-type=\'view\' class=\'fa fa-building fa-fw\'></i></a>&nbsp;<a title=\'Edit\'><i data-action-type=\'edit\' class=\'fa fa-pencil-square-o fa-fw\'></i></a>&nbsp<a title=\'delete\'><i data-action-type=\'delete\' class=\'fa fa-trash-o fa-fw\'></i></a>';
+
+  },
+     width: 130 },
     { headerName: 'Gate Pass No', field: 'gatePassNo', width: 150 },
     {
       headerName: 'Gate Pass Date', cellRenderer: function (params) {
@@ -64,6 +71,7 @@ export class ListGatePassComponent implements OnInit {
     if (e.event.target !== undefined) {
       const actionType = e.event.target.getAttribute('data-action-type');
       this.responseMessage=null;
+      this.gatePassData.comment=null;
       switch (actionType) {
         case 'view':
           this.gatePassId = e.data.id;
@@ -75,9 +83,9 @@ export class ListGatePassComponent implements OnInit {
           this.gatePassId = e.data.id;
           return this.deleteAssetGatePass(this.gatePassId);
           case 'approve':  
-           this.CommentApproveReject = "";       
-          this.gatePassId = e.data.id;
-          return this.openModalforApproveReject(this.gatePassId,this.approveReject);
+          this.gatePassId=e.data.id;
+          this.gatePassData.comment=null;          
+          return this.openModalforApproveReject(this.approveReject);
       }
     }
   }
@@ -93,7 +101,7 @@ export class ListGatePassComponent implements OnInit {
     );
   }
 
-  openModalforApproveReject(gatePassId : number,template: TemplateRef<any>)
+  openModalforApproveReject(template: TemplateRef<any>)
   {   
     this.modalRef = this.modalService.show(template);
   }
@@ -104,6 +112,7 @@ export class ListGatePassComponent implements OnInit {
     this.gatePassData.gatePassStatus.statusName = gatePassStatus;
     this.gatePassClient.updateGatePassStatus(this.gatePassData).subscribe( data => {
       this.responseMessage = data;
+      this.closeForm() 
     },
     error => {
       this.responseMessage = error;
@@ -121,9 +130,7 @@ export class ListGatePassComponent implements OnInit {
         this.modalRef = this.modalService.show(EditAssetGatePassComponent, { class: 'modal-lg', initialState });
        // this.modalRef.content.closeBtnName = 'Close';
         this.modalRef.content.pevent.subscribe(data => {
-          //  alert(data.data);
-          this.rowData = this.gatePassClient.getAllAssetGatePassList();
-
+          this.getAllAssetGatePassList();
         });
 
 
@@ -144,7 +151,9 @@ export class ListGatePassComponent implements OnInit {
       data => {
         initialState.gatePassData = data;
         this.modalRef = this.modalService.show(ViewAssetGatePassComponent, { class: 'modal-lg', initialState });
-       // this.modalRef.content.closeBtnName = 'Close';
+        this.modalRef.content.pevent.subscribe(data => {
+          this.getAllAssetGatePassList();
+        });
       },
       error => {
         initialState.gatePassData = error.error;
@@ -159,7 +168,16 @@ export class ListGatePassComponent implements OnInit {
 
   onGridReady(params) {
     this.gridApi = params.api;
+    this.getAllAssetGatePassList();
+  }
+
+  getAllAssetGatePassList()
+  {
     this.rowData = this.gatePassClient.getAllAssetGatePassList();
+  }
+  closeForm() {
+    this.getAllAssetGatePassList();
+    this.modalRef.hide();
   }
 
 }

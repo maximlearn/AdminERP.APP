@@ -8,6 +8,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { DashboardModule } from '../dashboard/dashboard.module';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from '../shared/shared-module.module';
+import { NgxLoadingModule } from 'ngx-loading';
 
 
 
@@ -19,7 +20,8 @@ import { SharedModule } from '../shared/shared-module.module';
         DashboardModule,
         HttpClientModule,
         NgbDropdownModule,
-        SharedModule
+        SharedModule,
+        NgxLoadingModule.forRoot({})
     ],
     declarations: [LayoutComponent, SidebarComponent, HeaderComponent]
   

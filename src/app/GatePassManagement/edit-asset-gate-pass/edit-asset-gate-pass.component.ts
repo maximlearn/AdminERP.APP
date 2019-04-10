@@ -17,7 +17,6 @@ export class EditAssetGatePassComponent implements OnInit {
   assetGatePassModel: AssetGatePassModel;
   assetGatePassDetailModel: AssetGatePassDetailModel;
   blanAssetGatePassDetailModel: AssetGatePassDetailModel;
-
   datePickerConfig: Partial<BsDatepickerConfig>;
   gatePassTypeList: GatePassTypeModel[];
   quantityUnitList: QuantityUnitModel[];

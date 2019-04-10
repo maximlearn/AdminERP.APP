@@ -8,7 +8,7 @@ import { ViewAssetComponent } from '../assets/view-asset/view-asset.component';
   imports: [
     CommonModule
   ],
-  exports:[CommonModule, SelectRequiredValidatorDirective,menuFilterPipe],
+  exports:[SelectRequiredValidatorDirective,menuFilterPipe],
   declarations: [SelectRequiredValidatorDirective,menuFilterPipe]
 })
 export class SharedModule { }

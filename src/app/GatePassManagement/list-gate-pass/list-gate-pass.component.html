@@ -11,8 +11,8 @@
                         <div class="row">
                             <div class="col form-group">
                                 <label for="gatepassdate" class="col-form-label font-weight-bold">Gate Pass No :</label>
-                                <input type="text" Id="gatepassdate" class="form-control" 
-                                placeholder="Enter Gate Pass Date">
+                                <input type="text" Id="gatepassdate" class="form-control"
+                                    placeholder="Enter Gate Pass Date">
                             </div>
                             <div class="col form-group">
                                 <label for="type" class="col-form-label font-weight-bold">Type :</label>
@@ -32,23 +32,30 @@
                         </div>
                         <div class="row">
                             <div class="col form-group">
-                                <label for="gptodate" class="col-form-label font-weight-bold">Gate Pass To Date :</label>
-                                <input type="text" Id="gptodate" class="form-control" placeholder="Enter Gate Pass To Date">
+                                <label for="gptodate" class="col-form-label font-weight-bold">Gate Pass To Date
+                                    :</label>
+                                <input type="text" Id="gptodate" class="form-control"
+                                    placeholder="Enter Gate Pass To Date">
                             </div>
                             <div class="col form-group">
-                                <label for="gpfromdate" class="col-form-label font-weight-bold">Gate Pass From Date :</label>
-                                <input type="text" Id="gpfromdate" class="form-control" placeholder="Enter Gate Pass To Date">
+                                <label for="gpfromdate" class="col-form-label font-weight-bold">Gate Pass From Date
+                                    :</label>
+                                <input type="text" Id="gpfromdate" class="form-control"
+                                    placeholder="Enter Gate Pass To Date">
                             </div>
                             <div class="col form-group">
                                 <label for="assettagid" class="col-form-label font-weight-bold">Asset Tag ID :</label>
-                                <input type="text" Id="assettagid" class="form-control" placeholder="Enter Asset Tag ID">
+                                <input type="text" Id="assettagid" class="form-control"
+                                    placeholder="Enter Asset Tag ID">
                             </div>
                         </div>
                     </div>
                     <div class="card-footer">
                         <div class="text-right">
-                            <button type="button" class="btn btn-primary mr-1 m-1  btn-sm font-weight-bold"><i class="fa fa-save fa-fw"></i>&nbsp;Search</button>
-                            <button type="button" class="btn btn-primary  btn-sm m-1 font-weight-bold"><i class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
+                            <button type="button" class="btn btn-primary mr-1 m-1  btn-sm font-weight-bold"><i
+                                    class="fa fa-save fa-fw"></i>&nbsp;Search</button>
+                            <button type="button" class="btn btn-primary  btn-sm m-1 font-weight-bold"><i
+                                    class="fa fa-close fa-fw"></i>&nbsp;Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -56,57 +63,69 @@
         </div>
     </div>
     <div class="text-left">
-        <span class="font-weight-bold" [class.text-success]="responseMessage.isSuccess" [class.text-danger]="!responseMessage.isSuccess"
-          *ngIf="responseMessage ">
-          {{responseMessage.message}}
+        <span class="font-weight-bold" [class.text-success]="responseMessage.isSuccess"
+            [class.text-danger]="!responseMessage.isSuccess" *ngIf="responseMessage ">
+            {{responseMessage.message}}
         </span>
-        </div>
+    </div>
     <div class="card border border-primary">
         <div class="card-header text-white bg-secondary">
-            <i class="fa fa-database fa-fw"></i>&nbsp;Search Asset Gate Pass            
+            <i class="fa fa-database fa-fw"></i>&nbsp;Search Asset Gate Pass
         </div>
 
         <div class="card-body text-primary">
             <div class="row">
                 <div class="col" style=" overflow: hidden;">
                     <ag-grid-angular style='width: 100%; height: 370px;' class="ag-theme-balham" [enableSorting]="true"
-                        [enableFilter]="true" [rowData]="rowData | async" [pagination]="true" [paginationPageSize]='paginationPageSize'
-                        [paginationNumberFormatter]='paginationNumberFormatter' [columnDefs]="columnDefs" (rowClicked)="onRowClicked($event)"
-                        id="gridApi" (gridReady)="onGridReady($event)">
+                        [enableFilter]="true" [rowData]="rowData | async" [pagination]="true"
+                        [paginationPageSize]='paginationPageSize'
+                        [paginationNumberFormatter]='paginationNumberFormatter' [columnDefs]="columnDefs"
+                        (rowClicked)="onRowClicked($event)" id="gridApi" (gridReady)="onGridReady($event)">
                     </ag-grid-angular>
                 </div>
-               
+
             </div>
         </div>
     </div>
 
     <ng-template #template>
         <div class="modal-header">
-          <h4 class="modal-title pull-left">Approve / Reject Gate Pass</h4>
-          <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-            <span aria-hidden="true">&times;</span>
-          </button>
+            <h4 class="modal-title pull-left">Approve / Reject Gate Pass</h4>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="closeForm()">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         <div class="modal-body">
-            <div class="row">
-                <div class="col form-group">
-                    <label for="approverejectcomment" class="col-form-label font-weight-bold mb-2">Comment / Reason :</label>
-                    <textarea id="approverejectcomment" name="approverejectcomment" [(ngModel)]="gatePassData.comment"
-                    #approverejectcomment ="ngModel" class="form-control" rows="4" placeholder="Enter Comment for Approve/Reject" ></textarea>                   
-                    <span class="font-weight-bold" [class.text-success]="responseMessage.isSuccess" [class.text-danger]="!responseMessage.isSuccess"
-                    *ngIf="responseMessage">
-                    {{responseMessage.message}}
-                  </span>
+            <form name="approveRejectForm" #approveRejectForm="ngForm">
+                <div class="row">
+                    <div class="col form-group"  [class.was-validated]="approverejectcomment.errors?.required  && approverejectcomment.touched">
+                        <label for="approverejectcomment" class="col-form-label font-weight-bold mb-2">Comment / Reason
+                            :</label>
+                        <textarea id="approverejectcomment" name="approverejectcomment"
+                           [(ngModel)]="gatePassData.comment" required #approverejectcomment="ngModel"
+                            class="form-control" rows="4" placeholder="Enter Comment for Approve/Reject"></textarea>
+                        <span class="invalid-feedback"
+                            *ngIf="approverejectcomment.errors?.required && approverejectcomment.touched">
+                            Comment/Reason is required.
+                        </span>
+                        <span class="font-weight-bold" [class.text-success]="responseMessage.isSuccess"
+                            [class.text-danger]="!responseMessage.isSuccess" *ngIf="responseMessage">
+                            {{responseMessage.message}}
+                        </span>
+                    </div>
                 </div>
-            </div>
+          
             <div class="row mt-2">
                 <div class="col form-group text-right">
-                    <button type="button" (click) = "UpdateGatePassStatus('Approved')" class="btn btn-primary btn-sm mr-2" style="width: 6.3rem"><i
-                        class="fa fa-close fa-fw"></i>&nbsp;Approve</button>
-                    <button type="buton" (click) = "UpdateGatePassStatus('Reject')" class="btn btn-primary btn-sm"><i
-                        class="fa fa-save fa-fw"></i>&nbsp;Reject</button>
+                    <button type="button" [disabled]="!approveRejectForm.form.valid" [ngClass]="!approveRejectForm.form.valid ? 'btn-disabled' : 'btn-primary'"
+                     (click)="UpdateGatePassStatus('Approved')" class="btn  btn-sm mr-2"
+                        style="width: 6.3rem"><i class="fa fa-close fa-fw"></i>&nbsp;Approve</button>
+                    <button type="buton" [disabled]="!approveRejectForm.form.valid" [ngClass]="!approveRejectForm.form.valid ? 'btn-disabled' : 'btn-primary'"
+                     (click)="UpdateGatePassStatus('Reject')" class="btn  btn-sm"><i
+                            class="fa fa-save fa-fw"></i>&nbsp;Reject</button>
                 </div>
             </div>
+        </form>
         </div>
-      </ng-template>
+    </ng-template>
 </div>
