@@ -1,16 +1,19 @@
 <nav class="navbar navbar-expand-lg fixed-top">
-  <a class="navbar-brand" href="#">Admin ERP </a>
+  <a class="navbar-brand" href="#">Admin</a>
   <button class="navbar-toggler" type="button" (click)="toggleSidebar()">
       <!-- <span class="navbar-toggler-icon"></span> -->
       <i class="fa fa-bars text-muted" aria-hidden="true"></i>
   </button>
   <div class="collapse navbar-collapse">
     <div>
-        <img src="assets/images/smalllogo.png"/>
+        <img src="../../../../assets/images/erpLogo.png" class="logo"/>
     </div>
       <!-- <form class="form-inline my-2 my-lg-0">
           <input class="form-control mr-sm-2" type="text" placeholder="{{ 'Search' }}" >
       </form> -->
+     <div class="navbar-nav ml-auto text-white">
+       <h3>Asset & Gatepass Management</h3>
+       </div>
       <ul class="navbar-nav ml-auto" *ngIf="userData">
           <li class="nav-item dropdown" ngbDropdown>
               <a href="javascript:void(0)" class="nav-link" ngbDropdownToggle>
